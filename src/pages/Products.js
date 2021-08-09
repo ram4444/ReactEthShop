@@ -16,7 +16,7 @@ import PRODUCTS from '../_mocks_/products';
 
 // ----------------------------------------------------------------------
 
-axios({
+let pd = axios({
   method: 'get',
   url: 'http://localhost/jsonapi/node/product',
   responseType: 'json',
@@ -28,13 +28,43 @@ axios({
     return response.data.data;
   })
   .then((data) => {
-    data.map((_, index) => {
+    pd = data.map((_, index) => {
+      const jsonImglink = _.relationships.field_product_photo.links.related.href;
       const setIndex = index + 1;
-      console.log(_.id);
+      // console.log(_.id);
+      // console.log(setIndex);
+
+      const imglink = axios({
+        method: 'get',
+        url: jsonImglink,
+        responseType: 'json',
+        // crossDomain: true,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      })
+        .then((response) => response.data.data)
+        .then(
+          (data2) => `http://localhost/sites/default/files/2021-08/${data2[0].attributes.name}`
+          /*
+          data2.map((_) => {
+            console.log(_.name);
+          });
+          */
+          // console.log(data2[0].attributes.name);
+        );
       return {
-        id: _.id
+        id: _.id,
+        cover: imglink.PromiseResult,
+        name: _.attributes.title,
+        // price: _.attributes.price,
+        price: 13,
+        priceSale: null,
+        colors: '#000000',
+        status: ''
       };
     });
+    // pd = data;
+    console.log(PRODUCTS);
+    console.log(pd);
   });
 
 export default function EcommerceShop() {
@@ -94,7 +124,7 @@ export default function EcommerceShop() {
           </Stack>
         </Stack>
 
-        <ProductList products={PRODUCTS} />
+        <ProductList products={pd} />
         <ProductCartWidget />
       </Container>
     </Page>
