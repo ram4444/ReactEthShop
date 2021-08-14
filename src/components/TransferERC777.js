@@ -1,6 +1,7 @@
 import React from 'react';
 import Web3 from 'web3';
-
+import { styled } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 import { contractAddr } from '../properties/contractAddr';
 
 const web3 = new Web3(window.web3.currentProvider);
@@ -39,9 +40,9 @@ function TransferERC777() {
     acc.then((result) => ivkContractFuncBySEND(result[0]));
   };
   return (
-    <button disabled={isDisabled} onClick={onClick}>
+    <Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={isDisabled} onClick={onClick}>
       {buttonText}
-    </button>
+    </Button>
   );
 }
 

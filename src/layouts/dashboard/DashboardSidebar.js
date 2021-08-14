@@ -9,8 +9,6 @@ import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
-import ConnectMetaMask from '../../components/ConnectMetaMask';
-import TransferERC777 from '../../components/TransferERC777';
 //
 import sidebarConfig from './SidebarConfig';
 import account from '../../_mocks_/account';
@@ -58,9 +56,6 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column' }
       }}
     >
-      <ConnectMetaMask />
-      <TransferERC777 />
-
       <Box sx={{ mb: 2, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>

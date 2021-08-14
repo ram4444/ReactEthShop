@@ -1,10 +1,12 @@
 import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 // material
 import { Container, Stack, Typography } from '@material-ui/core';
 // components
 import Page from '../components/Page';
+import ConnectMetaMask from '../components/ConnectMetaMask';
+import TransferERC777 from '../components/TransferERC777';
 import {
   ProductSort,
   ProductList,
@@ -12,63 +14,52 @@ import {
   ProductFilterSidebar
 } from '../components/_dashboard/products';
 //
-import PRODUCTS from '../_mocks_/products';
+// import PRODUCTS from '../_mocks_/products';
 
-// ----------------------------------------------------------------------
-
-let pd = axios({
-  method: 'get',
-  url: 'http://localhost/jsonapi/node/product',
-  responseType: 'json',
-  // crossDomain: true,
-  headers: { 'Access-Control-Allow-Origin': '*' }
-})
-  .then((response) => {
-    console.log('response');
-    return response.data.data;
+// ---------------This only return a promise only-------------------------------------------------
+function promiseHttp() {
+  return axios({
+    method: 'get',
+    url: 'http://localhost/jsonapi/node/product?include=field_product_photo',
+    responseType: 'json',
+    // crossDomain: true,
+    headers: { 'Access-Control-Allow-Origin': '*' }
   })
-  .then((data) => {
-    pd = data.map((_, index) => {
-      const jsonImglink = _.relationships.field_product_photo.links.related.href;
-      const setIndex = index + 1;
-      // console.log(_.id);
-      // console.log(setIndex);
+    .then((response) => {
+      console.log('HTTP call done');
+      return response.data;
+    })
+    .then((data) => {
+      const dataArray = data.data.map((_) => _);
+      const includedArray = data.included.map((_) => _.attributes.name);
 
-      const imglink = axios({
-        method: 'get',
-        url: jsonImglink,
-        responseType: 'json',
-        // crossDomain: true,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-      })
-        .then((response) => response.data.data)
-        .then(
-          (data2) => `http://localhost/sites/default/files/2021-08/${data2[0].attributes.name}`
-          /*
-          data2.map((_) => {
-            console.log(_.name);
-          });
-          */
-          // console.log(data2[0].attributes.name);
-        );
-      return {
-        id: _.id,
-        cover: imglink.PromiseResult,
-        name: _.attributes.title,
-        // price: _.attributes.price,
-        price: 13,
-        priceSale: null,
-        colors: '#000000',
-        status: ''
-      };
+      return dataArray.map((_, i) => {
+        console.log('Merging JSON');
+        return {
+          id: _.id,
+          cover: `http://localhost/sites/default/files/2021-08/${includedArray[i]}`,
+          name: _.attributes.title,
+          // price: _.attributes.price,
+          price: _.attributes.field_price,
+          priceSale: null,
+          colors: ['#000000'],
+          status: ''
+        };
+      });
     });
-    // pd = data;
-    console.log(PRODUCTS);
-    console.log(pd);
-  });
+}
 
 export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [pd, setPd] = useState();
+
+  useEffect(() => {
+    promiseHttp().then((prom) => {
+      setPd(prom);
+      setLoading(false);
+    });
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -98,12 +89,18 @@ export default function EcommerceShop() {
     resetForm();
   };
 
+  if (isLoading) {
+    return <Page title="LOADING" />;
+  }
+
   return (
     <Page title="Dashboard: Products | Minimal-UI">
       <Container>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
-        </Typography>
+        <Stack direction="row" spacing={2}>
+          <Typography variant="h4">Products</Typography>
+          <ConnectMetaMask />
+          <TransferERC777 />
+        </Stack>
 
         <Stack
           direction="row"
