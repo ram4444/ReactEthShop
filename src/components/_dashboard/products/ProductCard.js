@@ -8,6 +8,8 @@ import { fCurrency } from '../../../utils/formatNumber';
 //
 import Label from '../../Label';
 import ColorPreview from '../../ColorPreview';
+import BuywithCrypto from '../../BuywithCrypto';
+import { contractAddr } from '../../../properties/contractAddr';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +29,7 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ product }) {
   const { name, cover, price, colors, status, priceSale } = product;
+  const rinkebyTestAddr = contractAddr.Acct2;
 
   return (
     <Card>
@@ -55,6 +58,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
+        <BuywithCrypto amountTransfer={price} toAddr={rinkebyTestAddr} />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
