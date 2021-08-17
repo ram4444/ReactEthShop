@@ -1,8 +1,10 @@
 import { useFormik } from 'formik';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+
 import axios from 'axios';
 // material
 import { Container, Stack, Typography } from '@material-ui/core';
+import { Context } from '../Context';
 // components
 import Page from '../components/Page';
 import ConnectMetaMask from '../components/ConnectMetaMask';
@@ -53,6 +55,11 @@ export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [pd, setPd] = useState();
+
+  const context = useContext(Context);
+  const { currentNetId } = context;
+  context.currentNetId = window.ethereum.chainId;
+  console.log('Context CurrentNetId is: ', context.currentNetId);
 
   useEffect(() => {
     promiseHttp().then((prom) => {

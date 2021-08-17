@@ -1,7 +1,8 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { styled } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import { Context } from '../Context';
 
 const ONBOARD_TEXT = 'Click here to install MetaMask!';
 const CONNECT_TEXT = 'Connect';
@@ -12,7 +13,10 @@ function ConnectMetaMask() {
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled, setDisabled] = React.useState(false);
   const [accounts, setAccounts] = React.useState([]);
+  const [chainId, setChainId] = React.useState('UNKNOWN');
   const onboarding = React.useRef();
+
+  const context = useContext(Context);
 
   React.useEffect(() => {
     if (!onboarding.current) {
@@ -41,7 +45,8 @@ function ConnectMetaMask() {
       window.ethereum.request({ method: 'eth_requestAccounts' }).then(handleNewAccounts);
       window.ethereum.on('accountsChanged', handleNewAccounts);
       // console.log(window.ethereum);
-      console.log(window.ethereum.chainId);
+      // console.log(window.ethereum.chainId);
+      setChainId(window.ethereum.chainId);
       switch (window.ethereum.chainId) {
         case '0x1':
           NET_NAME = 'Ethereum Mainnet';
@@ -59,11 +64,10 @@ function ConnectMetaMask() {
           NET_NAME = 'UNKNOWN';
       }
       return () => {
-        // window.ethereum.off('accountsChanged', handleNewAccounts);
+        window.ethereum.off('accountsChanged', handleNewAccounts);
       };
     }
   }, []);
-
   const onClick = () => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       window.ethereum
@@ -73,6 +77,8 @@ function ConnectMetaMask() {
       onboarding.current.startOnboarding();
     }
   };
+
+  window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
   return (
     <Button
       variant="contained"

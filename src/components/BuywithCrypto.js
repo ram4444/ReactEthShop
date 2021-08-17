@@ -1,5 +1,6 @@
 import React from 'react';
 import Web3 from 'web3';
+import PropTypes from 'prop-types';
 import { styled } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { contractAddr } from '../properties/contractAddr';
@@ -12,8 +13,8 @@ const contract = new web3.eth.Contract(abi, contractAddr.T777R);
 const ONBOARD_TEXT = 'Buy with Crypto';
 
 BuywithCrypto.propTypes = {
-  amountTransfer: BuywithCrypto.object,
-  toAddr: BuywithCrypto.object
+  amountTransfer: PropTypes.string,
+  toAddr: PropTypes.string
 };
 
 function BuywithCrypto({ amountTransfer, toAddr }) {
