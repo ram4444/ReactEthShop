@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import { styled } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+
+import { TestContext, ProdContext } from '../Context';
 import { contractAddr } from '../properties/contractAddr';
 
 const web3 = new Web3(window.web3.currentProvider);
@@ -21,6 +23,7 @@ function BuywithCrypto({ amountTransfer, toAddr }) {
   const [buttonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled] = React.useState(false);
 
+  const context = useContext(TestContext);
   // console.log(amountTransfer);
   // console.log(toAddr);
 

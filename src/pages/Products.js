@@ -1,10 +1,10 @@
 import { useFormik } from 'formik';
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import axios from 'axios';
 // material
 import { Container, Stack, Typography } from '@material-ui/core';
-import { Context } from '../Context';
+
 // components
 import Page from '../components/Page';
 import ConnectMetaMask from '../components/ConnectMetaMask';
@@ -15,6 +15,7 @@ import {
   ProductCartWidget,
   ProductFilterSidebar
 } from '../components/_dashboard/products';
+import { TestContext, ProdContext } from '../Context';
 //
 // import PRODUCTS from '../_mocks_/products';
 
@@ -54,12 +55,13 @@ function promiseHttp() {
 export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [netId, setNetId] = useState('UNKNOWN');
   const [pd, setPd] = useState();
 
-  const context = useContext(Context);
-  const { currentNetId } = context;
-  context.currentNetId = window.ethereum.chainId;
-  console.log('Context CurrentNetId is: ', context.currentNetId);
+  const context = useContext(TestContext);
+  const { drupalHostname, localNetId, erc777ContractAddr, receiverAddr } = context;
+  // context.currentNetId = window.ethereum.chainId;
+  // console.log('Context CurrentNetId is: ', context.currentNetId);
 
   useEffect(() => {
     promiseHttp().then((prom) => {
@@ -96,6 +98,11 @@ export default function EcommerceShop() {
     resetForm();
   };
 
+  const handleSetNetId = (fromChild) => {
+    console.log(fromChild);
+    setNetId(fromChild);
+  };
+
   if (isLoading) {
     return <Page title="LOADING" />;
   }
@@ -105,7 +112,7 @@ export default function EcommerceShop() {
       <Container>
         <Stack direction="row" spacing={2}>
           <Typography variant="h4">Products</Typography>
-          <ConnectMetaMask />
+          <ConnectMetaMask handler={handleSetNetId} />
           <TransferERC777 />
         </Stack>
 

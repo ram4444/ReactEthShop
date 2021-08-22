@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
 import { styled } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { contractAddr } from '../properties/contractAddr';
+import { TestContext } from '../Context';
+// import { contractAddr } from '../properties/contractAddr';
 
 const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
-
-const contract = new web3.eth.Contract(abi, contractAddr.T777R);
-const acct2 = contractAddr.Acct2;
 
 const ONBOARD_TEXT = 'Transfer T777R';
 
@@ -18,11 +16,15 @@ function TransferERC777() {
   const [buttonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled] = React.useState(false);
 
+  const context = useContext(TestContext);
+  const { drupalHostname, localNetId, netId, erc777ContractAddr, receiverAddr } = context;
+  const contract = new web3.eth.Contract(abi, erc777ContractAddr);
+
   let acc = [];
 
   function ivkContractFuncBySEND(acct) {
     contract.methods
-      .transfer(acct2, web3.utils.toWei('100', 'ether'))
+      .transfer(receiverAddr, web3.utils.toWei('100', 'ether'))
       .send({
         from: acct,
         // value: web3.utils.toHex(web3.utils.toWei('100', 'gwei')),

@@ -2,21 +2,26 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import React, { useState, useEffect, useContext } from 'react';
 import { styled } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { Context } from '../Context';
+import PropTypes from 'prop-types';
+import { TestContext, ProdContext } from '../Context';
 
 const ONBOARD_TEXT = 'Click here to install MetaMask!';
 const CONNECT_TEXT = 'Connect';
 const CONNECTED_TEXT = 'Connected';
 let NET_NAME = 'UNKNOWN';
 
-function ConnectMetaMask() {
+function ConnectMetaMask({ handler }) {
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled, setDisabled] = React.useState(false);
   const [accounts, setAccounts] = React.useState([]);
   const [chainId, setChainId] = React.useState('UNKNOWN');
   const onboarding = React.useRef();
 
-  const context = useContext(Context);
+  // const context = useContext(TestContext);
+
+  ConnectMetaMask.propTypes = {
+    handler: PropTypes.func
+  };
 
   React.useEffect(() => {
     if (!onboarding.current) {
@@ -47,6 +52,7 @@ function ConnectMetaMask() {
       // console.log(window.ethereum);
       // console.log(window.ethereum.chainId);
       setChainId(window.ethereum.chainId);
+      handler(window.ethereum.chainId);
       switch (window.ethereum.chainId) {
         case '0x1':
           NET_NAME = 'Ethereum Mainnet';
