@@ -2,7 +2,7 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { useFormik, Form, FormikProvider, Formik, Field } from 'formik';
+import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { useNavigate } from 'react-router-dom';
@@ -19,18 +19,20 @@ import {
   FormLabel
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
-
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 export default function CreateTokenForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const RegisterSchema = Yup.object().shape({
+  const CreateTokenSchema = Yup.object().shape({
+    /*
     chainNetwork: Yup.string().required(
       'Please select the network for the token smart contract to be deployed'
     ),
     deploy: Yup.string().required('Please select the deploy option'),
+    */
     tokenName: Yup.string()
       .min(2, 'Too Short!')
       .max(30, 'Too Long!')
@@ -48,7 +50,7 @@ export default function CreateTokenForm() {
   const formik = useFormik({
     initialValues: {
       chainNetwork: '',
-      deploy: '',
+      deployOption: '',
       tokenName: '',
       tokenAlias: '',
       mintAmount: '',
@@ -56,10 +58,21 @@ export default function CreateTokenForm() {
       custInfuraProjId: '',
       custMnem: ''
     },
-    validationSchema: RegisterSchema,
+    validationSchema: CreateTokenSchema,
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
-      alert(JSON.stringify(values, null, 2));
+      console.log(JSON.stringify(values, null, 2));
+
+      axios({
+        method: 'post',
+        url: 'http://localhost:8080/pb/trufflemigratetest',
+        responseType: 'json',
+        // crossDomain: true,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      }).then((response) => {
+        console.log('HTTP call done');
+        console.log(response.data);
+      });
     }
   });
 
@@ -71,14 +84,24 @@ export default function CreateTokenForm() {
         <Stack spacing={3}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Chain Network</FormLabel>
-            <RadioGroup row aria-label="chainNetwork" name="chainNetwork">
+            <RadioGroup
+              row
+              aria-label="chainNetwork"
+              name="chainNetwork"
+              {...getFieldProps('chainNetwork')}
+            >
               <FormControlLabel value="rinkeby" control={<Radio />} label="Rinkeby Testnet" />
               <FormControlLabel value="mainnet" control={<Radio />} label="Mainnet" />
             </RadioGroup>
           </FormControl>
           <FormControl component="fieldset">
             <FormLabel component="legend">Deploy Option</FormLabel>
-            <RadioGroup row aria-label="deployOption" name="deploy">
+            <RadioGroup
+              row
+              aria-label="deployOption"
+              name="deployOption"
+              {...getFieldProps('deployOption')}
+            >
               <FormControlLabel value="0" control={<Radio />} label="Create contract only" />
               <FormControlLabel value="1" control={<Radio />} label="Deploy to blockchain" />
             </RadioGroup>
@@ -127,7 +150,7 @@ export default function CreateTokenForm() {
 
           <TextField
             fullWidth
-            type={showPassword ? 'text' : 'custMnem'}
+            type={showPassword ? 'text' : 'password'}
             label="Mnemoric phase"
             {...getFieldProps('custMnem')}
             InputProps={{
