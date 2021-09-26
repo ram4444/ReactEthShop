@@ -46,11 +46,9 @@ export default function CreateToken() {
         <ContentStyle>
           <Box sx={{ mb: 5 }}>
             <Typography variant="h4" gutterBottom>
-              Get started absolutely free.
+              Create a tradable TOKEN on blockchain
             </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>
-              Free forever. No credit card needed.
-            </Typography>
+            <Typography sx={{ color: 'text.secondary' }}>In ERC777 standard</Typography>
           </Box>
 
           <CreateTokenForm />

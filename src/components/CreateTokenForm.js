@@ -16,7 +16,8 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel
+  FormLabel,
+  Switch
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
 import axios from 'axios';
@@ -25,14 +26,13 @@ import axios from 'axios';
 export default function CreateTokenForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [advanceOption, setAdvanceOption] = useState(false);
 
   const CreateTokenSchema = Yup.object().shape({
-    /*
     chainNetwork: Yup.string().required(
       'Please select the network for the token smart contract to be deployed'
     ),
-    deploy: Yup.string().required('Please select the deploy option'),
-    */
+    deployOption: Yup.string().required('Please select the deploy option'),
     tokenName: Yup.string()
       .min(2, 'Too Short!')
       .max(30, 'Too Long!')
@@ -41,10 +41,12 @@ export default function CreateTokenForm() {
       .min(2, 'Too Short!')
       .max(5, 'Too Long!')
       .required('Token Alias required'),
-    mintAmount: Yup.number().required('Mint amount required'),
+    mintAmount: Yup.number().required('Mint amount required')
+    /*
     custOwnerAddr: Yup.string().required('Contract Owner Address is required'),
     custInfuraProjId: Yup.string().required('Infura Project Id is required'),
     custMnem: Yup.string().required('Mnemoric phase is required')
+    */
   });
 
   const formik = useFormik({
@@ -61,14 +63,15 @@ export default function CreateTokenForm() {
     validationSchema: CreateTokenSchema,
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
-      console.log(JSON.stringify(values, null, 2));
+      // console.log(JSON.stringify(values, null, 2));
 
       axios({
         method: 'post',
         url: 'http://localhost:8080/pb/trufflemigratetest',
         responseType: 'json',
-        // crossDomain: true,
-        headers: { 'Access-Control-Allow-Origin': '*' }
+        crossDomain: true,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        data: JSON.stringify(values, null, 2)
       }).then((response) => {
         console.log('HTTP call done');
         console.log(response.data);
@@ -91,7 +94,7 @@ export default function CreateTokenForm() {
               {...getFieldProps('chainNetwork')}
             >
               <FormControlLabel value="rinkeby" control={<Radio />} label="Rinkeby Testnet" />
-              <FormControlLabel value="mainnet" control={<Radio />} label="Mainnet" />
+              <FormControlLabel value="rinkeby" control={<Radio />} label="Mainnet" />
             </RadioGroup>
           </FormControl>
           <FormControl component="fieldset">
@@ -132,12 +135,28 @@ export default function CreateTokenForm() {
             />
           </Stack>
 
+          <FormControl>
+            <FormControlLabel
+              control={
+                <Switch
+                  // checked={state.checkedB}
+                  onChange={() => setAdvanceOption((prev) => !prev)}
+                  // name="checkedB"
+                  color="primary"
+                />
+              }
+              label="Advance Options"
+            />
+          </FormControl>
+
           <TextField
             fullWidth
-            label="Wallet address"
+            label="Owner's Wallet address"
             {...getFieldProps('custOwnerAddr')}
             error={Boolean(touched.custOwnerAddr && errors.custOwnerAddr)}
             helperText={touched.custOwnerAddr && errors.custOwnerAddr}
+            disabled={!advanceOption}
+            sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
           />
 
           <TextField
@@ -146,6 +165,8 @@ export default function CreateTokenForm() {
             {...getFieldProps('custInfuraProjId')}
             error={Boolean(touched.custInfuraProjId && errors.custInfuraProjId)}
             helperText={touched.custInfuraProjId && errors.custInfuraProjId}
+            disabled={!advanceOption}
+            sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
           />
 
           <TextField
@@ -164,6 +185,8 @@ export default function CreateTokenForm() {
             }}
             error={Boolean(touched.custMnem && errors.custMnem)}
             helperText={touched.custMnem && errors.custMnem}
+            disabled={!advanceOption}
+            sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
           />
 
           <LoadingButton
