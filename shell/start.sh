@@ -1,2 +1,2 @@
 #!/bin/bash
-pm2 start npm --name ReactEthShop npm -- start
+pm2 start --name ReactEthShop npm -- start
