@@ -5,7 +5,20 @@ import { Button } from '@material-ui/core';
 import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 
-const web3 = new Web3(window.web3.currentProvider);
+let web3;
+
+function init() {
+  if (typeof web3 !== 'undefined') {
+    console.log('Web3 found');
+    window.web3 = new Web3(window.web3.currentProvider);
+    // web3.eth.defaultAccount = web3.eth.accounts[0];
+  } else {
+    console.error('web3 was undefined');
+  }
+}
+
+init();
+
 const { abi } = require('../abi/ERC777.json');
 
 const ONBOARD_TEXT = 'Transfer T777R';
