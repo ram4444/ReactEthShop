@@ -6,6 +6,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { useNavigate } from 'react-router-dom';
+
 // material
 import {
   Stack,
@@ -21,6 +22,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
+import { urls } from '../properties/urls';
 // ----------------------------------------------------------------------
 
 export default function CreateTokenForm() {
@@ -64,10 +66,10 @@ export default function CreateTokenForm() {
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
       // console.log(JSON.stringify(values, null, 2));
-
+      // TODO: Axio call here and PRODUCT. ABI handle
       axios({
         method: 'post',
-        url: 'http://localhost:8080/pb/trufflemigratetest',
+        url: urls.truffleMigrate,
         responseType: 'json',
         crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -94,7 +96,7 @@ export default function CreateTokenForm() {
               {...getFieldProps('chainNetwork')}
             >
               <FormControlLabel value="rinkeby" control={<Radio />} label="Rinkeby Testnet" />
-              <FormControlLabel value="rinkeby" control={<Radio />} label="Mainnet" />
+              <FormControlLabel value="Rinkeby" control={<Radio />} label="Mainnet" />
             </RadioGroup>
           </FormControl>
           <FormControl component="fieldset">
