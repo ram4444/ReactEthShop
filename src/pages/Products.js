@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 
 import axios from 'axios';
 // material
-import { Container, Stack, Typography } from '@material-ui/core';
+import { Container, Stack, Typography } from '@mui/material';
 
 // components
 import Page from '../components/Page';

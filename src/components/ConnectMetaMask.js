@@ -1,7 +1,7 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
 import React, { useState, useEffect, useContext } from 'react';
-import { styled } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import { TestContext, ProdContext } from '../Context';
 
