@@ -66,7 +66,7 @@ export default function CreateTokenForm() {
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
       // console.log(JSON.stringify(values, null, 2));
-      // TODO: Axio call here and PRODUCT. ABI handle
+
       axios({
         method: 'post',
         url: urls.truffleMigrate,
