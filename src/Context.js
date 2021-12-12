@@ -3,7 +3,7 @@ import React from 'react';
 export const drupalHostname = {
   LOCAL: 'localhost',
   docker: 'containerHost',
-  ext: 'extIP'
+  ext: 'mstdatalite.dionysbiz.xyz'
 };
 
 export const netId = {
@@ -27,7 +27,7 @@ export const receiverAddr = {
 
 // env
 export const TestContext = React.createContext({
-  drupalHostname: drupalHostname.LOCAL,
+  drupalHostname: drupalHostname.ext,
   localNetId: netId.UNKNOWN,
   erc777ContractAddr: erc777ContractAddr.T777R,
   receiverAddr: receiverAddr.Acct2

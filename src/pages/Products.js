@@ -20,37 +20,6 @@ import { TestContext, ProdContext } from '../Context';
 // import PRODUCTS from '../_mocks_/products';
 
 // ---------------This only return a promise only-------------------------------------------------
-function promiseHttp() {
-  return axios({
-    method: 'get',
-    url: 'http://localhost/jsonapi/node/product?include=field_product_photo',
-    responseType: 'json',
-    // crossDomain: true,
-    headers: { 'Access-Control-Allow-Origin': '*' }
-  })
-    .then((response) => {
-      console.log('HTTP call done');
-      return response.data;
-    })
-    .then((data) => {
-      const dataArray = data.data.map((_) => _);
-      const includedArray = data.included.map((_) => _.attributes.name);
-
-      return dataArray.map((_, i) => {
-        console.log('Merging JSON');
-        return {
-          id: _.id,
-          cover: `http://localhost/sites/default/files/2021-08/${includedArray[i]}`,
-          name: _.attributes.title,
-          // price: _.attributes.price,
-          price: _.attributes.field_price,
-          priceSale: null,
-          colors: ['#000000'],
-          status: ''
-        };
-      });
-    });
-}
 
 export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
@@ -62,6 +31,38 @@ export default function EcommerceShop() {
   const { drupalHostname, localNetId, erc777ContractAddr, receiverAddr } = context;
   // context.currentNetId = window.ethereum.chainId;
   // console.log('Context CurrentNetId is: ', context.currentNetId);
+
+  function promiseHttp() {
+    return axios({
+      method: 'get',
+      url: `http://${drupalHostname}/jsonapi/node/product?include=field_product_photo`,
+      responseType: 'json',
+      // crossDomain: true,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('HTTP call done');
+        return response.data;
+      })
+      .then((data) => {
+        const dataArray = data.data.map((_) => _);
+        const includedArray = data.included.map((_) => _.attributes.name);
+
+        return dataArray.map((_, i) => {
+          console.log('Merging JSON');
+          return {
+            id: _.id,
+            cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${includedArray[i]}`,
+            name: _.attributes.title,
+            // price: _.attributes.price,
+            price: _.attributes.field_price,
+            priceSale: null,
+            colors: ['#000000'],
+            status: ''
+          };
+        });
+      });
+  }
 
   useEffect(() => {
     promiseHttp().then((prom) => {
