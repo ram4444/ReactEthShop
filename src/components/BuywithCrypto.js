@@ -7,13 +7,15 @@ import { Button } from '@mui/material';
 import { TestContext, ProdContext } from '../Context';
 import { contractAddr } from '../properties/contractAddr';
 
-let web3;
+const web3 = new Web3(window.web3.currentProvider);
+const { abi } = require('../abi/ERC777.json');
+
 let contract;
 
 async function init() {
   if (typeof web3 !== 'undefined') {
     console.log('Web3 found');
-    web3 = new Web3(window.web3.currentProvider);
+    window.web3 = new Web3(window.web3.currentProvider);
     // web3.eth.defaultAccount = web3.eth.accounts[0];
     contract = new web3.eth.Contract(abi, contractAddr.T777R);
   } else {
@@ -21,8 +23,6 @@ async function init() {
   }
 }
 init();
-
-const { abi } = require('../abi/ERC777.json');
 
 // const contract = new web3.eth.Contract(abi, contractAddr.T777R);
 

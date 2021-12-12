@@ -5,7 +5,8 @@ import { Button } from '@mui/material';
 import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 
-let web3;
+const web3 = new Web3(window.web3.currentProvider);
+const { abi } = require('../abi/ERC777.json');
 
 function init() {
   if (typeof web3 !== 'undefined') {
@@ -18,8 +19,6 @@ function init() {
 }
 
 init();
-
-const { abi } = require('../abi/ERC777.json');
 
 const ONBOARD_TEXT = 'Transfer T777R';
 
