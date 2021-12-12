@@ -1,6 +1,7 @@
 // material
 import { alpha, useTheme } from '@mui/material/styles';
 import { GlobalStyles } from '@mui/material';
+import { red, yellow, blue, green, purple } from '@mui/material/colors';
 
 // ----------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ export function BaseOptionChartStyle() {
           '.apexcharts-xaxistooltip': {
             ...background,
             border: 0,
-            boxShadow: theme.customShadows.z24,
+            boxShadow: theme.yellowcustomShadows.z24,
             color: theme.palette.text.primary,
             borderRadius: theme.shape.borderRadiusSm,
             '&:before': { borderBottomColor: 'transparent' },
@@ -81,11 +82,16 @@ export default function BaseOptionChart() {
     // Colors
     colors: [
       theme.palette.primary.main,
-      theme.palette.chart.yellow[0],
-      theme.palette.chart.blue[0],
-      theme.palette.chart.violet[0],
-      theme.palette.chart.green[0],
-      theme.palette.chart.red[0]
+      yellow[500],
+      blue[500],
+      purple[500],
+      green[500],
+      red[500]
+      // theme.palette.chart.yellow[0]
+      // theme.palette.chart.blue[0],
+      // theme.palette.chart.violet[0],
+      // theme.palette.chart.green[0],
+      // theme.palette.chart.red[0]
     ],
 
     // Chart
