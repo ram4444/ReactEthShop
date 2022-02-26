@@ -1,3 +1,3 @@
 export const urls = {
-  truffleMigrate: 'http://localhost:8081/pb/trufflemigrate'
+  truffleMigrate: 'http://ethshopdemo.dionysbiz.xyz:8081/pb/trufflemigrate'
 };
