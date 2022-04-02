@@ -111,7 +111,7 @@ export default function CreateTokenForm() {
               {...getFieldProps('deployOption')}
             >
               <FormControlLabel value="0" control={<Radio />} label="Create contract only" />
-              <FormControlLabel value="1" control={<Radio />} label="Deploy to blockchain" />
+              <FormControlLabel value="true" control={<Radio />} label="Deploy to blockchain" />
             </RadioGroup>
           </FormControl>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
