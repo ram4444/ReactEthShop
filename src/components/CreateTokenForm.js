@@ -72,7 +72,10 @@ export default function CreateTokenForm() {
         url: urls.truffleMigrate,
         responseType: 'json',
         crossDomain: true,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
         data: JSON.stringify(values, null, 2)
       }).then((response) => {
         console.log('HTTP call done');
