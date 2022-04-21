@@ -2,9 +2,10 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
+
 import { useFormik, Form, FormikProvider } from 'formik';
-import eyeFill from '@iconify/icons-eva/eye-fill';
-import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+// import eyeFill from '@iconify/icons-eva/eye-fill';
+// import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { useNavigate } from 'react-router-dom';
 
 // material
@@ -22,6 +23,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
+import Iconify from './Iconify';
 import { urls } from '../properties/urls';
 // ----------------------------------------------------------------------
 
@@ -85,6 +87,8 @@ export default function CreateTokenForm() {
   });
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+  const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
+
 
   return (
     <FormikProvider value={formik}>
@@ -183,7 +187,7 @@ export default function CreateTokenForm() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton edge="end" onClick={() => setShowPassword((prev) => !prev)}>
-                    <Icon icon={showPassword ? eyeFill : eyeOffFill} />
+                    <Icon icon={showPassword ? getIcon('eva:eye-fill') : getIcon('eva:eye-Off-Fill')} />
                   </IconButton>
                 </InputAdornment>
               )

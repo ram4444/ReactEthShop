@@ -3,10 +3,10 @@ import { Link as RouterLink } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Box, Card, Link, Container, Typography } from '@mui/material';
 // layouts
-import AuthLayout from '../layouts/AuthLayout';
+// import AuthLayout from '../layouts/AuthLayout';
 // components
 import Page from '../components/Page';
-import { MHidden } from '../components/@material-extend';
+// import { MHidden } from '../components/@material-extend';
 import CreateTokenForm from '../components/CreateTokenForm';
 // import AuthSocial from '../components/authentication/AuthSocial';
 
