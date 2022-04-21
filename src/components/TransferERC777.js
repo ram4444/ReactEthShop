@@ -6,6 +6,7 @@ import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 
 const web3 = new Web3(window.web3.currentProvider);
+const console = require("console-browserify")
 const { abi } = require('../abi/ERC777.json');
 
 function init() {
@@ -14,7 +15,7 @@ function init() {
     window.web3 = new Web3(window.web3.currentProvider);
     // web3.eth.defaultAccount = web3.eth.accounts[0];
   } else {
-    console.error('web3 was undefined');
+    // console.error('web3 was undefined');
   }
 }
 

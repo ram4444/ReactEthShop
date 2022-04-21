@@ -1,25 +1,19 @@
-import { useFormik } from 'formik';
 import React, { useState, useEffect, useContext } from 'react';
-
-import axios from 'axios';
 // material
 import { Container, Stack, Typography } from '@mui/material';
 
+import axios from 'axios';
 // components
 import Page from '../components/Page';
 import ConnectMetaMask from '../components/ConnectMetaMask';
 import TransferERC777 from '../components/TransferERC777';
-import {
-  ProductSort,
-  ProductList,
-  ProductCartWidget,
-  ProductFilterSidebar
-} from '../components/_dashboard/products';
-import { TestContext, ProdContext } from '../Context';
-//
-// import PRODUCTS from '../_mocks_/products';
+import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+// mock
+// import PRODUCTS from '../_mock/products';
 
-// ---------------This only return a promise only-------------------------------------------------
+import { TestContext, ProdContext } from '../Context';
+
+// ----------------------------------------------------------------------
 
 export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
@@ -29,8 +23,7 @@ export default function EcommerceShop() {
 
   const context = useContext(TestContext);
   const { drupalHostname, localNetId, erc777ContractAddr, receiverAddr } = context;
-  // context.currentNetId = window.ethereum.chainId;
-  // console.log('Context CurrentNetId is: ', context.currentNetId);
+
 
   function promiseHttp() {
     return axios({
@@ -71,32 +64,12 @@ export default function EcommerceShop() {
     });
   }, []);
 
-  const formik = useFormik({
-    initialValues: {
-      gender: '',
-      category: '',
-      colors: '',
-      priceRange: '',
-      rating: ''
-    },
-    onSubmit: () => {
-      setOpenFilter(false);
-    }
-  });
-
-  const { resetForm, handleSubmit } = formik;
-
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };
 
   const handleCloseFilter = () => {
     setOpenFilter(false);
-  };
-
-  const handleResetFilter = () => {
-    handleSubmit();
-    resetForm();
   };
 
   const handleSetNetId = (fromChild) => {
@@ -109,26 +82,20 @@ export default function EcommerceShop() {
   }
 
   return (
-    <Page title="Dashboard: Products | Minimal-UI">
+    <Page title="Dashboard: Products">
       <Container>
         <Stack direction="row" spacing={2}>
-          <Typography variant="h4">Products</Typography>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            Products
+          </Typography>
           <ConnectMetaMask handler={handleSetNetId} />
           <TransferERC777 />
         </Stack>
 
-        <Stack
-          direction="row"
-          flexWrap="wrap-reverse"
-          alignItems="center"
-          justifyContent="flex-end"
-          sx={{ mb: 5 }}
-        >
+        <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
             <ProductFilterSidebar
-              formik={formik}
               isOpenFilter={openFilter}
-              onResetFilter={handleResetFilter}
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
             />
