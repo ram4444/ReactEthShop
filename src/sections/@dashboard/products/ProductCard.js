@@ -9,6 +9,9 @@ import { fCurrency } from '../../../utils/formatNumber';
 import Label from '../../../components/Label';
 import { ColorPreview } from '../../../components/color-utils';
 
+import BuywithCrypto from '../../../components/BuywithCrypto';
+import { contractAddr } from '../../../properties/contractAddr';
+
 // ----------------------------------------------------------------------
 
 const ProductImgStyle = styled('img')({
@@ -27,6 +30,7 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ product }) {
   const { name, cover, price, colors, status, priceSale } = product;
+  const rinkebyTestAddr = contractAddr.Acct2;
 
   return (
     <Card>
@@ -55,6 +59,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
+        <BuywithCrypto amountTransfer={price} toAddr={rinkebyTestAddr} />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
