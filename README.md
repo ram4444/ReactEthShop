@@ -1,29 +1,23 @@
+# Eth Demo shop
+This is the git repo of the Demo site for online shop using custom defined crypto currency 
+
 ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
-> Free React Admin Dashboard made with Material-UI components and React.
+> This project is base on Free React Admin Dashboard made with Material-UI components and React.
 
-![preview](public/static/preview.jpg)
+## Notes for code update
 
-| [Minimal Free](https://minimal-kit-react.vercel.app/) | [Minimal](https://material-ui.com/store/items/minimal-dashboard/) |
-| ----------------------------------------------------- | :---------------------------------------------------------------- |
-| **7** Demo pages                                      | **42+** demo pages                                                |
-| -                                                     | ✓ Multi-language                                                  |
-| -                                                     | ✓ Dark/Light Mode 🌓                                              |
-| -                                                     | ✓ [More components](https://minimals.cc/components)               |
-| -                                                     | ✓ TypeScript version                                              |
-| -                                                     | ✓ Design files (Figma & Sketch)                                   |
+To avoid error, the updated theme is used as the foundation and all changes are added back manually.
+Therefore, we have to run npm install for serval library again:
 
-## Page demo
+#### includes
+    npm install browserify-zlib path-browserify url assert crypto-browserify console-browserify stream-http https-browserify os-browserify buffer stream-browserify web3
 
-- [Dashboard](https://minimal-kit-react.vercel.app/dashboard/app)
-- [Users](https://minimal-kit-react.vercel.app/dashboard/user)
-- [Product](https://minimal-kit-react.vercel.app/dashboard/products)
-- [Blog](https://minimal-kit-react.vercel.app/dashboard/blog)
-- [Login](https://minimal-kit-react.vercel.app/login)
-- [Register](https://minimal-kit-react.vercel.app/register)
-- [Not Found](https://minimal-kit-react.vercel.app/404)
+The package.json is modified to overide since react-script is using webpack version 5  
+
+
 
 ## Getting started
 
@@ -37,4 +31,4 @@ Distributed under the MIT License. See [LICENSE](https://github.com/minimal-ui-k
 
 ## Contact us
 
-Email Us: support@minimals.cc
+Email Us: ramwt4444@gmail.com
