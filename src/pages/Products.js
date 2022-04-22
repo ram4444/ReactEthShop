@@ -88,8 +88,6 @@ export default function EcommerceShop() {
           <Typography variant="h4" sx={{ mb: 5 }}>
             Products
           </Typography>
-          <ConnectMetaMask handler={handleSetNetId} />
-          <TransferERC777 />
         </Stack>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
