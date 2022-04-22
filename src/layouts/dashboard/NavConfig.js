@@ -18,7 +18,7 @@ const navConfig = [
   },
   {
     title: 'create token',
-    path: '/list/createtoken',
+    path: '/form/createtoken',
     icon: getIcon('eva:stop-circle-fill')
   }
   
