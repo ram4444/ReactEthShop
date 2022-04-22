@@ -6,6 +6,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { urls } from '../../../properties/urls';
 // component
 import Iconify from '../../../components/Iconify';
@@ -48,7 +49,10 @@ export default function CurrentUserForm() {
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
       // console.log(JSON.stringify(values, null, 2));
-
+      Cookies.set('username',values.username);
+      Cookies.set('email',values.email);
+      Cookies.set('address1',values.address1);
+      Cookies.set('address2',values.address2);
       axios({
         method: 'post',
         url: urls.appendwalletaddr,

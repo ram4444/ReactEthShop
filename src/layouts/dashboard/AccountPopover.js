@@ -3,6 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
+import Cookies from 'js-cookie';
 // components
 import MenuPopover from '../../components/MenuPopover';
 import ConnectMetaMask from '../../components/ConnectMetaMask';
@@ -84,10 +85,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {Cookies.get('username')? Cookies.get('username'):'New User' }
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+          {Cookies.get('email')? Cookies.get('email'):'' }
           </Typography>
         </Box>
 
