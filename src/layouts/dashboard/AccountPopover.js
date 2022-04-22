@@ -5,6 +5,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 // components
 import MenuPopover from '../../components/MenuPopover';
+import ConnectMetaMask from '../../components/ConnectMetaMask';
 // mocks_
 import account from '../../_mock/account';
 
@@ -17,14 +18,9 @@ const MENU_OPTIONS = [
     linkTo: '/',
   },
   {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-    linkTo: '#',
-  },
-  {
     label: 'Settings',
     icon: 'eva:settings-2-fill',
-    linkTo: '#',
+    linkTo: '/form/currentUserInfo',
   },
 ];
 
@@ -34,6 +30,7 @@ export default function AccountPopover() {
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
+  const [netId, setNetId] = useState('UNKNOWN');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -41,6 +38,11 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
+  };
+
+  const handleSetNetId = (fromChild) => {
+    console.log(fromChild);
+    setNetId(fromChild);
   };
 
   return (
@@ -101,9 +103,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
-          Logout
-        </MenuItem>
+        <ConnectMetaMask handler={handleSetNetId} />
       </MenuPopover>
     </>
   );
