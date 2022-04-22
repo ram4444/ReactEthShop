@@ -64,7 +64,7 @@ export default function CurrentUserForm() {
         console.log(response.data);
         // Store infor to cookies
         // Redirect back to home
-        navigate('/list/blog', { replace: true });
+        navigate('/list/articles', { replace: true });
       });
       
     },
