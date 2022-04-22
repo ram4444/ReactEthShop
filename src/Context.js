@@ -15,6 +15,7 @@ export const netId = {
 };
 
 export const erc777ContractAddr = {
+  USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   TestERC20: '0xbbeB26b6773feF8dBe9865A7023FA004E08C31FF',
   T777R: '0x055d329178e7b029D9a7D0B56406Ad5587788C39',
   RealToken: 'Not Confirm'
@@ -30,6 +31,7 @@ export const TestContext = React.createContext({
   drupalHostname: drupalHostname.ext,
   localNetId: netId.UNKNOWN,
   erc777ContractAddr: erc777ContractAddr.T777R,
+  usdtContractAddr: erc777ContractAddr.USDT,
   receiverAddr: receiverAddr.Acct2
 });
 
@@ -37,5 +39,6 @@ export const ProdContext = React.createContext({
   drupalHostname: drupalHostname.docker,
   localNetId: netId.UNKNOWN,
   erc777ContractAddr: erc777ContractAddr.RealToken,
+  usdtContractAddr: erc777ContractAddr.USDT,
   receiverAddr: receiverAddr.Acct2
 });
