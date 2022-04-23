@@ -28,7 +28,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale, walletAddr } = product;
+  const { name, cover, price, colors, status, priceSale, receiverAddr } = product;
 
   return (
     <Card>
@@ -57,7 +57,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
-        <BuywithCrypto amountTransfer={price} toAddr={walletAddr} />
+        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />

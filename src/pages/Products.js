@@ -52,7 +52,7 @@ export default function EcommerceShop() {
             priceSale: null,
             colors: ['#000000'],
             status: '',
-            walletAddr: _.attributes.field_walletaddr,
+            receiverAddr: _.attributes.field_walletaddr,
           };
         });
       });
