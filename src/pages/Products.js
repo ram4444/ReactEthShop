@@ -51,7 +51,8 @@ export default function EcommerceShop() {
             price: _.attributes.field_price,
             priceSale: null,
             colors: ['#000000'],
-            status: ''
+            status: '',
+            walletAddr: _.attributes.field_walletaddr,
           };
         });
       });

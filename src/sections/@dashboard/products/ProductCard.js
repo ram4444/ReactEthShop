@@ -10,7 +10,6 @@ import Label from '../../../components/Label';
 import { ColorPreview } from '../../../components/color-utils';
 
 import BuywithCrypto from '../../../components/BuywithCrypto';
-import { contractAddr } from '../../../properties/contractAddr';
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +28,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
-  const rinkebyTestAddr = contractAddr.Acct2;
+  const { name, cover, price, colors, status, priceSale, walletAddr } = product;
 
   return (
     <Card>
@@ -59,7 +57,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
-        <BuywithCrypto amountTransfer={price} toAddr={rinkebyTestAddr} />
+        <BuywithCrypto amountTransfer={price} toAddr={walletAddr} />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
