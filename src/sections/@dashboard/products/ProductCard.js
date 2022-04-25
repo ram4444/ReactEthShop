@@ -8,7 +8,6 @@ import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/Label';
 import { ColorPreview } from '../../../components/color-utils';
-
 import BuywithCrypto from '../../../components/BuywithCrypto';
 
 // ----------------------------------------------------------------------
@@ -28,8 +27,8 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale, receiverAddr } = product;
-
+  const { name, cover, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift } = product;
+  console.log(currency)
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -57,7 +56,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
-        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} />
+        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain}/>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />

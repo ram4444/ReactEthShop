@@ -27,18 +27,22 @@
     function secondAxio(product) {
       const prom = axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo`,
+        url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
       }) 
         .then((responsePhoto) => {
           console.log('HTTP call for Product photo done');
-          return responsePhoto.data.included[0].attributes.name;
+          // console.log(responsePhoto)
+          return (
+            {"filename": responsePhoto.data.included[0].attributes.name,
+            "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
+            "chainName": responsePhoto.data.included[1].attributes.field_chain});
       })
-        .then((filename) => ({
+        .then((obj) => ({
             id: product.id,
-            cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${filename}`,
+            cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
             name: product.attributes.title,
             // price: _.attributes.price,
             price: product.attributes.field_price,
@@ -46,7 +50,11 @@
             colors: ['#000000'],
             status: '',
             receiverAddr: product.attributes.field_walletaddr,
-            currency: product.attributes.field_currency
+            currency: product.attributes.field_currency,
+            contractAddr: obj.contractAddr,
+            chain: obj.chainName,
+            dpshift: product.attributes.field_dptshift
+            
       }))
       return prom;
     } 
