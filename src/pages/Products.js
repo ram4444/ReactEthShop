@@ -34,11 +34,12 @@
       }) 
         .then((responsePhoto) => {
           console.log('HTTP call for Product photo done');
-          // console.log(responsePhoto)
+          console.log(responsePhoto)
           return (
             {"filename": responsePhoto.data.included[0].attributes.name,
             "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
-            "chainName": responsePhoto.data.included[1].attributes.field_chain});
+            "chainName": responsePhoto.data.included[1].attributes.field_chain,
+            "cryptoName": responsePhoto.data.included[1].attributes.title});
       })
         .then((obj) => ({
             id: product.id,
@@ -50,7 +51,7 @@
             colors: ['#000000'],
             status: '',
             receiverAddr: product.attributes.field_walletaddr,
-            currency: product.attributes.field_currency,
+            currency: obj.cryptoName,
             contractAddr: obj.contractAddr,
             chain: obj.chainName,
             dpshift: product.attributes.field_dptshift
