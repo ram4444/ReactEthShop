@@ -83,33 +83,33 @@
 
     useEffect(() => { 
       
-        const a = promiseHttp().then((prom) => {
-          // console.log('prom')
-          // console.log(prom)
-          const arr = [];
-          
-          let donecount =0;
-          const s = prom.map((product,i ) => {
-            secondAxio(product).then((prom2) => {
-              // console.log('prom2');
-              // console.log(prom2);
-              arr.push(prom2);
-              donecount+=1;
-              return prom2;
-            }).then((prom2) => {
-              if (donecount===prom.length) {
-                console.log('end')
-                setPd(arr);
-                setLoading(false);
-              }
-              
-            })
-            return[]
-          })
-          return arr;
-        });
+      const a = promiseHttp().then((prom) => {
+        // console.log('prom')
+        // console.log(prom)
+        const arr = [];
         
-        console.log(a);
+        let donecount =0;
+        const s = prom.map((product,i ) => {
+          secondAxio(product).then((prom2) => {
+            // console.log('prom2');
+            // console.log(prom2);
+            arr.push(prom2);
+            donecount+=1;
+            return prom2;
+          }).then((prom2) => {
+            if (donecount===prom.length) {
+              console.log('end')
+              setPd(arr);
+              setLoading(false);
+            }
+            
+          })
+          return[]
+        })
+        return arr;
+      });
+      
+      console.log(a);
         
     }, []);
 
