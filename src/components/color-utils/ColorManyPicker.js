@@ -35,13 +35,49 @@ function IconColor({ sx, ...other }) {
   );
 }
 
+function IconColorChecked({ sx, ...other }) {
+  return (
+    <Box
+      sx={{
+        width: 20,
+        height: 20,
+        display: 'flex',
+        borderRadius: '50%',
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'currentColor',
+        transition: (theme) =>
+          theme.transitions.create('all', {
+            duration: theme.transitions.duration.shortest,
+          }),
+        ...sx,
+      }}
+      {...other}
+    >
+      <Iconify icon="eva:checkmark-circle-2-fill" />
+    </Box>
+  );
+}
+
 ColorManyPicker.propTypes = {
   colors: PropTypes.array.isRequired,
-  onChecked: PropTypes.func,
+  // onChecked: PropTypes.func,
   sx: PropTypes.object,
 };
 
-export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
+const handleChange = (event) => {
+  // setChecked(event.target.checked);
+  console.log(event.target.value )
+};
+
+
+
+export default function ColorManyPicker({ colors, sx, ...other }) {
+  function onChecked (color){
+    return colors.includes(color);
+  }
+
   return (
     <Box sx={sx}>
       {colors.map((color) => {
@@ -54,6 +90,7 @@ export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
             value={color}
             color="default"
             checked={onChecked(color)}
+            onChange={handleChange}
             icon={
               <IconColor
                 sx={{
@@ -64,7 +101,7 @@ export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
               />
             }
             checkedIcon={
-              <IconColor
+              <IconColorChecked
                 sx={{
                   transform: 'scale(1.4)',
                   '&:before': {
