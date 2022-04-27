@@ -64,19 +64,20 @@ ColorManyPicker.propTypes = {
   colors: PropTypes.array.isRequired,
   // onChecked: PropTypes.func,
   sx: PropTypes.object,
-};
-
-const handleChange = (event) => {
-  // setChecked(event.target.checked);
-  console.log(event.target.value )
+  applyFilter: PropTypes.func
 };
 
 
-
-export default function ColorManyPicker({ colors, sx, ...other }) {
+export default function ColorManyPicker({ colors, sx, applyFilter, ...other }) {
   function onChecked (color){
     return colors.includes(color);
   }
+
+  const handleChange = (event) => {
+    // console.log(applyFilter)
+    // console.log(event.target.value )
+    applyFilter(event.target.value)
+  };
 
   return (
     <Box sx={sx}>

@@ -53,9 +53,10 @@ ShopFilterSidebar.propTypes = {
   isOpenFilter: PropTypes.bool,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
+  applyFilter: PropTypes.func,
 };
 
-export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter }) {
+export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, applyFilter }) {
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon="ic:round-filter-list" />} onClick={onOpenFilter}>
@@ -85,7 +86,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
           <Stack spacing={3} sx={{ p: 3 }}>
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Gender
+                Token
               </Typography>
               <FormGroup>
                 {FILTER_GENDER_OPTIONS.map((item) => (
@@ -115,6 +116,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                 // onChange={handleChange}
                 // onChecked={(color) => colors.includes(color)}
                 sx={{ maxWidth: 38 * 4 }}
+                applyFilter={applyFilter}
               />
             </div>
 
