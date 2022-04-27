@@ -41,6 +41,12 @@ DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
 };
 
+window.ethereum.on('chainChanged', (_chainId) => {
+  console.log('Test for change chain in nav bar');
+  console.log(_chainId);
+  window.location.reload()
+});
+
 export default function DashboardNavbar({ onOpenSidebar }) {
   return (
     <RootStyle>

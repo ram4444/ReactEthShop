@@ -70,7 +70,7 @@ function ConnectMetaMask({ handler }) {
           NET_NAME = 'UNKNOWN';
       }
       return () => {
-        window.ethereum.off('accountsChanged', handleNewAccounts);
+        window.ethereum.removeListener('accountsChanged', handleNewAccounts);
       };
     }
   }, []);
@@ -83,8 +83,7 @@ function ConnectMetaMask({ handler }) {
       onboarding.current.startOnboarding();
     }
   };
-
-  window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
+  
   return (
     <Button
       variant="contained"
