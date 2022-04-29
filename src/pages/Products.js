@@ -1,18 +1,18 @@
-  import React, { useState, useEffect, useContext } from 'react';
-  import MetaMaskOnboarding from '@metamask/onboarding';
-  // material
-  import { Container, Stack, Typography } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
+import MetaMaskOnboarding from '@metamask/onboarding';
+// material
+import { Container, Stack, Typography } from '@mui/material';
 
-  import axios from 'axios';
-  // components
-  import Page from '../components/Page';
-  // import ConnectMetaMask from '../components/ConnectMetaMask';
-  // import TransferERC777 from '../components/TransferERC777';
-  import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
-  // mock
-  // import PRODUCTS from '../_mock/products';
+import axios from 'axios';
+// components
+import Page from '../components/Page';
+// import ConnectMetaMask from '../components/ConnectMetaMask';
+// import TransferERC777 from '../components/TransferERC777';
+import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+// mock
+// import PRODUCTS from '../_mock/products';
 
-  import { TestContext, ProdContext } from '../Context';
+import { TestContext, ProdContext } from '../Context';
 
   // ----------------------------------------------------------------------
 
@@ -189,10 +189,10 @@
                     
                     
                     if (tokenChain===chainName){
-                      setfilterTokenList(oldArray => [...oldArray, tokenIdinDrupal])
+                      setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
                       // filterTokenList4Pass.push(tokenIdinDrupal)
-                      console.log(tokenIdinDrupal)
-                      return tokenIdinDrupal;
+                      console.log(tokenNameinDrupal)
+                      return tokenNameinDrupal;
                     }
                     return null;
                   }).filter(Boolean) ;
@@ -231,7 +231,7 @@
       });
 
       // Product category
-      
+
     }, []);
 
     const handleOpenFilter = () => {
@@ -268,17 +268,22 @@
       // Apply the token list filter
       const finalProdlist=[];
       console.log(displayProductListB4)
+      let donecount2 =0;
       allProductList.forEach((prod) => {
         console.log(prod)
         
         if (displayTokenList.get(prod.currency)){
           finalProdlist.push(prod)
         }
-        
-      }) 
+        donecount2+=1;
+        if (donecount2===allProductList.length) {
+          console.log(finalProdlist)
+          setDisplayProductList(finalProdlist);
+        }
+
+      })
       
-      console.log(finalProdlist)
-      setDisplayProductList(finalProdlist);
+      
     };
 
     const handleSetNetId = (fromChild) => {
