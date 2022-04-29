@@ -54,9 +54,20 @@ ShopFilterSidebar.propTypes = {
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
   applyFilter: PropTypes.func,
+  filterTokenList: PropTypes.array,
+  displayTokenList: PropTypes.object
 };
 
-export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, applyFilter }) {
+export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, applyFilter, filterTokenList, displayTokenList }) {
+
+  const handleChange = (event) => {
+    // console.log(event.target.value )
+    // const {key, value, name } = event.target;
+    applyFilter(event.target.value)
+  };
+
+  
+
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon="ic:round-filter-list" />} onClick={onOpenFilter}>
@@ -89,21 +100,13 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                 Token
               </Typography>
               <FormGroup>
-                {FILTER_GENDER_OPTIONS.map((item) => (
-                  <FormControlLabel key={item} control={<Checkbox />} label={item} />
-                ))}
+                {filterTokenList.map((item) => (
+                    <FormControlLabel key={item} control={
+                      
+                      <Checkbox defaultChecked={displayTokenList.get(item)} onChange={handleChange} value={item}/>
+                    } label={item} />
+                  ))}
               </FormGroup>
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Category
-              </Typography>
-              <RadioGroup>
-                {FILTER_CATEGORY_OPTIONS.map((item) => (
-                  <FormControlLabel key={item} value={item} control={<Radio />} label={item} />
-                ))}
-              </RadioGroup>
             </div>
 
             <div>
@@ -118,49 +121,6 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                 sx={{ maxWidth: 38 * 4 }}
                 applyFilter={applyFilter}
               />
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Price
-              </Typography>
-              <RadioGroup>
-                {FILTER_PRICE_OPTIONS.map((item) => (
-                  <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />
-                ))}
-              </RadioGroup>
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Rating
-              </Typography>
-              <RadioGroup>
-                {FILTER_RATING_OPTIONS.map((item, index) => (
-                  <FormControlLabel
-                    key={item}
-                    value={item}
-                    control={
-                      <Radio
-                        disableRipple
-                        color="default"
-                        icon={<Rating readOnly value={4 - index} />}
-                        checkedIcon={<Rating readOnly value={4 - index} />}
-                      />
-                    }
-                    label="& Up"
-                    sx={{
-                      my: 0.5,
-                      borderRadius: 1,
-                      '& > :first-of-type': { py: 0.5 },
-                      '&:hover': {
-                        opacity: 0.48,
-                        '& > *': { bgcolor: 'transparent' },
-                      },
-                    }}
-                  />
-                ))}
-              </RadioGroup>
             </div>
           </Stack>
         </Scrollbar>

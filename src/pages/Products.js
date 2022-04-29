@@ -18,16 +18,17 @@
 
   export default function EcommerceShop() {
     const [openFilter, setOpenFilter] = useState(false);
-    const [appliedFilter, setAppliedFilter] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [netId, setNetId] = useState('UNKNOWN');
-    const [allToken, setAllToken] = useState([]);
-    const [displayToken, setDisplayToken] = useState([]);
-    const [allNet, setAllNet] = useState([]);
-    const [displayProduct, setDisplayProduct] = useState();
+    // This is for display to filter sidebar
+    const [filterTokenList, setfilterTokenList] = useState([]);
+    const [displayTokenList, setDisplayTokenList] = useState([]);
+    const [displayProductList, setDisplayProductList] = useState();
+
+    const [allProductList, setAllProductList] = useState();
 
     const context = useContext(TestContext);
-    const { drupalHostname, localNetId, erc777ContractAddr, receiverAddr } = context;
+    const { drupalHostname } = context;
 
     function secondAxio(product) {
       const prom = axios({
@@ -39,7 +40,7 @@
       }) 
         .then((responsePhoto) => {
           console.log('HTTP call for Product photo done');
-          console.log(responsePhoto)
+          // console.log(responsePhoto)
           return (
             {"filename": responsePhoto.data.included[0].attributes.name,
             "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
@@ -74,7 +75,7 @@
         headers: { 'Access-Control-Allow-Origin': '*' }
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           console.log('HTTP call for Product lists done');
           return response.data;
       })
@@ -121,8 +122,8 @@
           return response.data;
       })
         .then((data) => {
-          console.log('----data token list----');
-          console.log(data);
+          // console.log('----data token list----');
+          // console.log(data);
           const dataArray = data.data.map((_) => _);
           return dataArray;
       })
@@ -180,34 +181,47 @@
                       chainName=('UNKNOWN');
                   }
                   
-        
-                  prom.map((tokenObj) => {
+                  const filterTokenList4Pass = prom.map((tokenObj) => {
                     const tokenChain=tokenObj.attributes.field_chain
-                    // console.log(tokenChain)
-                    // console.log(chainName)
+                    const tokenIdinDrupal=tokenObj.attributes.name
+                    const tokenNameinDrupal=tokenObj.attributes.field_tokenname
+                    const tokenAliasinDrupal=tokenObj.attributes.field_alias
+                    
                     
                     if (tokenChain===chainName){
-                      setDisplayToken(oldArray => [...oldArray, tokenChain])
-                      // console.log(displayToken)
+                      setfilterTokenList(oldArray => [...oldArray, tokenIdinDrupal])
+                      // filterTokenList4Pass.push(tokenIdinDrupal)
+                      console.log(tokenIdinDrupal)
+                      return tokenIdinDrupal;
                     }
-                    return {};
+                    return null;
+                  }).filter(Boolean) ;
+                  console.log(filterTokenList4Pass)
+                  
+                  const displayTokensMap = new Map()
+                  filterTokenList4Pass.map((tokenName) => {
+                    console.log(tokenName)
+                    displayTokensMap.set(tokenName , true)
+                    return null;
                   });
+                  console.log(displayTokensMap)
+                  setDisplayTokenList(displayTokensMap);
 
                   const finalProdlist=[];
                   arr.forEach((prod) => {
-                    console.log(prod)
+                    // console.log(prod)
                     if (prod.chain===chainName){
                       finalProdlist.push(prod)
                     }
                   }) 
 
-                  console.log(finalProdlist)
-                  setDisplayProduct(finalProdlist);
+                  // console.log(finalProdlist)
+                  // The first time loading loads all products
+                  setAllProductList(finalProdlist)
+                  setDisplayProductList(finalProdlist);
                   setLoading(false);
                 });
               }
-
-              
             }
             
           })
@@ -216,20 +230,8 @@
         return arr;
       });
 
-      
-      // console.log(a);
-      // Load the filter List
-      
-      
-      // Chain
-      promiseHttpChain().then((prom) => {
-        
-      });
-
       // Product category
-
-
-        
+      
     }, []);
 
     const handleOpenFilter = () => {
@@ -240,19 +242,48 @@
       setOpenFilter(false);
     };
 
-    const handleApplyFilter = (filterList) => {
+    const handleApplyFilter = (tokenName) => {
       console.log("handle apply filter in Product");
       // console.log(filterList);
       // arrFilter.push(filterList)
-      setAppliedFilter(oldArray => [...oldArray, filterList]);
-      console.log('Appended to Filter Array');
-      console.log(appliedFilter);
-      // setAppliedFilter(filterList);
+
+      const displayProductListB4 = displayProductList;
+      const displayTokenListB4 = displayTokenList;
+
+      // console.log(displayProductListB4)
+      // console.log(displayTokenListB4)
+
+      // displayTokenList:
+      // USDT: true
+      // ETH: true
+
+      if (displayTokenListB4.get(tokenName))
+        displayTokenListB4.set(tokenName, false)
+      else 
+        displayTokenListB4.set(tokenName, true)
+
+      console.log(displayTokenListB4)
+      setDisplayTokenList(displayTokenListB4)
+
+      // Apply the token list filter
+      const finalProdlist=[];
+      console.log(displayProductListB4)
+      allProductList.forEach((prod) => {
+        console.log(prod)
+        
+        if (displayTokenList.get(prod.currency)){
+          finalProdlist.push(prod)
+        }
+        
+      }) 
+      
+      console.log(finalProdlist)
+      setDisplayProductList(finalProdlist);
     };
 
     const handleSetNetId = (fromChild) => {
-      console.log("handleSetNetId");
-      console.log(fromChild);
+      // console.log("handleSetNetId");
+      // console.log(fromChild);
       setNetId(fromChild);
     };
 
@@ -276,12 +307,14 @@
                 onOpenFilter={handleOpenFilter}
                 onCloseFilter={handleCloseFilter}
                 applyFilter={handleApplyFilter}
+                filterTokenList={filterTokenList}
+                displayTokenList={displayTokenList}
               />
               <ProductSort />
             </Stack>
           </Stack>
 
-          <ProductList products={displayProduct} />
+          <ProductList products={displayProductList} />
           <ProductCartWidget />
         </Container>
       </Page>
