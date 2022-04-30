@@ -320,7 +320,6 @@ import { TestContext, ProdContext } from '../Context';
           </Stack>
 
           <ProductList products={displayProductList} />
-          <ProductCartWidget />
         </Container>
       </Page>
     );
