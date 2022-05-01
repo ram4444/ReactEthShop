@@ -58,8 +58,12 @@ const ModalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
+  maxHeight: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
+  borderRadius: '25px',
+  overflow: "hidden",
+  overflowY: "scroll", // added scroll
   boxShadow: 24,
   p: 4,
 };
@@ -169,11 +173,9 @@ export default function ArticlesPostCard({ post, index }) {
             >
               <Box sx={ModalStyle}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Text in a modal
+                {title}
                 </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                {body}
-                </Typography>
+                <div dangerouslySetInnerHTML={{ __html: body }} height={200} />
               </Box>
             </Modal>
           </div>

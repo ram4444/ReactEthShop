@@ -1,7 +1,8 @@
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Link, Typography, Stack, Modal } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
@@ -20,6 +21,22 @@ const ProductImgStyle = styled('img')({
   position: 'absolute',
 });
 
+const ModalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  maxHeight: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  borderRadius: '25px',
+  overflow: "hidden",
+  overflowY: "scroll", // added scroll
+  boxShadow: 24,
+  p: 4,
+};
+
 // ----------------------------------------------------------------------
 
 ShopProductCard.propTypes = {
@@ -29,6 +46,11 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ product }) {
   const { name, cover, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift } = product;
   // console.log(currency)
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -47,7 +69,23 @@ export default function ShopProductCard({ product }) {
             {status}
           </Label>
         )}
-        <ProductImgStyle alt={name} src={cover} />
+        <ProductImgStyle alt={name} src={cover} onClick={handleOpen}/>
+        <div>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={ModalStyle}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                {name}
+                </Typography>
+                <div dangerouslySetInnerHTML={{ __html: cover }} height={200} />
+                <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency}/>
+              </Box>
+            </Modal>
+          </div>
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
