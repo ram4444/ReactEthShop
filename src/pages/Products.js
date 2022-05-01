@@ -31,6 +31,7 @@ import { TestContext, ProdContext } from '../Context';
     const { drupalHostname } = context;
 
     function secondAxio(product) {
+
       const prom = axios({
         method: 'get',
         url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency`,
@@ -60,8 +61,8 @@ import { TestContext, ProdContext } from '../Context';
             currency: obj.cryptoName,
             contractAddr: obj.contractAddr,
             chain: obj.chainName,
-            dpshift: product.attributes.field_dptshift
-            
+            dpshift: product.attributes.field_dptshift,
+            description: product.attributes.field_description.value
       }))
       return prom;
     } 

@@ -44,12 +44,14 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift } = product;
+  const { name, cover, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift, description } = product;
   // console.log(currency)
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  console.log(description)
 
   return (
     <Card>
@@ -81,7 +83,7 @@ export default function ShopProductCard({ product }) {
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                 {name}
                 </Typography>
-                <div dangerouslySetInnerHTML={{ __html: cover }} height={200} />
+                <div dangerouslySetInnerHTML={{ __html: description }} height={200} />
                 <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency}/>
               </Box>
             </Modal>

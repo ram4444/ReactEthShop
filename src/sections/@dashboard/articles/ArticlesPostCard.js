@@ -92,7 +92,7 @@ export default function ArticlesPostCard({ post, index }) {
     { number: share, icon: 'eva:share-fill' },
   ];
   
-  console.log(post)
+  // console.log(post.body)
   return (
     <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
       <Card sx={{ position: 'relative' }}>
