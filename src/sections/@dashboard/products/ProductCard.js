@@ -51,7 +51,7 @@ export default function ShopProductCard({ product }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  console.log(description)
+  // console.log(description)
 
   return (
     <Card>
