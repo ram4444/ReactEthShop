@@ -4,10 +4,15 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import {uuid} from 'uuidv4'
+
 
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
+import { putItem, scanTable } from '../utils/awsClient'
 
 const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
@@ -60,12 +65,21 @@ BuywithCrypto.propTypes = {
   toAddr: PropTypes.string,
   contractAddr: PropTypes.string,
   chain: PropTypes.string,
-  currencyName: PropTypes.string
+  currencyName: PropTypes.string,
+  product: PropTypes.object,
 };
 
-function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName}) {
+function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product}) {
   const [buttonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled] = React.useState(false);
+
+  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const handleClose = () => {
+    setOpenLoadScreen(false);
+  };
+  const handleToggle = () => {
+    setOpenLoadScreen(!openLoadScreen);
+  };
 
   const context = useContext(TestContext);
   // console.log(amountTransfer);
@@ -97,7 +111,8 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
       switch (chain) {
         case 'Rinkeby':
           chainIdUse = '0x4';
-          gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei('188729959600000', 'gwei')))
           if (currencyName.includes("Tether")) {
             unit='ether'
           }
@@ -109,7 +124,8 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
           break;
         default:
           chainIdUse = '0x4';
-          gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei('188729959600000', 'gwei')))
           if (currencyName.includes("Tether")) {
             unit='ether'
           }
@@ -125,6 +141,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
         })
         .then((receipt) => {
           console.log(receipt)
+          handleClose()
         });
       } else {
         console.log(`Read to send ${currencyName}`)
@@ -151,7 +168,56 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               chainId: chainIdUse,
               data: ''
             })
-            .then(console.log);
+            .then((receipt) => {
+              handleClose()
+              console.log(receipt)
+              // console.log(Object.fromEntries(receipt))
+              // const str = Object.fromEntries(receipt)
+              const eventsjson = JSON.stringify(receipt.events)
+              
+              let contractAddrPass // DynamoDB npot accept null value
+              if ((currencyName.includes("Ethereum")) || receipt.contractAddress===null){
+                contractAddrPass=''
+              } else {
+                contractAddrPass=receipt.contractAddress
+              }
+              const uid=uuid()
+              // console.log(uid)
+              const txStatus= receipt.status.toString()
+              const txIndex=receipt.transactionIndex.toString();
+              const record=
+              { 
+                // MAP type need hard code
+                "order_id": { S: uid },
+                // Info from drupal
+                "currencyName": {S: currencyName},
+                "chain" : {S: chain},
+                "product_id": {S: product.id},
+                "product_name": {S: product.name},
+                "product_cover": {S: product.cover},
+                "product_price": {N: product.price},
+                // Info from transaction return
+                "blockHash": { S: receipt.blockHash },
+                "blockNumber": { N: receipt.blockNumber.toString() },
+                "contractAddress": { S: contractAddrPass },
+                "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
+                "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
+                "fromAddr": {S: receipt.from},
+                "toAddr": {S: receipt.to},
+                "gasUsed": {N: receipt.gasUsed.toString()},
+                
+                "tx_status": {BOOL: receipt.status},
+                
+                "transactionHash": {S: receipt.transactionHash},
+                "transactionIndex": {N: receipt.transactionIndex.toString()},
+                
+                "tx_type": {S: receipt.type},
+                
+                "tx_events": { S: eventsjson }
+              }
+                
+              putItem('orders',record)
+            });
           
         }) 
       }
@@ -165,13 +231,22 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
     acc.then((result) => {
       console.log('result when call')
       console.log(result)
+      handleToggle()
       ivkContractFuncBySEND(result[0])
     });
   };
   return (
-    <Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={isDisabled} onClick={onClick}>
+    <><Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={isDisabled} onClick={onClick}>
       {buttonText}
-    </Button>
+    </Button><div>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openLoadScreen}
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </div></>
   );
 }
 

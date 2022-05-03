@@ -84,7 +84,7 @@ export default function ShopProductCard({ product }) {
                 {name}
                 </Typography>
                 <div dangerouslySetInnerHTML={{ __html: description }} height={200} />
-                <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency}/>
+                <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product}/>
               </Box>
             </Modal>
           </div>
@@ -96,7 +96,7 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
-        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency}/>
+        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product}/>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
