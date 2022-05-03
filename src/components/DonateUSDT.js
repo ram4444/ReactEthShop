@@ -75,7 +75,7 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
   let abiUse;
 
   function ivkContractFuncBySEND(acct) {
-    
+
     // Get the gas price first
     web3.eth.getGasPrice().then((result) => {
       console.log('GasFee in Wei')
@@ -99,7 +99,9 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
       switch (chain) {
         case 'Rinkeby':
           chainIdUse = '0x4';
-          gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei(result, 'gwei')))
+          // gasFee = web3.utils.toBN(web3.utils.toWei('100', 'gwei'))
           if (currencyName.includes("Tether")) {
             unit='ether'
           }
@@ -110,7 +112,9 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
           break;
         default:
           chainIdUse = '0x4';
-          gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei(result, 'gwei')))
+          // gasFee = web3.utils.toBN(web3.utils.toWei('100', 'gwei'))
           if (currencyName.includes("Tether")) {
             unit='ether'
           }
