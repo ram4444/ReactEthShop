@@ -36,6 +36,8 @@
     ]
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.81.0",
+    "@aws-sdk/credential-providers": "^3.81.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@faker-js/faker": "^6.1.2",
@@ -47,6 +49,7 @@
     "@testing-library/jest-dom": "^5.16.2",
     "apexcharts": "^3.35.0",
     "assert": "^2.0.0",
+    "aws-sdk": "^2.1125.0",
     "axios": "^0.26.1",
     "buffer": "^6.0.3",
     "change-case": "^4.1.2",
@@ -76,6 +79,8 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "url": "^0.11.0",
+    "uuid": "^8.3.2",
+    "uuidv4": "^6.2.13",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.3",
     "yup": "^0.32.11"
