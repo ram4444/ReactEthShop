@@ -53,6 +53,7 @@ export default function CurrentUserForm() {
       Cookies.set('email',values.email);
       Cookies.set('address1',values.address1);
       Cookies.set('address2',values.address2);
+      Cookies.set('DeliveryAddrFilled',true);
       axios({
         method: 'post',
         url: urls.appendwalletaddr,

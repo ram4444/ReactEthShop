@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {uuid} from 'uuidv4'
+import Cookies from 'js-cookie';
 
 
 import { TestContext, ProdContext } from '../Context';
@@ -18,14 +19,38 @@ const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
 
 let contract;
+let enableBuyButton = false;
+let walletFound = false;
+let cookiesFound = false;
+let ONBOARD_TEXT = 'Buy with Crypto';
 
 async function init() {
   if (typeof web3 !== 'undefined') {
     console.log('Web3 found');
     window.web3 = new Web3(window.web3.currentProvider);
     // web3.eth.defaultAccount = web3.eth.accounts[0];
+    walletFound=true
   } else {
     console.error('web3 was undefined');
+    walletFound=false
+  }
+
+  if (Cookies.get('address1')) {
+    cookiesFound=true
+  } else {
+    cookiesFound=false
+  }
+
+  if (cookiesFound && walletFound) {
+    enableBuyButton=true;
+    ONBOARD_TEXT = 'Buy with Crypto';
+  } else { 
+    enableBuyButton=false;
+    if (!walletFound) {
+      ONBOARD_TEXT = 'Wallet NOT Found';
+    } else {
+      ONBOARD_TEXT = 'Deliver Address NOT Found';
+    }
   }
 }
 init();
@@ -58,7 +83,52 @@ function promiseHttpAbi(chain, contractAddr) {
     
 }
 
-const ONBOARD_TEXT = 'Buy with Crypto';
+async function processReceipt(receipt, product, currencyName, chain) {
+  let eventsjson = JSON.stringify(receipt.events)
+              
+  let contractAddrPass // DynamoDB not accept null value
+  if ((currencyName.includes("Ethereum")) || receipt.contractAddress===null){
+    contractAddrPass=''
+    eventsjson='{}' // No event for Ethereum
+  } else {
+    contractAddrPass=receipt.contractAddress
+  }
+  const uid=uuid()
+  // console.log(uid)
+  const record=
+  { 
+    // MAP type need hard code
+    "order_id": { S: uid },
+    // Info from drupal
+    "currencyName": {S: currencyName},
+    "chain" : {S: chain},
+    "product_id": {S: product.id},
+    "product_name": {S: product.name},
+    "product_cover": {S: product.cover},
+    "product_price": {N: product.price},
+    // Info from transaction return
+    "blockHash": { S: receipt.blockHash },
+    "blockNumber": { N: receipt.blockNumber.toString() },
+    "contractAddress": { S: contractAddrPass },
+    "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
+    "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
+    "fromAddr": {S: receipt.from},
+    "toAddr": {S: receipt.to},
+    "gasUsed": {N: receipt.gasUsed.toString()},
+    "tx_status": {BOOL: receipt.status},
+    "transactionHash": {S: receipt.transactionHash},
+    "transactionIndex": {N: receipt.transactionIndex.toString()},
+    "tx_type": {S: receipt.type},
+    "tx_events": { S: eventsjson },
+    // Delivery Info From Cookies
+    "buyer_name": {S: Cookies.get('username')},
+    "buyer_email": {S: Cookies.get('email')},
+    "delivery_addr1": {S: Cookies.get('address1')},
+    "delivery_addr2": {S: Cookies.get('address2')}
+  }
+    
+  putItem('orders',record)
+}
 
 BuywithCrypto.propTypes = {
   amountTransfer: PropTypes.string,
@@ -70,8 +140,14 @@ BuywithCrypto.propTypes = {
 };
 
 function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product}) {
-  const [buttonText] = React.useState(ONBOARD_TEXT);
-  const [isDisabled] = React.useState(false);
+  const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
+  const [buyButtonDisable, setBuyButtonDisable] = React.useState(!enableBuyButton);
+  const handleBuyButtonDisable = () => {
+    setBuyButtonDisable(false);
+  };
+  const handleToggleBuyButtonDisable = () => {
+    setBuyButtonDisable(!buyButtonDisable);
+  };
 
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const handleClose = () => {
@@ -141,6 +217,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
         })
         .then((receipt) => {
           console.log(receipt)
+          processReceipt(receipt, product, currencyName, chain)
           handleClose()
         });
       } else {
@@ -171,8 +248,9 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
             .then((receipt) => {
               handleClose()
               console.log(receipt)
-              // console.log(Object.fromEntries(receipt))
-              // const str = Object.fromEntries(receipt)
+              processReceipt(receipt, product, currencyName, chain)
+              
+              /*
               const eventsjson = JSON.stringify(receipt.events)
               
               let contractAddrPass // DynamoDB npot accept null value
@@ -183,8 +261,6 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               }
               const uid=uuid()
               // console.log(uid)
-              const txStatus= receipt.status.toString()
-              const txIndex=receipt.transactionIndex.toString();
               const record=
               { 
                 // MAP type need hard code
@@ -205,18 +281,20 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
                 "fromAddr": {S: receipt.from},
                 "toAddr": {S: receipt.to},
                 "gasUsed": {N: receipt.gasUsed.toString()},
-                
                 "tx_status": {BOOL: receipt.status},
-                
                 "transactionHash": {S: receipt.transactionHash},
                 "transactionIndex": {N: receipt.transactionIndex.toString()},
-                
                 "tx_type": {S: receipt.type},
-                
-                "tx_events": { S: eventsjson }
+                "tx_events": { S: eventsjson },
+                // Delivery Info From Cookies
+                "buyer_name": {S: Cookies.get('username')},
+                "buyer_email": {S: Cookies.get('email')},
+                "delivery_addr1": {S: Cookies.get('address1')},
+                "delivery_addr2": {S: Cookies.get('address2')}
               }
                 
               putItem('orders',record)
+              */
             });
           
         }) 
@@ -235,8 +313,9 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
       ivkContractFuncBySEND(result[0])
     });
   };
+
   return (
-    <><Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={isDisabled} onClick={onClick}>
+    <><Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={buyButtonDisable} onClick={onClick}>
       {buttonText}
     </Button><div>
         <Backdrop
@@ -248,6 +327,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
         </Backdrop>
       </div></>
   );
+
 }
 
 export default BuywithCrypto;
