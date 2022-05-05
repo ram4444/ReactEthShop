@@ -13,7 +13,7 @@ import Cookies from 'js-cookie';
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
-import { putItem, scanTable } from '../utils/awsClient'
+import { putItem } from '../utils/awsClient'
 
 const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
@@ -84,15 +84,34 @@ function promiseHttpAbi(chain, contractAddr) {
 }
 
 async function processReceipt(receipt, product, currencyName, chain) {
+  console.log(receipt)
   let eventsjson = JSON.stringify(receipt.events)
               
   let contractAddrPass // DynamoDB not accept null value
+  let toAddrPass;
   if ((currencyName.includes("Ethereum")) || receipt.contractAddress===null){
     contractAddrPass=''
     eventsjson='{}' // No event for Ethereum
+    toAddrPass=receipt.to
   } else {
-    contractAddrPass=receipt.contractAddress
+    contractAddrPass=receipt.to
+    eventsjson = JSON.stringify(receipt.events)
+    toAddrPass=receipt.events.Transfer.returnValues.to
   }
+
+  // In custom TOKEN contract address is in receipt.to, Receiver is in receipt.events.Transfer.returnValues.to
+  // 
+  
+  /*
+  With Cap letters:
+  receipt.events.Transfer.returnValues.to
+  product.receiverAddr
+
+  Lower Cap letters only:
+  eth_request_account
+  receipt.to, receipt.from
+  */
+
   const uid=uuid()
   // console.log(uid)
   const record=
@@ -105,6 +124,7 @@ async function processReceipt(receipt, product, currencyName, chain) {
     "product_id": {S: product.id},
     "product_name": {S: product.name},
     "product_cover": {S: product.cover},
+    "product_coverFilename": {S: product.coverFilename},
     "product_price": {N: product.price},
     // Info from transaction return
     "blockHash": { S: receipt.blockHash },
@@ -112,8 +132,8 @@ async function processReceipt(receipt, product, currencyName, chain) {
     "contractAddress": { S: contractAddrPass },
     "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
     "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
-    "fromAddr": {S: receipt.from},
-    "toAddr": {S: receipt.to},
+    "fromAddr": {S: receipt.from.toLowerCase()},
+    "toAddr": {S: product.receiverAddr.toLowerCase()},
     "gasUsed": {N: receipt.gasUsed.toString()},
     "tx_status": {BOOL: receipt.status},
     "transactionHash": {S: receipt.transactionHash},
@@ -249,52 +269,6 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               handleClose()
               console.log(receipt)
               processReceipt(receipt, product, currencyName, chain)
-              
-              /*
-              const eventsjson = JSON.stringify(receipt.events)
-              
-              let contractAddrPass // DynamoDB npot accept null value
-              if ((currencyName.includes("Ethereum")) || receipt.contractAddress===null){
-                contractAddrPass=''
-              } else {
-                contractAddrPass=receipt.contractAddress
-              }
-              const uid=uuid()
-              // console.log(uid)
-              const record=
-              { 
-                // MAP type need hard code
-                "order_id": { S: uid },
-                // Info from drupal
-                "currencyName": {S: currencyName},
-                "chain" : {S: chain},
-                "product_id": {S: product.id},
-                "product_name": {S: product.name},
-                "product_cover": {S: product.cover},
-                "product_price": {N: product.price},
-                // Info from transaction return
-                "blockHash": { S: receipt.blockHash },
-                "blockNumber": { N: receipt.blockNumber.toString() },
-                "contractAddress": { S: contractAddrPass },
-                "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
-                "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
-                "fromAddr": {S: receipt.from},
-                "toAddr": {S: receipt.to},
-                "gasUsed": {N: receipt.gasUsed.toString()},
-                "tx_status": {BOOL: receipt.status},
-                "transactionHash": {S: receipt.transactionHash},
-                "transactionIndex": {N: receipt.transactionIndex.toString()},
-                "tx_type": {S: receipt.type},
-                "tx_events": { S: eventsjson },
-                // Delivery Info From Cookies
-                "buyer_name": {S: Cookies.get('username')},
-                "buyer_email": {S: Cookies.get('email')},
-                "delivery_addr1": {S: Cookies.get('address1')},
-                "delivery_addr2": {S: Cookies.get('address2')}
-              }
-                
-              putItem('orders',record)
-              */
             });
           
         }) 
