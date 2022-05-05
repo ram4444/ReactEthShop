@@ -51,6 +51,7 @@ import { TestContext, ProdContext } from '../Context';
         .then((obj) => ({
             id: product.id,
             cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
+            coverFilename: obj.filename,
             name: product.attributes.title,
             // price: _.attributes.price,
             price: product.attributes.field_price,
