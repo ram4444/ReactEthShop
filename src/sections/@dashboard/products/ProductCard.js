@@ -44,7 +44,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift, description } = product;
+  const { name, cover, coverFilename, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift, description } = product;
   // console.log(currency)
 
   const [open, setOpen] = React.useState(false);
