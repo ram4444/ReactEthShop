@@ -11,6 +11,7 @@ import NotFound from './pages/Page404';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import DashboardApp from './pages/DashboardApp';
+import SellerDashboardApp from './pages/SellerDashboardApp';
 import CreateToken from './pages/CreateToken';
 import CurrentUserInfo from './pages/CurrentUserInfo';
 
@@ -26,6 +27,7 @@ export default function Router() {
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> },
         { path: 'articles', element: <Articles /> },
+        
       ],
     },
     {
@@ -41,6 +43,7 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { path: 'app', element: <DashboardApp /> },
+        { path: 'seller', element: <SellerDashboardApp /> },
       ],
     },
     {

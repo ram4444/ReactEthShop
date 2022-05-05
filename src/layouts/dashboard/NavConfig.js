@@ -20,6 +20,11 @@ const navConfig = [
     title: 'create token',
     path: '/form/createtoken',
     icon: getIcon('eva:stop-circle-fill')
+  },
+  {
+    title: 'Seller Dashboard',
+    path: '/dashboard/seller',
+    icon: getIcon('eva:car-fill')
   }
   
 ];
