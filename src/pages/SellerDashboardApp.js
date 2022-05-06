@@ -80,7 +80,7 @@ export default function SellerDashboardApp() {
 
           <Grid item xs={12} md={6} lg={8}>
             <LatestOrdersUpdate
-              title="Latest Orders"
+              title="Latest Orders Received"
               list={orderList.map((_, index) => ({
                 id: _.order_id,
                 title: _.product_name.S,
@@ -88,7 +88,11 @@ export default function SellerDashboardApp() {
                 buyerEmail: _.buyer_email.S,
                 buyerAddr1: _.delivery_addr1.S,
                 buyerAddr2: _.delivery_addr2.S,
+                currency: _.currencyName.S,
+                price: _.product_price.N,
                 image: _.product_cover.S,
+                chain: _.chain.S,
+                txHash: _.transactionHash.S,
                 postedAt: faker.date.recent(),
               }))}
             />
