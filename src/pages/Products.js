@@ -34,14 +34,14 @@ import { TestContext, ProdContext } from '../Context';
 
       const prom = axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency`,
+        url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency,uid`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
       }) 
         .then((responsePhoto) => {
           console.log('HTTP call for Product photo done');
-          // console.log(responsePhoto)
+          console.log(responsePhoto)
           return (
             {"filename": responsePhoto.data.included[0].attributes.name,
             "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
