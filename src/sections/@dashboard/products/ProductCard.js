@@ -72,7 +72,7 @@ export default function ShopProductCard({ product }) {
           </Label>
         )}
         <ProductImgStyle alt={name} src={cover} onClick={handleOpen}/>
-        <div>
+          <div>
             <Modal
               open={open}
               onClose={handleClose}
