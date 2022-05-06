@@ -25,6 +25,45 @@ export async function listTable() {
   }
 }
 
+// Used in buyer dashboard
+export async function queryOrdersByOrderer(fromAddr) {
+  const client = new DynamoDBClient({ 
+    region: "ap-southeast-1", 
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: "ap-southeast-1" },
+      identityPoolId: 'ap-southeast-1:5b08d690-81df-4a05-b1cf-36e894f1ae61'
+    })
+  })
+
+  // ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax
+
+  const params = {
+    TableName: 'orders',
+    IndexName: 'fromAddr-blockNumber-index',
+    // ProjectionExpression: "order_id, chain, fromAddr, toAddr, product_cover, product_name, product_id, buyer_name, buyer_email, delivery_addr1, delivery_addr2, currencyName, product_price, transactionHash",
+    // FilterExpression: "toAddr = :val",
+    // ExpressionAttributeValues: {":val": {"S": toAddr}},
+    KeyConditions: {
+      fromAddr: {
+        "ComparisonOperator":"EQ",
+        "AttributeValueList": [ {"S": fromAddr} ]
+      }
+    }
+  };
+
+  let results = {}
+  const command = new QueryCommand(params);
+  try {
+    results = await client.send(command);
+    console.log(results);
+  } catch (err) {
+    console.error(err);
+  }
+
+  return results
+}
+
+// Used in seller dashboard
 export async function queryOrdersByReceiver(toAddr) {
   const client = new DynamoDBClient({ 
     region: "ap-southeast-1", 
@@ -38,7 +77,7 @@ export async function queryOrdersByReceiver(toAddr) {
 
   const params = {
     TableName: 'orders',
-    IndexName: 'toAddr-index',
+    IndexName: 'toAddr-blockNumber-index',
     // ProjectionExpression: "order_id, chain, fromAddr, toAddr, product_cover, product_name, product_id, buyer_name, buyer_email, delivery_addr1, delivery_addr2, currencyName, product_price, transactionHash",
     // FilterExpression: "toAddr = :val",
     // ExpressionAttributeValues: {":val": {"S": toAddr}},

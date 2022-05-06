@@ -22,6 +22,11 @@ const navConfig = [
     icon: getIcon('eva:stop-circle-fill')
   },
   {
+    title: 'Buyer Dashboard',
+    path: '/dashboard/buyer',
+    icon: getIcon('akar-icons:shipping-box-01')
+  },
+  {
     title: 'Seller Dashboard',
     path: '/dashboard/seller',
     icon: getIcon('eva:car-fill')
