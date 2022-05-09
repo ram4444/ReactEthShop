@@ -72,22 +72,22 @@ export default function ShopProductCard({ product }) {
           </Label>
         )}
         <ProductImgStyle alt={name} src={cover} onClick={handleOpen}/>
-          <div>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={ModalStyle}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                {name}
-                </Typography>
-                <div dangerouslySetInnerHTML={{ __html: description }} height={200} />
-                <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product}/>
-              </Box>
-            </Modal>
-          </div>
+        <div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={ModalStyle}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+              {name}
+              </Typography>
+              <div dangerouslySetInnerHTML={{ __html: description }} height={200} />
+              <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product} handleClosedModal={handleClose}/>
+            </Box>
+          </Modal>
+        </div>
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
@@ -96,7 +96,6 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
-        <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product}/>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
