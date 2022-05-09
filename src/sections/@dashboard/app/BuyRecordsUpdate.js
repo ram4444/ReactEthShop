@@ -69,6 +69,9 @@ export default function BuyRecordsUpdate({ title, subheader, list, ...other }) {
 
 OrdersItem.propTypes = {
   orders: PropTypes.shape({
+    id: PropTypes.string,
+    fromAddr: PropTypes.string,
+    toAddr: PropTypes.string,
     buyerName: PropTypes.string,
     buyerEmail: PropTypes.string,
     buyerAddr1: PropTypes.string,
@@ -80,6 +83,7 @@ OrdersItem.propTypes = {
     image: PropTypes.string,
     postedAt: PropTypes.instanceOf(Date),
     title: PropTypes.string,
+    deliveryType: PropTypes.string,
   }),
 };
 
