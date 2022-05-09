@@ -10,7 +10,6 @@ import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 
 import { TestContext, ProdContext } from '../../../Context';
-import { putItemDelivered } from '../../../utils/awsClient'
 
 // ----------------------------------------------------------------------
 
@@ -29,13 +28,14 @@ const ModalStyle = {
   p: 4,
 };
 
-LatestOrdersUpdate.propTypes = {
+DeliveredOrdersUpdate.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   list: PropTypes.array.isRequired,
 };
 
-export default function LatestOrdersUpdate({ title, subheader, list, ...other }) {
+export default function DeliveredOrdersUpdate({ title, subheader, list, ...other }) {
+  console.log(list)
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -74,7 +74,6 @@ OrdersItem.propTypes = {
     price: PropTypes.string,
     chain: PropTypes.string,
     txHash: PropTypes.string,
-    image: PropTypes.string,
     postedAt: PropTypes.instanceOf(Date),
     title: PropTypes.string,
     deliveryType: PropTypes.string,
@@ -83,7 +82,7 @@ OrdersItem.propTypes = {
 };
 
 function OrdersItem( { orders }) {
-  const { id, fromAddr, toAddr, image, title, buyerName, buyerEmail, buyerAddr1, buyerAddr2, currency, price, chain, txHash, postedAt, deliveryType, blockNumber} = orders;
+  const { id, fromAddr, toAddr, title, buyerName, buyerEmail, buyerAddr1, buyerAddr2, currency, price, chain, txHash, postedAt, deliveryType, blockNumber} = orders;
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -97,6 +96,7 @@ function OrdersItem( { orders }) {
     const url = ''
     const urlNormal= url.concat('etherscan.io/tx/',txHash);
     let urlFinal = ''
+    console.log(chain)
     switch (chain) {
       case 'Mainnet':
         urlFinal=urlNormal
@@ -118,36 +118,9 @@ function OrdersItem( { orders }) {
     window.open('http://'.concat(urlFinal), "_blank")
   }
 
-  const handleRemoveItem = () => {
-    const record=
-    {
-      // MAP type need hard code
-      
-      // Info from drupal
-      "order_id": { S: id},
-      "fromAddr": {S: fromAddr},
-      "toAddr": {S: toAddr},
-      "chain" : {S: chain},
-      "product_name": {S: title},
-      "currency": {S: currency},
-      "product_price": {N: price},
-      "buyer_name": {S: buyerName},
-      "buyer_email": {S: buyerEmail},
-      "delivery_addr1": {S: buyerAddr1},
-      "delivery_addr2": {S: buyerAddr2},
-      "delivery_type": {S: deliveryType},
-      "blockNumber": {N: blockNumber},
-      "txHash": {S: txHash}
-    } 
-    console.log(record)
-    putItemDelivered('delivered_orders', record)
-    setDisplayRow(false)
-  }
-
   return (
     <>
     {displayRow && <Stack direction="row" alignItems="center" spacing={2} >
-      <Box component="img" alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
 
       <Box sx={{ minWidth: 120, flexGrow: 1 }} onClick={handleOpen}>
         <Link color="inherit" variant="subtitle2" noWrap>
@@ -200,7 +173,7 @@ function OrdersItem( { orders }) {
                 Pirce: {price}
               </Typography>
             </Stack>
-            <Box component="img" alt={title} src={image} sx={{ width: 400, borderRadius: 1.5, flexShrink: 0 }} />
+            
             <Typography id="modal-modal-description" variant="subtitle1" component="div">
             Deilver to: 
             </Typography>
@@ -208,9 +181,7 @@ function OrdersItem( { orders }) {
             {buyerAddr1} 
             {buyerAddr2}
             </Typography>
-            <Button variant="contained" sx={{ mb: 5, mt: 2 }} onClick={()=>handleRemoveItem()}>
-              Item Delivered
-            </Button>
+
           </Box>
         </Modal>
       </div>
