@@ -2,10 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+// Material
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import CircularProgress from '@mui/material/CircularProgress';
+
 import {uuid} from 'uuidv4'
 import Cookies from 'js-cookie';
 
@@ -83,19 +90,19 @@ function promiseHttpAbi(chain, contractAddr) {
     
 }
 
-async function processReceipt(receipt, product, currencyName, chain) {
+async function processReceipt(receipt, product, currencyName, chain, deliveryType) {
   console.log(receipt)
   let eventsjson = JSON.stringify(receipt.events)
               
   let contractAddrPass // DynamoDB not accept null value
   let toAddrPass;
-  if ((currencyName.includes("Ethereum")) || receipt.contractAddress===null){
+  if ((currencyName.includes("Ethereum")) ){
     contractAddrPass=''
     eventsjson='{}' // No event for Ethereum
     toAddrPass=receipt.to
   } else {
     contractAddrPass=receipt.to
-    eventsjson = JSON.stringify(receipt.events)
+    // eventsjson = JSON.stringify(receipt.events)
     toAddrPass=receipt.events.Transfer.returnValues.to
   }
 
@@ -111,7 +118,7 @@ async function processReceipt(receipt, product, currencyName, chain) {
   eth_request_account
   receipt.to, receipt.from
   */
-
+  console.log(eventsjson)
   const uid=uuid()
   // console.log(uid)
   const record=
@@ -126,6 +133,9 @@ async function processReceipt(receipt, product, currencyName, chain) {
     "product_cover": {S: product.cover},
     "product_coverFilename": {S: product.coverFilename},
     "product_price": {N: product.price},
+    "product_email": {S: product.email},
+    "product_phone": {S: product.phone},
+    "product_location": {S: product.location},
     // Info from transaction return
     "blockHash": { S: receipt.blockHash },
     "blockNumber": { N: receipt.blockNumber.toString() },
@@ -144,7 +154,8 @@ async function processReceipt(receipt, product, currencyName, chain) {
     "buyer_name": {S: Cookies.get('username')},
     "buyer_email": {S: Cookies.get('email')},
     "delivery_addr1": {S: Cookies.get('address1')},
-    "delivery_addr2": {S: Cookies.get('address2')}
+    "delivery_addr2": {S: Cookies.get('address2')},
+    "delivery_type": {S: deliveryType}
   }
     
   putItem('orders',record)
@@ -157,9 +168,14 @@ BuywithCrypto.propTypes = {
   chain: PropTypes.string,
   currencyName: PropTypes.string,
   product: PropTypes.object,
+  handleClosedModal: PropTypes.func,
 };
 
-function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product}) {
+let deliveryType;
+
+function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal}) {
+  console.log(product.deliveryTypeList)
+  
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
   const [buyButtonDisable, setBuyButtonDisable] = React.useState(!enableBuyButton);
   const handleBuyButtonDisable = () => {
@@ -172,10 +188,20 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const handleClose = () => {
     setOpenLoadScreen(false);
+    handleClosedModal()
   };
   const handleToggle = () => {
     setOpenLoadScreen(!openLoadScreen);
   };
+  // const [deliveryTypeList, setDeliveryTypeList] = React.useState([]);
+  
+  // const [deliveryType, setDeliveryType] = React.useState('');
+  function handleDeliveryTypeChange(type) {
+    console.log('Change the const to')
+    console.log(type)
+    deliveryType=type
+  }
+  // 
 
   const context = useContext(TestContext);
   // console.log(amountTransfer);
@@ -237,7 +263,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
         })
         .then((receipt) => {
           console.log(receipt)
-          processReceipt(receipt, product, currencyName, chain)
+          processReceipt(receipt, product, currencyName, chain, deliveryType)
           handleClose()
         });
       } else {
@@ -265,10 +291,11 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               chainId: chainIdUse,
               data: ''
             })
+
             .then((receipt) => {
               handleClose()
               console.log(receipt)
-              processReceipt(receipt, product, currencyName, chain)
+              processReceipt(receipt, product, currencyName, chain, deliveryType)
             });
           
         }) 
@@ -277,21 +304,54 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
     })
   }
 
-  const onClick = () => {
+  const onClickBuy = () => {
     // Sending Ethereum to an address
     acc = window.ethereum.request({ method: 'eth_requestAccounts' });
     acc.then((result) => {
       console.log('result when call')
       console.log(result)
+      // console.log('submit the Type as')
+      // console.log(deliveryType)
       handleToggle()
       ivkContractFuncBySEND(result[0])
     });
   };
 
+  const DeliveryTypeTxt = {
+    themselves: "by Buyers",
+    collectpt: "Collection Point",
+    door: "Door to door"
+  };
+
+  handleDeliveryTypeChange("themselves")
   return (
-    <><Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={buyButtonDisable} onClick={onClick}>
-      {buttonText}
-    </Button><div>
+    <>
+      <FormControl>
+        <FormLabel id="demo-radio-buttons-group-label">Delivery Method</FormLabel>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          defaultValue="themselves"
+          name="radio-buttons-group"
+          // onChange={()=>handleDeliveryTypeChange}
+        >
+          {product.deliveryTypeList.map((submitValue) => {
+            const labelSelect=DeliveryTypeTxt[submitValue]
+            return (<FormControlLabel 
+                    key={submitValue} 
+                    value={submitValue} 
+                    control={<Radio />} 
+                    label={labelSelect}
+                    onClick={()=>handleDeliveryTypeChange(submitValue)}
+                    />)
+          })}
+        
+        </RadioGroup>
+      </FormControl>
+    
+      <Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={buyButtonDisable} onClick={()=>onClickBuy()}>
+        {buttonText}
+      </Button>
+      <div>
         <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={openLoadScreen}
