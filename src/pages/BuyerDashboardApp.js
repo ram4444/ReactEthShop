@@ -5,12 +5,8 @@ import { faker } from '@faker-js/faker';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 
-import {uuid} from 'uuidv4'
-import Cookies from 'js-cookie';
-
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
 // sections
 import {
   BuyRecordsUpdate,
@@ -20,8 +16,6 @@ import { queryOrdersByOrderer } from '../utils/awsClient'
 
 
 // ----------------------------------------------------------------------
-
-
 
 
 export default function BuyerDashboardApp() {
