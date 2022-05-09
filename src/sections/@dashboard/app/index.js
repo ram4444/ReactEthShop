@@ -9,3 +9,4 @@ export { default as AppCurrentSubject } from './AppCurrentSubject';
 export { default as AppConversionRates } from './AppConversionRates';
 export { default as BuyRecordsUpdate } from './BuyRecordsUpdate';
 export { default as LatestOrdersUpdate } from './LatestOrdersUpdate';
+export { default as DeliveredOrdersUpdate } from './DeliveredOrdersUpdate';
