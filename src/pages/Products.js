@@ -63,6 +63,11 @@ import { TestContext, ProdContext } from '../Context';
             contractAddr: obj.contractAddr,
             chain: obj.chainName,
             dpshift: product.attributes.field_dptshift,
+            email: product.attributes.field_email,
+            phone: product.attributes.field_phone,
+            deliveryTypeList: product.attributes.field_deilvery_type,
+            location: product.attributes.field_location,
+
             description: product.attributes.field_description.value
       }))
       return prom;
