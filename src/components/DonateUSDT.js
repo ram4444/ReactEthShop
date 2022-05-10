@@ -10,12 +10,43 @@ import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
 
-const web3 = new Web3(window.web3.currentProvider);
+// const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
 
 let contract;
+const App = new Web3()
+let web3
 
 async function init() {
+  
+  if (window.ethereum) {
+    App.web3Provider = window.ethereum;
+    try {
+      // Request account access
+      
+      // Depricatd soon 
+      // await window.ethereum.enable();
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
+      // walletFound=true
+      console.log('Wallet found')
+    } catch (error) {
+      // User denied account access...
+      console.error("User denied account access")
+    }
+  } else if (window.web3) {
+    App.web3Provider = window.web3.currentProvider;
+    // walletFound=true
+    console.log('Wallet found [Legacy]')
+  }
+  // If no injected web3 instance is detected, fall back to Ganache
+  else {
+    console.error('web3 was undefined');
+    // walletFound=false
+  }
+  web3 = new Web3(App.web3Provider);
+
+
+  /*
   if (typeof web3 !== 'undefined') {
   console.log('Wallet found for donation');
     // window.web3 = new Web3(window.web3.currentProvider);
@@ -23,6 +54,9 @@ async function init() {
   } else {
     console.error('web3 was undefined for donation');
   }
+  */
+
+
 }
 init();
 
