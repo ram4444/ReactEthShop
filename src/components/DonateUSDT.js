@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
@@ -15,11 +17,11 @@ let contract;
 
 async function init() {
   if (typeof web3 !== 'undefined') {
-    console.log('Web3 found');
-    window.web3 = new Web3(window.web3.currentProvider);
+  console.log('Wallet found for donation');
+    // window.web3 = new Web3(window.web3.currentProvider);
     // web3.eth.defaultAccount = web3.eth.accounts[0];
   } else {
-    console.error('web3 was undefined');
+    console.error('web3 was undefined for donation');
   }
 }
 init();
@@ -68,6 +70,15 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
   const [isDisabled] = React.useState(false);
 
   const context = useContext(TestContext);
+
+  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const handleClose = () => {
+    setOpenLoadScreen(false);
+  };
+  const handleToggle = () => {
+    setOpenLoadScreen(!openLoadScreen);
+  };
+
   const { usdtContractAddr, receiverAddr } = context;
   // const contract = new web3.eth.Contract(abi, usdtContractAddr);
 
@@ -127,9 +138,15 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
           value: web3.utils.toWei(amountTransfer, 'ether'), 
           gas: gasFee
         })
+        .on('error', (error, receipt) => {
+          console.log('error')
+          console.log(error)
+          handleClose()
+        })
         .then((receipt) => {
           console.log(receipt)
-        });
+        })
+        ;
       } else {
         promiseHttpAbi(chain, contractAddr).then((response) => {
           if (response.data.status === '1') {
@@ -154,8 +171,17 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
               chainId: chainIdUse,
               data: ''
             })
-            .then(console.log);
-          
+            .on('error', (error, receipt) => {
+              console.log('error')
+              console.log(error)
+              handleClose()
+            })
+            .then((receipt) => {
+              handleClose()
+              console.log(receipt)
+              // We can save the receipt and show it on the home page for the donation
+            })
+            ;
         }) 
       }
     
@@ -167,11 +193,23 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
     // Sending Ethereum to an address
     acc = window.ethereum.request({ method: 'eth_requestAccounts' });
     acc.then((result) => ivkContractFuncBySEND(result[0]));
+    handleToggle()
   };
   return (
+    <>
     <Button variant="contained" disabled={isDisabled} onClick={onClick}>
       {buttonText}
     </Button>
+
+    <div>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openLoadScreen}
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </div></>
   );
 }
 
