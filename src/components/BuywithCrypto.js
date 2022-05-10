@@ -22,7 +22,7 @@ import { TestContext, ProdContext } from '../Context';
 import { urls } from '../properties/urls';
 import { putItem } from '../utils/awsClient'
 
-const web3 = new Web3(window.web3.currentProvider);
+// const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
 
 let contract;
@@ -31,7 +31,38 @@ let walletFound = false;
 let cookiesFound = false;
 let ONBOARD_TEXT = 'Buy with Crypto';
 
+const App = new Web3()
+let web3
+
 async function init() {
+  
+  if (window.ethereum) {
+    App.web3Provider = window.ethereum;
+    try {
+      // Request account access
+      
+      // Depricatd soon 
+      // await window.ethereum.enable();
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
+      walletFound=true
+      console.log('Wallet found')
+    } catch (error) {
+      // User denied account access...
+      console.error("User denied account access")
+    }
+  } else if (window.web3) {
+    App.web3Provider = window.web3.currentProvider;
+    walletFound=true
+    console.log('Wallet found [Legacy]')
+  }
+  // If no injected web3 instance is detected, fall back to Ganache
+  else {
+    console.error('web3 was undefined');
+    walletFound=false
+  }
+  web3 = new Web3(App.web3Provider);
+  // legacy 
+  /*
   if (typeof web3 !== 'undefined') {
     console.log('Web3 found');
     window.web3 = new Web3(window.web3.currentProvider);
@@ -41,6 +72,7 @@ async function init() {
     console.error('web3 was undefined');
     walletFound=false
   }
+  */
 
   if (Cookies.get('address1')) {
     cookiesFound=true
@@ -261,6 +293,11 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
           value: web3.utils.toWei(amountTransfer, 'ether'), 
           gas: gasFee
         })
+        .on('error', (error, receipt) => {
+          console.log('error')
+          console.log(error)
+          handleClose()
+        })
         .then((receipt) => {
           console.log(receipt)
           processReceipt(receipt, product, currencyName, chain, deliveryType)
@@ -291,7 +328,11 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               chainId: chainIdUse,
               data: ''
             })
-
+            .on('error', (error, receipt) => {
+              console.log('error')
+              console.log(error)
+              handleClose()
+            })
             .then((receipt) => {
               handleClose()
               console.log(receipt)
