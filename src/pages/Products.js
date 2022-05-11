@@ -67,7 +67,7 @@ import { TestContext, ProdContext } from '../Context';
             phone: product.attributes.field_phone,
             deliveryTypeList: product.attributes.field_deilvery_type,
             location: product.attributes.field_location,
-
+            lastChanged: product.attributes.changed,
             description: product.attributes.field_description.value
       }))
       return prom;
@@ -221,6 +221,9 @@ import { TestContext, ProdContext } from '../Context';
                       finalProdlist.push(prod)
                     }
                   }) 
+                  
+                  // Default sort by latest update
+                  finalProdlist.sort((a, b) => a.lastChanged.localeCompare(b.lastChanged)).reverse();
 
                   // console.log(finalProdlist)
                   // The first time loading loads all products
@@ -303,6 +306,33 @@ import { TestContext, ProdContext } from '../Context';
       return <Page title="LOADING" />;
     }
 
+    const handleApplySort = (sortBy) => {
+      // pList = displayProductList --- NOT FUCKING WORK
+      const pList = []
+      displayProductList.map((item)=>pList.push(item))
+      console.log(pList)
+      switch (sortBy) {
+        case 'name':
+          pList.sort((a, b) => a.name.localeCompare(b.name));
+          setDisplayProductList(pList)
+          break;
+        case 'name_desc':
+          pList.sort((a, b) => a.name.localeCompare(b.name)).reverse();
+          setDisplayProductList(pList)
+          break;
+        case 'newest':
+          pList.sort((a, b) => a.lastChanged.localeCompare(b.lastChanged)).reverse();
+          setDisplayProductList(pList)
+          break;
+        default:
+          console.log('not applicable');
+      }
+
+      console.log(pList)
+      setDisplayProductList(pList)
+      
+    }
+
     return (
       <Page title="Dashboard: Products">
         <Container>
@@ -322,7 +352,9 @@ import { TestContext, ProdContext } from '../Context';
                 filterTokenList={filterTokenList}
                 displayTokenList={displayTokenList}
               />
-              <ProductSort />
+              <ProductSort 
+                applySort={handleApplySort} 
+              />
             </Stack>
           </Stack>
 

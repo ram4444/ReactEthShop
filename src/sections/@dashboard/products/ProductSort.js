@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 // material
 import { Menu, Button, MenuItem, Typography } from '@mui/material';
 // component
@@ -9,12 +10,17 @@ import Iconify from '../../../components/Iconify';
 const SORT_BY_OPTIONS = [
   { value: 'featured', label: 'Featured' },
   { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' }
+  { value: 'name', label: 'Name' },
+  { value: 'name_desc', label: 'Name Desc' }
 ];
 
-export default function ShopProductSort() {
+ShopProductSort.propTypes = {
+  applySort: PropTypes.func,
+};
+
+export default function ShopProductSort({applySort}) {
   const [open, setOpen] = useState(null);
+  const [currentSort, setCurrentSort] = useState('newest');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -23,6 +29,12 @@ export default function ShopProductSort() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const clickSort = (v) => {
+    setCurrentSort(v)
+    applySort(v)
+    handleClose()
+  }
 
   return (
     <>
@@ -34,7 +46,7 @@ export default function ShopProductSort() {
       >
         Sort By:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          Newest
+          {currentSort}
         </Typography>
       </Button>
       <Menu
@@ -48,8 +60,8 @@ export default function ShopProductSort() {
         {SORT_BY_OPTIONS.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === 'newest'}
-            onClick={handleClose}
+            selected={option.value === currentSort}
+            onClick={async () => clickSort(option.value)}
             sx={{ typography: 'body2' }}
           >
             {option.label}
