@@ -4,14 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 // Material
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
-import Backdrop from '@mui/material/Backdrop';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Button, Backdrop, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CircularProgress, Stack} from '@mui/material';
 
 import {uuid} from 'uuidv4'
 import Cookies from 'js-cookie';
@@ -225,6 +218,8 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   const handleToggle = () => {
     setOpenLoadScreen(!openLoadScreen);
   };
+
+  const [defaultDeliveryRadio, setDefaultDeliveryRadio] = React.useState(product.deliveryTypeList[0]);
   // const [deliveryTypeList, setDeliveryTypeList] = React.useState([]);
   
   // const [deliveryType, setDeliveryType] = React.useState('');
@@ -367,34 +362,38 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   handleDeliveryTypeChange("themselves")
   return (
     <>
-      <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Delivery Method</FormLabel>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          defaultValue="themselves"
-          name="radio-buttons-group"
-          // onChange={()=>handleDeliveryTypeChange}
-        >
-          {product.deliveryTypeList.map((submitValue) => {
-            const labelSelect=DeliveryTypeTxt[submitValue]
-            return (<FormControlLabel 
-                    key={submitValue} 
-                    value={submitValue} 
-                    control={<Radio />} 
-                    label={labelSelect}
-                    onClick={()=>handleDeliveryTypeChange(submitValue)}
-                    />)
-          })}
+      <Stack direction="row" spacing={2} pt={2} alignItems="center" justifyContent="center" >
+        <div maxWidth='40%'>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Delivery Method</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={defaultDeliveryRadio}
+              name="radio-buttons-group"
+              // onChange={()=>handleDeliveryTypeChange}
+            >
+              {product.deliveryTypeList.map((submitValue) => {
+                const labelSelect=DeliveryTypeTxt[submitValue]
+                return (<FormControlLabel 
+                        key={submitValue} 
+                        value={submitValue} 
+                        control={<Radio />} 
+                        label={labelSelect}
+                        onClick={()=>handleDeliveryTypeChange(submitValue)}
+                        />)
+              })}
+            
+            </RadioGroup>
+          </FormControl>
+        </div>
         
-        </RadioGroup>
-      </FormControl>
-    
-      <Button variant="contained" sx={{ mb: 5, mt: 2 }} disabled={buyButtonDisable} onClick={()=>onClickBuy()}>
-        {buttonText}
-      </Button>
+        <Button variant="contained" sx={{ mb: 5, mt: 2, maxHeight: 75 }} disabled={buyButtonDisable} onClick={()=>onClickBuy()}>
+          {buttonText}
+        </Button>
+      </Stack>
       <div>
         <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2 }}
           open={openLoadScreen}
           onClick={handleClose}
         >

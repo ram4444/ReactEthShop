@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Box, Card, Link, Typography, Stack, Modal } from '@mui/material';
+import { Box, Card, Link, Typography, Stack, Modal, Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
@@ -27,12 +27,12 @@ const ModalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  maxHeight: 400,
+  maxHeight: 600,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   borderRadius: '25px',
   overflow: "hidden",
-  overflowY: "scroll", // added scroll
+  // overflowY: "scroll", // added scroll
   boxShadow: 24,
   p: 4,
 };
@@ -83,7 +83,11 @@ export default function ShopProductCard({ product }) {
               <Typography id="modal-modal-title" variant="h6" component="h2">
               {name}
               </Typography>
-              <div dangerouslySetInnerHTML={{ __html: description }} height={200} />
+              <Box height={300} display="flex" overflow="auto" overflowY="scroll">
+                <div dangerouslySetInnerHTML={{ __html: description }} />
+              </Box>
+              <br/>
+              <Divider />
               <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product} handleClosedModal={handleClose}/>
             </Box>
           </Modal>
