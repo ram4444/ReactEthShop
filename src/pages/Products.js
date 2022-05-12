@@ -24,6 +24,7 @@ import { TestContext, ProdContext } from '../Context';
     const [filterTokenList, setfilterTokenList] = useState([]);
     const [displayTokenList, setDisplayTokenList] = useState([]);
     const [displayProductList, setDisplayProductList] = useState();
+    const [currentSort, setCurrentSort] = useState('newest');
 
     const [allProductList, setAllProductList] = useState();
 
@@ -135,6 +136,34 @@ import { TestContext, ProdContext } from '../Context';
           return dataArray;
       })
         
+    }
+
+    function applySortfun(sortBy, finalProdlist) {
+      console.log('call')
+      setCurrentSort(sortBy);
+      // pList = finalProdlist --- NOT FUCKING WORK
+      const pList = []
+      finalProdlist.map((item)=>pList.push(item))
+      console.log(pList)
+      switch (sortBy) {
+        case 'name':
+          pList.sort((a, b) => a.name.localeCompare(b.name));
+          // setDisplayProductList(pList)
+          break;
+        case 'name_desc':
+          pList.sort((a, b) => a.name.localeCompare(b.name)).reverse();
+          // setDisplayProductList(pList)
+          break;
+        case 'newest':
+          pList.sort((a, b) => a.lastChanged.localeCompare(b.lastChanged)).reverse();
+          // setDisplayProductList(pList)
+          break;
+        default:
+          console.log('not applicable');
+      }
+
+      console.log(pList)
+      setDisplayProductList(pList)
     }
 
     useEffect(() => { 
@@ -289,12 +318,18 @@ import { TestContext, ProdContext } from '../Context';
         if (donecount2===allProductList.length) {
           console.log(finalProdlist)
           setDisplayProductList(finalProdlist);
+          const sortBy = currentSort
+          applySortfun(sortBy, finalProdlist)
         }
 
       })
       
       
     };
+
+    const handleApplySort = (sortBy) => {
+      applySortfun(sortBy,displayProductList)
+    }
 
     const handleSetNetId = (fromChild) => {
       // console.log("handleSetNetId");
@@ -304,33 +339,6 @@ import { TestContext, ProdContext } from '../Context';
 
     if (isLoading) {
       return <Page title="LOADING" />;
-    }
-
-    const handleApplySort = (sortBy) => {
-      // pList = displayProductList --- NOT FUCKING WORK
-      const pList = []
-      displayProductList.map((item)=>pList.push(item))
-      console.log(pList)
-      switch (sortBy) {
-        case 'name':
-          pList.sort((a, b) => a.name.localeCompare(b.name));
-          setDisplayProductList(pList)
-          break;
-        case 'name_desc':
-          pList.sort((a, b) => a.name.localeCompare(b.name)).reverse();
-          setDisplayProductList(pList)
-          break;
-        case 'newest':
-          pList.sort((a, b) => a.lastChanged.localeCompare(b.lastChanged)).reverse();
-          setDisplayProductList(pList)
-          break;
-        default:
-          console.log('not applicable');
-      }
-
-      console.log(pList)
-      setDisplayProductList(pList)
-      
     }
 
     return (
