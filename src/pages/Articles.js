@@ -7,8 +7,6 @@ import axios from 'axios';
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
 import { ArticlesPostCard, ArticlesPostsSort, ArticlesPostsSearch } from '../sections/@dashboard/articles';
-// mock
-import POSTS from '../_mock/blog';
 
 import { TestContext, ProdContext } from '../Context';
 
@@ -111,7 +109,7 @@ export default function Articles() {
   }, []);
   
   return (
-    <Page title="Crypto shop Home page: Articles">
+    <Page title="Crypto shop: Articles">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
