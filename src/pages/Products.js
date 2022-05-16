@@ -77,7 +77,7 @@ import { TestContext, ProdContext } from '../Context';
     function promiseHttp() {
       return axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/node/product`,
+        url: `http://${drupalHostname}/jsonapi/node/product?sort=-created`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
