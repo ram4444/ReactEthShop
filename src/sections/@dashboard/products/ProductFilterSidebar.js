@@ -18,7 +18,7 @@ import {
 // components
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
-import { ColorManyPicker } from '../../../components/color-utils';
+// import { ColorManyPicker } from '../../../components/color-utils';
 
 // ----------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                   ))}
               </FormGroup>
             </div>
-
+            {/*
             <div>
               <Typography variant="subtitle1" gutterBottom>
                 Colors
@@ -122,6 +122,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
                 applyFilter={applyFilter}
               />
             </div>
+                */}
           </Stack>
         </Scrollbar>
 
