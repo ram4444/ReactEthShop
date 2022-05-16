@@ -81,7 +81,7 @@ export default function ShopProductCard({ product }) {
           >
             <Box sx={ModalStyle}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-              {name}
+                {name}
               </Typography>
               <Box height={300} display="flex" overflow="auto" overflowY="scroll">
                 <div dangerouslySetInnerHTML={{ __html: description }} />
