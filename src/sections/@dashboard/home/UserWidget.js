@@ -1,5 +1,6 @@
 // @mui
 import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
 import { orange } from '@mui/material/colors';
@@ -37,6 +38,7 @@ const UserLogoImgStyle = styled('img')({
 // ----------------------------------------------------------------------
 
 UserWidget.propTypes = {
+  userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   color: PropTypes.string,
   logoUrl: PropTypes.string,
@@ -46,9 +48,17 @@ UserWidget.propTypes = {
 };
 
 
-  export default function UserWidget({ title, color = 'primary', logoUrl, caption, sx, ctrlIndex, ...other }) {
-  return (
+  export default function UserWidget({ userId, title, color = 'primary', logoUrl, caption, sx, ctrlIndex, ...other }) {
+    // component={Link} to={`/list/artist?userId=${userId}`}
+    
+    const navigate = useNavigate()
+    function nv() {
+      navigate(`/list/artist?userId=${userId}`)
+    }
+
+    return (
     <Card
+      onClick={()=>nv()}
       sx={{
         py: 5,
         boxShadow: 0,
@@ -69,11 +79,11 @@ UserWidget.propTypes = {
             )} 100%)`,
         }}
       >
-        <UserLogoImgStyle alt='alt' src={logoUrl}/>
+        <UserLogoImgStyle alt='alt' src={logoUrl} />
       </IconWrapperStyle>
       
 
-      <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
+      <Typography variant="subtitle2" sx={{ opacity: 0.72 }} >
         {title}
       </Typography>
 

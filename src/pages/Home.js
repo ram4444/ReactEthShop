@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme,styled } from '@mui/material/styles';
@@ -253,7 +254,8 @@ export default function HomeApp() {
             const index = 500+(((-1)**i)*100*Math.floor((Math.random() * 3) + 1))
             return (
               <Grid key={i} tem xs={12} sm={6} md={3} pt={'24px'} pl={'24px'}>
-                <UserWidget title={user.display_name} 
+                <UserWidget userId={user.id}
+                  title={user.display_name} 
                   logoUrl={user.user_picture} 
                   caption={user.introCaption} 
                   ctrlIndex={index}/>
