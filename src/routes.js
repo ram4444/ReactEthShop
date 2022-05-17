@@ -10,7 +10,10 @@ import Login from './pages/Login';
 import NotFound from './pages/Page404';
 import Register from './pages/Register';
 import Products from './pages/Products';
+import Parties from './pages/Parties';
+import PartiesHome from './pages/PartiesHome';
 import DashboardApp from './pages/DashboardApp';
+import HomeApp from './pages/Home';
 import SellerDashboardApp from './pages/SellerDashboardApp';
 import BuyererDashboardApp from './pages/BuyerDashboardApp';
 import CreateToken from './pages/CreateToken';
@@ -28,6 +31,9 @@ export default function Router() {
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> },
         { path: 'articles', element: <Articles /> },
+        { path: 'artists', element: <Articles /> },
+        { path: 'artist', element: <PartiesHome /> },
+        { path: 'party', element: <PartiesHome /> },
         
       ],
     },
@@ -44,6 +50,7 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { path: 'app', element: <DashboardApp /> },
+        { path: 'home', element: <HomeApp /> },
         { path: 'seller', element: <SellerDashboardApp /> },
         { path: 'buyer', element: <BuyererDashboardApp /> },
       ],
@@ -52,7 +59,7 @@ export default function Router() {
       path: '/',
       element: <LogoOnlyLayout />,
       children: [
-        { path: '/', element: <Navigate to="/list/articles" /> },
+        { path: '/', element: <Navigate to="/dashboard/home" /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
