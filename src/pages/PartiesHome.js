@@ -4,13 +4,16 @@ import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 // material
 import { Grid, Button, Container, Stack, Typography, Divider } from '@mui/material';
 import axios from 'axios';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
 import { ArticlesPostCard, ArticlesPostsSort, ArticlesPostsSearch } from '../sections/@dashboard/articles';
 import { ProductSort, ProductList, ProductFilterSidebar } from '../sections/@dashboard/products';
+import { ICOPostCard } from '../sections/@dashboard/ico';
 
 import { TestContext, ProdContext } from '../Context';
+
 
 // ----------------------------------------------------------------------
 
@@ -19,6 +22,12 @@ const SORT_OPTIONS = [
   { value: 'popular', label: 'Popular' },
   { value: 'oldest', label: 'Oldest' },
 ];
+
+const initialOptionsSandbox = {
+  "client-id": "ATHUcCN24SWqR9Fi9OuEqBuZRzR1EOFYC-SjL0fzYn4t_YyZ4Ql1o5InZ6Oue_Q1pR37m3ajQqtiLhna",
+  currency: "HKD",
+  intent: "capture",
+};
 
 // ----------------------------------------------------------------------
 
@@ -35,10 +44,18 @@ export default function PartiesHome() {
 
   const [allProductList, setAllProductList] = useState();
 
+  const [allICOList, setAllICOList] = useState([]);
+
   const [netId, setNetId] = useState('UNKNOWN');
   const [filterTokenList, setfilterTokenList] = useState([]);
   const [displayTokenList, setDisplayTokenList] = useState([]);
   const [isLoading, setLoading] = useState(true);
+
+  // For Paypal button 
+  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [ErrorMessage, setErrorMessage] = useState("");
+  const [orderID, setOrderID] = useState(false);
 
   // ------------------- HTTP call -----------------------------
   
@@ -183,6 +200,65 @@ export default function PartiesHome() {
       
   }
 
+  function promiseHttpICO(userId) {
+    return axios({
+      method: 'get',
+      url: `http://${drupalHostname}/jsonapi/node/ico?filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=b4d82ae4-b10c-4ebe-8911-f3d639e48682&sort=-created`,
+      responseType: 'json',
+      // crossDomain: true,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        // console.log(response);
+        console.log('HTTP call for ICO lists done');
+        return response.data;
+    })
+      .then((data) => {
+        console.log('----data----');
+        console.log(data);
+        const dataArray = data.data.map((_) => _);
+        // setAllArticleList(dataArray)
+        return dataArray;
+    })
+      
+  }
+
+  function promiseHttpICOPhoto(ico) {
+    console.log(ico)
+    const prom = axios({
+      method: 'get',
+      url: `http://${drupalHostname}/jsonapi/node/ico/${ico.id}?include=field_coverimageico,uid`,
+      responseType: 'json',
+      // crossDomain: true,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    }) 
+      .then((responsePhoto) => {
+        console.log('HTTP call for ICO photo done');
+        console.log(responsePhoto)
+        return (
+          {"filename": responsePhoto.data.included[0].attributes.name,
+           "userDisplayName": responsePhoto.data.included[1].attributes.display_name,
+          });
+    })
+      .then((obj) => ({
+          id: ico.id,
+          cover: `http://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
+          title: ico.attributes.title,
+          summary: ico.attributes.body.summary,
+          body: ico.attributes.body.value,
+          author: obj.userDisplayName,
+          createdAt: ico.attributes.created,
+          endDate: ico.attributes.field_end_date,
+          minUnit: ico.attributes.field_min_unit,
+          startupPrice: ico.attributes.field_startup_price,
+          fiat: ico.attributes.field_fiat_currency,
+          paypalClientId: ico.attributes.field_paypal_clientid,
+          issueAddr: ico.attributes.field_issue_address,
+          openStatus: ico.attributes.field_open_status
+        }))
+    return prom;
+  } 
+
   // ------------------- Pre-load-----------------------------
 
   useEffect(() => {
@@ -312,11 +388,55 @@ export default function PartiesHome() {
       })
     });
 
+    // Load the ICO list
+    const promiseICO = promiseHttpICO(userId).then((prom)=>{
+      console.log(prom)
+      const arr = [];
+      let donecount =0;
+      const s = prom.map((ico, i ) => {
+        promiseHttpICOPhoto(ico).then((prom2) => {
+          arr.push(prom2);
+          donecount+=1;
+          return prom2;
+        }).then((prom2) => {
+          if (donecount===prom.length) {
+            console.log('Currently there is no filter when the fist time load')
+            console.log(arr)
+            setAllICOList(arr)
+          }
+        })
+        return [];
+      })
+    })
+
   }, []);
+
+   // creates a paypal order
+
+  // capture likely error
+  const onError = (data, actions) => {
+    setErrorMessage("An Error occured with your payment ");
+  };
   
   return (
-    <Page title="Crypto shop: Articles">
-      <Container>
+    <Page title="Artist Home">
+
+      <Container sx={{ mb: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" gutterBottom>
+            Latest ICO
+          </Typography>
+        </Stack>
+
+        <Grid container spacing={3}>
+          { 
+            allICOList.map((ico, index) => (
+            <ICOPostCard key={ico.id} post={ico} index={index} />
+            ))}
+        </Grid>
+      </Container>
+
+      <Container sx={{ mb: 5 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Articles
@@ -334,7 +454,7 @@ export default function PartiesHome() {
 
       <Divider />
 
-      <Container>
+      <Container sx={{ mt: 5 }}>
           <Stack direction="row" spacing={2}>
             <Typography variant="h4" sx={{ mb: 5 }}>
               Products
