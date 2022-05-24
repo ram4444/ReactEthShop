@@ -203,7 +203,7 @@ export default function PartiesHome() {
   function promiseHttpICO(userId) {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/ico?filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=b4d82ae4-b10c-4ebe-8911-f3d639e48682&sort=-created`,
+      url: `http://${drupalHostname}/jsonapi/node/ico?filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}&sort=-created`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -227,7 +227,7 @@ export default function PartiesHome() {
     console.log(ico)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/ico/${ico.id}?include=field_coverimageico,uid`,
+      url: `http://${drupalHostname}/jsonapi/node/ico/${ico.id}?include=field_coverimageico,uid,field_icocurrency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -238,6 +238,8 @@ export default function PartiesHome() {
         return (
           {"filename": responsePhoto.data.included[0].attributes.name,
            "userDisplayName": responsePhoto.data.included[1].attributes.display_name,
+           "contractAddr": responsePhoto.data.included[2].attributes.field_contractaddress,
+           "chain":responsePhoto.data.included[2].attributes.field_chain,
           });
     })
       .then((obj) => ({
@@ -254,6 +256,8 @@ export default function PartiesHome() {
           fiat: ico.attributes.field_fiat_currency,
           paypalClientId: ico.attributes.field_paypal_clientid,
           issueAddr: ico.attributes.field_issue_address,
+          contractAddr: obj.contractAddr,
+          chain: obj.chain,
           openStatus: ico.attributes.field_open_status
         }))
     return prom;
