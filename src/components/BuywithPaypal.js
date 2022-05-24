@@ -19,7 +19,7 @@ import { TestContext, ProdContext } from '../Context';
 import { urls } from '../properties/urls';
 import { putItemICO } from '../utils/awsClient'
 
-async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, formUsername, formEmail, formAmount) {
+async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, payerWalletAddr) {
   
   const detailsId = details.id 
   const currencyCode = details.purchase_units[0].amount.currency_code
@@ -73,7 +73,8 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
   const record=
   { 
     // MAP type need hard code
-    "ico_order_id": { S: uid },
+    "id": { S: uid },
+    "payerWalletAddr" : { S: payerWalletAddr},
     // info from form 
     "form_username": {S: formUsername},
     "form_email": {S: formEmail},
@@ -83,8 +84,9 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     "min_unit": {S: minUnit},
     "startup_price": {S: startupPrice},
     "paypal_clientId" : {S: paypalClientId},
-    "issue_addr" : {S: issueAddr},
-
+    "issue_addr" : {S: issueAddr.toLowerCase()},
+    "contract_addr": {S: contractAddr.toLowerCase()},
+    "chain": {S: chain},
     // Info from paypal return
     "details_id": { S: detailsId },
     "currency_code": { S: currencyCode },
@@ -124,8 +126,10 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     */
   }
   
-  putItemICO('ico_orders',record)
+  putItemICO(record)
 }
+
+
 
 BuywithPaypal.propTypes = {
   title: PropTypes.string,
@@ -136,10 +140,12 @@ BuywithPaypal.propTypes = {
   minUnit: PropTypes.string,
   paypalClientId: PropTypes.string,
   issueAddr: PropTypes.string,
+  contractAddr: PropTypes.string,
+  chain: PropTypes.string,
   open: PropTypes.bool,
 };
 
-function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, open}) {
+function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, contractAddr, chain, open}) {
   const navigate = useNavigate();
   const ref = useRef(null);
 
@@ -263,7 +269,15 @@ function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, payp
                 // console.log(ref.current.values)
                 const name = receiptDetails.payer.name.given_name;
                 console.log(`Transaction completed by ${name}`);
-                processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, formUsername, formEmail, formAmount)
+
+                const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+                acc.then((result) => {
+                  console.log('eth_requestAccounts')
+                  console.log(result[0])
+                  processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, result[0])
+                  
+                });
+                
                 // setShowPaypal(false);
                 // setShowForm(true);
                 
