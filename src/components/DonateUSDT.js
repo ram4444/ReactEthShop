@@ -191,7 +191,7 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
           } else {
             console.log(response.message);
             console.log(response.result);
-            console.log('Query ABI from Etherscan fail, use lacal instead');
+            console.log('Query ABI from Etherscan fail, use local ABI file instead');
             contract = new web3.eth.Contract(abi, contractAddr);
           }
           

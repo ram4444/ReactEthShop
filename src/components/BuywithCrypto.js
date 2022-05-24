@@ -224,7 +224,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   
   // const [deliveryType, setDeliveryType] = React.useState('');
   function handleDeliveryTypeChange(type) {
-    console.log('Change the const to')
+    console.log('Change the con4st to')
     console.log(type)
     deliveryType=type
   }
@@ -309,7 +309,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
           } else {
             console.log(response.message);
             console.log(response.result);
-            console.log('Query ABI from Etherscan fail, use lacal instead');
+            console.log('Query ABI from Etherscan fail, use local ABI file instead');
             contract = new web3.eth.Contract(abi, contractAddr);
           }
     
