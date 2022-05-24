@@ -78,7 +78,7 @@ ICOPostCard.propTypes = {
 };
 
 export default function ICOPostCard({ post, index }) {
-  const { id, cover, title, summary, body, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, openStatus, createdAt, author } = post;
+  const { id, cover, title, summary, body, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, contractAddr, chain, openStatus, createdAt, author } = post;
   
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -179,6 +179,8 @@ export default function ICOPostCard({ post, index }) {
                   fiat={fiat}
                   minUnit={minUnit}
                   paypalClientId={paypalClientId}
+                  contractAddr={contractAddr}
+                  chain={chain}
                   issueAddr={issueAddr}
                   open={open}
                 />
