@@ -34,53 +34,62 @@ const DonationbarStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Donationbar() {
-  const [isOpen, setOpen] = useState(false);
-  const [value, setValue] = useState(0);
+  const [isBarOpen, setBarOpen] = useState(false);
+  const [value, setValue] = useState('0');
   const [chainId, setChainId] = useState('UNKNOWN');
   const [chainName, setChainName] = useState('UNKNOWN');
   const [usdtContractAddr, setUsdtContractAddr] = useState('0xdAC17F958D2ee523a2206206994597C13D831ec7');
   const [reveiverAddr, setReveiverAddr] = useState('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF');
+  const [isWalletFound, setWalletFound] = useState(false);
 
-  const handleOpen = () => {
-    setOpen((prev) => !prev);
+  const handleBarOpen = () => {
+    setBarOpen((prev) => !prev);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setBarOpen(false);
   };
 
-  useEffect(() => { 
-    setChainId(window.ethereum.chainId)
 
-    switch (window.ethereum.chainId) {
-      case '0x1':
-        setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
-        setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
-        setChainName('Mainnet')
-        break;
-      case '0x4':
-        setUsdtContractAddr('0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02')
-        setReveiverAddr('0x7104F1aDf1224611b7c3831BfeEe591e42e48858')
-        setChainName('Rinkeby')
-        break;
-      default:
-        setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
-        setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
-        setChainName('Mainnet')
-    }
+  useEffect(() => { 
+    if (window.ethereum) {
+      setWalletFound(true)
+      setChainId(window.ethereum.chainId)
+
+      switch (window.ethereum.chainId) {
+        case '0x1':
+          setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
+          setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
+          setChainName('Mainnet')
+          break;
+        case '0x4':
+          setUsdtContractAddr('0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02')
+          setReveiverAddr('0x7104F1aDf1224611b7c3831BfeEe591e42e48858')
+          setChainName('Rinkeby')
+          break;
+        default:
+          setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
+          setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
+          setChainName('Mainnet')
+      }
+    } 
   })
 
   return (
+    
     <ClickAwayListener onClickAway={handleClose}>
       <div>
-        {!isOpen && (
-          <IconButton onClick={handleOpen}>
+        {!isBarOpen && (
+          <IconButton onClick={handleBarOpen}>
             <Iconify icon="bx:donate-heart" width={20} height={20} />
           </IconButton>
         )}
 
-        <Slide direction="down" in={isOpen} mountOnEnter unmountOnExit>
+        <Slide direction="down" in={isBarOpen} mountOnEnter unmountOnExit>
+          
           <DonationbarStyle>
+            {isWalletFound && (
+            <>
             <Input
               id='donate'
               autoFocus
@@ -94,15 +103,37 @@ export default function Donationbar() {
               }
               type='number'
               onChange={(e) => {
-                setValue(e.target.value);
+                setValue(e.target.value.toString());
               }}
               sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
             />
+            
             <DonateUSDT amountTransfer={value}
             toAddr={reveiverAddr}
             contractAddr={usdtContractAddr}
             chain={chainName}
             currencyName='Tether' />
+            </>
+            )}
+            { /* Else */ }
+            {!isWalletFound && (
+              <Input
+              id='notEnable'
+              disabled
+              autoFocus
+              fullWidth
+              disableUnderline
+              placeholder="To donate, please CONNECT your wallet first"
+              startAdornment={
+                <InputAdornment position="start">
+                  <Iconify icon="eva:bx:donate-heart" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                </InputAdornment>
+              }
+              type='number'
+              sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
+            />
+            )}
+            
           </DonationbarStyle>
         </Slide>
       </div>

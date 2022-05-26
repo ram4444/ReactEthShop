@@ -25,13 +25,14 @@ import { TestContext, ProdContext } from '../Context';
     const [displayTokenList, setDisplayTokenList] = useState([]);
     const [displayProductList, setDisplayProductList] = useState();
     const [currentSort, setCurrentSort] = useState('newest');
+    const [isWalletFound, setWalletFound] = useState(false);
 
     const [allProductList, setAllProductList] = useState();
 
     const context = useContext(TestContext);
     const { drupalHostname } = context;
 
-    function secondAxio(product) {
+    function promiseHttpProductPhoto(product) {
 
       const prom = axios({
         method: 'get',
@@ -168,6 +169,11 @@ import { TestContext, ProdContext } from '../Context';
 
     useEffect(() => { 
       
+      if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+        setWalletFound(true)
+      }
+
+
       // Load the product list
       const a = promiseHttp().then((prom) => {
         // console.log('prom')
@@ -176,7 +182,7 @@ import { TestContext, ProdContext } from '../Context';
         
         let donecount =0;
         const s = prom.map((product,i ) => {
-          secondAxio(product).then((prom2) => {
+          promiseHttpProductPhoto(product).then((prom2) => {
             // console.log('prom2');
             // console.log(prom2);
             arr.push(prom2);
@@ -186,16 +192,28 @@ import { TestContext, ProdContext } from '../Context';
             if (donecount===prom.length) {
               console.log('All product info has been obatined. Apply filter afterwards.')
               
-              if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+              // if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+                
                 // setNetId(window.ethereum.chainId);
-                console.log(window.ethereum.chainId);
+                let chainId ='' ; // in 0x1
+                try {
+                  // await window.ethereum.request({ method: 'eth_requestAccounts' })
+                  // console.log('Wallet found')
+                  console.log('chainId: ')
+                  console.log(window.ethereum.chainId);
+                  chainId=window.ethereum.chainId
+                } catch (error) {
+                  console.error("window.ethereum not found")
+                  setWalletFound(false)
+                }
+                
                 // Token
                 promiseHttpToken().then((prom) => {
                   console.log("promiseHttpToken");
                   console.log(prom);
         
                   let chainName;
-                  switch (window.ethereum.chainId) {
+                  switch (chainId) {
                     case '0x1':
                       setNetId('Mainnet');
                       chainName=('Mainnet');
@@ -214,7 +232,7 @@ import { TestContext, ProdContext } from '../Context';
                       break;
                     default:
                       setNetId('UNKNOWN');
-                      chainName=('UNKNOWN');
+                      chainName=('Mainnet');
                   }
                   
                   const filterTokenList4Pass = prom.map((tokenObj) => {
@@ -260,7 +278,7 @@ import { TestContext, ProdContext } from '../Context';
                   setDisplayProductList(finalProdlist);
                   setLoading(false);
                 });
-              }
+              // }
             }
             
           })
@@ -269,7 +287,7 @@ import { TestContext, ProdContext } from '../Context';
         return arr;
       });
 
-      // Product category
+      
 
     }, []);
 
@@ -344,10 +362,15 @@ import { TestContext, ProdContext } from '../Context';
     return (
       <Page title="Dashboard: Products">
         <Container>
-          <Stack direction="row" spacing={2}>
-            <Typography variant="h4" sx={{ mb: 5 }}>
+          <Stack direction="row" spacing={ {xs: 1, sm: 2, md: 4} }>
+            <Typography variant="h4">
               Products
             </Typography>
+            {!isWalletFound && (
+            <Typography variant="caption" >
+              Please connect your wallet to enable the purchase function
+            </Typography>
+            )}
           </Stack>
 
           <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>

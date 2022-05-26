@@ -29,7 +29,7 @@ const { abi } = require('../abi/ERC777.json');
 
 
 
-let walletFound = false;
+// let walletFound = false;
 
 const App = new Web3()
 let web3
@@ -73,6 +73,8 @@ export default function SellerDashboardApp() {
   const [deliverdIcoOrderList, setDeliverdIcoOrderList] = React.useState([]);
   const [currentNetId, setCurrentNetId] = useState('UNKNOWN');
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const [isWalletFound, setWalletFound] = useState(false);
+
   const handleClose = () => {
     setOpenLoadScreen(false);
   };
@@ -96,7 +98,7 @@ export default function SellerDashboardApp() {
         // Depricatd soon 
         // await window.ethereum.enable();
         await window.ethereum.request({ method: 'eth_requestAccounts' })
-        walletFound=true
+        setWalletFound(true)
         console.log('Wallet found')
       } catch (error) {
         // User denied account access...
@@ -104,13 +106,13 @@ export default function SellerDashboardApp() {
       }
     } else if (window.web3) {
       App.web3Provider = window.web3.currentProvider;
-      walletFound=true
+      setWalletFound(true)
       console.log('Wallet found [Legacy]')
     }
     // If no injected web3 instance is detected, fall back to Ganache
     else {
       console.error('web3 was undefined');
-      walletFound=false
+      setWalletFound(false)
     }
     web3 = new Web3(App.web3Provider);
     let chainName;
@@ -432,12 +434,14 @@ export default function SellerDashboardApp() {
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
+      {isWalletFound && (
+        <>
         <Typography variant="h4" sx={{ mb: 5 }}>
           Seller Dashboard
         </Typography>
 
         <Grid container spacing={3}>
-          
+            
             <Grid item xs={12} md={6} lg={8} height='400'>
               <div style={{ height: 400, width: '100%' }}>
               <Typography variant="h5" sx={{ mb: 5 }}>
@@ -452,7 +456,7 @@ export default function SellerDashboardApp() {
               />
               </div>
             </Grid>
-          
+            
           
           <Grid item xs={12} md={6} lg={8}>
             <LatestOrdersUpdate
@@ -520,6 +524,18 @@ export default function SellerDashboardApp() {
 
 
         </Grid>
+        </>
+        )}
+        {!isWalletFound && (
+          <>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            Wallet not found!
+          </Typography>
+          <Typography variant="h5" sx={{ mb: 5 }}>
+            Pleast connect the wallet to show order received
+          </Typography>
+          </>
+        )}
       </Container>
       <div>
         <Backdrop

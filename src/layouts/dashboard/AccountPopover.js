@@ -66,7 +66,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src='/static/icons/logo_anonymus.png' alt="photoURL" />
       </IconButton>
 
       <MenuPopover

@@ -43,7 +43,7 @@ function ConnectMetaMask({ handler }) {
   }, [accounts]);
 
   React.useEffect(() => {
-    function handleNewAccounts(newAccounts) {
+    async function handleNewAccounts(newAccounts) {
       setAccounts(newAccounts);
     }
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {

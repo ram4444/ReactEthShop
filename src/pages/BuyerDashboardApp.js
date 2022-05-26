@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-
+import Web3 from 'web3';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
@@ -16,15 +16,42 @@ import { queryOrdersByOrderer } from '../utils/awsClient'
 
 
 // ----------------------------------------------------------------------
-
+const App = new Web3()
 
 export default function BuyerDashboardApp() {
   const [orderList, setOrderList] = React.useState([]);
+  const [isWalletFound, setWalletFound] = useState(false);
   
   let qR=[];
   let usr;
-  function init() {
+  async function init() {
     console.log('init')
+
+    if (window.ethereum) {
+      App.web3Provider = window.ethereum;
+      try {
+        // Request account access
+        
+        // Depricatd soon 
+        // await window.ethereum.enable();
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
+        setWalletFound(true)
+        console.log('Wallet found')
+      } catch (error) {
+        // User denied account access...
+        console.error("User denied account access")
+      }
+    } else if (window.web3) {
+      App.web3Provider = window.web3.currentProvider;
+      setWalletFound(true)
+      console.log('Wallet found [Legacy]')
+    }
+    // If no injected web3 instance is detected, fall back to Ganache
+    else {
+      console.error('web3 was undefined');
+      setWalletFound(false)
+    }
+
     const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
     acc.then((result) => {
       usr= result[0]
@@ -57,10 +84,13 @@ export default function BuyerDashboardApp() {
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
+      {isWalletFound && (
+        <>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Buyer Dashboard
         </Typography>
 
+        
         <Grid container spacing={3}>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -84,6 +114,18 @@ export default function BuyerDashboardApp() {
           </Grid>
 
         </Grid>
+        </>
+        )}
+        {!isWalletFound && (
+          <>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            Wallet not found!
+          </Typography>
+          <Typography variant="h5" sx={{ mb: 5 }}>
+            Pleast connect the wallet to show your purchase record
+          </Typography>
+          </>
+        )}
       </Container>
     </Page>
   );
