@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography, Box } from '@mui/material';
 import axios from 'axios';
 // components
 import Page from '../components/Page';
@@ -27,6 +27,7 @@ export default function Articles() {
 
   const [displayArticleList, setDisplayArticleList] = useState([]);
   const [allArticleList, setAllArticleList] = useState([]);
+  const [currentSort, setCurrentSort] = useState('newest');
   
   function promiseHttp() {
     return axios({
@@ -83,6 +84,34 @@ export default function Articles() {
     return prom;
   } 
 
+  function applySort(sortBy, finalPartiesList) {
+    console.log('apply sort')
+    setCurrentSort(sortBy);
+    // pList = finalPartiesList --- NOT FUCKING WORK
+    const pList = []
+    finalPartiesList.map((item)=>pList.push(item))
+    console.log(pList)
+    switch (sortBy) {
+      case 'author':
+        pList.sort((a, b) => a.author.localeCompare(b.author));
+        // setDisplayProductList(pList)
+        break;
+      case 'author_desc':
+        pList.sort((a, b) => a.author.localeCompare(b.author)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      case 'newest':
+        pList.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      default:
+        console.log('not applicable');
+    }
+
+    console.log(pList)
+    setDisplayArticleList(pList)
+  }
+
   useEffect(() => {
     // Load the article list
     const a = promiseHttp().then((prom)=>{
@@ -108,19 +137,44 @@ export default function Articles() {
 
   }, []);
   
+  const handleApplySort = (sortBy) => {
+    applySort(sortBy, displayArticleList)
+  }
+
   return (
     <Page title="Crypto shop: Articles">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Articles
-          </Typography>
-          <ArticlesPostsSort options={SORT_OPTIONS} />
+          <Grid container spacing={3} sx={{ mb: 2 }}>
+            <Grid key='Title' item xs={3} sm={6} md={9}>
+              <Typography variant="h4" gutterBottom width='30%'>
+                Articles
+              </Typography>
+            </Grid>
+
+            <Grid key='SortButton' item xs={9} sm={6} md={3} >
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {/* Pending
+                <ProductFilterSidebar 
+                  isOpenFilter={openFilter}
+                  onOpenFilter={handleOpenFilter}
+                  onCloseFilter={handleCloseFilter}
+                  applyFilter={handleApplyFilter}
+                  filterTokenList={filterTokenList}
+                  displayTokenList={displayTokenList}
+                />
+                */}
+                <ArticlesPostsSort
+                  applySort={handleApplySort} 
+                />
+              </Box>
+            </Grid>
+          </Grid>
         </Stack>
 
         <Grid container spacing={3}>
           { 
-            allArticleList.map((post, index) => (
+            displayArticleList.map((post, index) => (
             <ArticlesPostCard key={post.id} post={post} index={index} />
             ))}
         </Grid>
