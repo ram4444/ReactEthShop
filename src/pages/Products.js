@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
 // material
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, Grid, Box } from '@mui/material';
 
 import axios from 'axios';
 // components
@@ -362,31 +362,37 @@ import { TestContext, ProdContext } from '../Context';
     return (
       <Page title="Dashboard: Products">
         <Container>
-          <Stack direction="row" spacing={ {xs: 1, sm: 2, md: 4} }>
-            <Typography variant="h4">
-              Products
-            </Typography>
+
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             {!isWalletFound && (
-            <Typography variant="caption" >
-              Please connect your wallet to enable the purchase function
+            <Typography variant="caption"  width='100%'>
+              Please connect your wallet to enable the purchase function  
             </Typography>
             )}
-          </Stack>
 
-          <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-            <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-              <ProductFilterSidebar
-                isOpenFilter={openFilter}
-                onOpenFilter={handleOpenFilter}
-                onCloseFilter={handleCloseFilter}
-                applyFilter={handleApplyFilter}
-                filterTokenList={filterTokenList}
-                displayTokenList={displayTokenList}
-              />
-              <ProductSort 
-                applySort={handleApplySort} 
-              />
-            </Stack>
+            <Grid container spacing={3} sx={{ mb: 2 }}>
+              <Grid key='Title' item xs={3} sm={6} md={9}>
+                <Typography variant="h4" gutterBottom width='15%'>
+                  Products
+                </Typography>
+              </Grid>
+
+              <Grid key='SortButton' item xs={9} sm={6} md={3} >
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <ProductFilterSidebar 
+                    isOpenFilter={openFilter}
+                    onOpenFilter={handleOpenFilter}
+                    onCloseFilter={handleCloseFilter}
+                    applyFilter={handleApplyFilter}
+                    filterTokenList={filterTokenList}
+                    displayTokenList={displayTokenList}
+                  />
+                  <ProductSort
+                    applySort={handleApplySort} 
+                  />
+                </Box>
+              </Grid>
+            </Grid>
           </Stack>
 
           <ProductList products={displayProductList} />
