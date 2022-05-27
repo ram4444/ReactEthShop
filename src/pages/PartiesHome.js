@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 // material
-import { Grid, Button, Container, Stack, Typography, Divider } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography, Divider, Box } from '@mui/material';
 import axios from 'axios';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 // components
@@ -36,11 +36,14 @@ export default function PartiesHome() {
   const context = useContext(TestContext);
   const { drupalHostname } = context;
   const [searchParams, setSearchParams] = useSearchParams();
+  const [openProductFilter, setOpenProductFilter] = useState(false);
 
   const [displayArticleList, setDisplayArticleList] = useState([]);
   const [allArticleList, setAllArticleList] = useState([]);
   const [displayProductList, setDisplayProductList] = useState([]);
-  const [currentSort, setCurrentSort] = useState('newest');
+  const [currentSortArticle, setCurrentSortArticle] = useState('newest');
+  const [currentSortProducts, setCurrentSortProducts] = useState('newest');
+  const [isWalletFound, setWalletFound] = useState(false);
 
   const [allProductList, setAllProductList] = useState();
 
@@ -269,6 +272,10 @@ export default function PartiesHome() {
     console.log(searchParams.get("userId"))
     const userId = searchParams.get("userId")
 
+    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+      setWalletFound(true)
+    }
+
     // Load the article list
     const promiseArticles = promiseHttpArticles(userId).then((prom)=>{
       console.log(prom)
@@ -310,16 +317,27 @@ export default function PartiesHome() {
           if (donecount===prom.length) {
             console.log('All product info has been obatined. Apply filter afterwards.')
             
-            if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-              // setNetId(window.ethereum.chainId);
-              console.log(window.ethereum.chainId);
+            // if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+
+              let chainId ='' ; // in 0x1
+              try {
+                // await window.ethereum.request({ method: 'eth_requestAccounts' })
+                // console.log('Wallet found')
+                console.log('chainId: ')
+                console.log(window.ethereum.chainId);
+                chainId=window.ethereum.chainId
+              } catch (error) {
+                console.error("window.ethereum not found")
+                setWalletFound(false)
+              }
+
               // Token
               promiseHttpToken().then((prom) => {
                 console.log("promiseHttpToken");
                 console.log(prom);
       
                 let chainName;
-                switch (window.ethereum.chainId) {
+                switch (chainId) {
                   case '0x1':
                     setNetId('Mainnet');
                     chainName=('Mainnet');
@@ -338,24 +356,30 @@ export default function PartiesHome() {
                     break;
                   default:
                     setNetId('UNKNOWN');
-                    chainName=('UNKNOWN');
+                    chainName=('Mainnet');
                 }
                 
+                const arrFilterTokenList=[]
                 const filterTokenList4Pass = prom.map((tokenObj) => {
                   const tokenChain=tokenObj.attributes.field_chain
                   const tokenIdinDrupal=tokenObj.attributes.name
                   const tokenNameinDrupal=tokenObj.attributes.field_tokenname
                   const tokenAliasinDrupal=tokenObj.attributes.field_alias
                   
-                  
+                  console.log(tokenChain)
+                  console.log(chainName)
+                  console.log(tokenNameinDrupal)
                   if (tokenChain===chainName){
-                    setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
+                    console.log(filterTokenList)
+                    // setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
                     // filterTokenList4Pass.push(tokenIdinDrupal)
+                    arrFilterTokenList.push(tokenNameinDrupal)
                     console.log(tokenNameinDrupal)
                     return tokenNameinDrupal;
                   }
                   return null;
                 }).filter(Boolean) ;
+                
                 console.log(filterTokenList4Pass)
                 
                 const displayTokensMap = new Map()
@@ -380,11 +404,12 @@ export default function PartiesHome() {
 
                 console.log(finalProdlist)
                 // The first time loading loads all products
+                setfilterTokenList(arrFilterTokenList)
                 setAllProductList(finalProdlist)
                 setDisplayProductList(finalProdlist);
                 setLoading(false);
               });
-            }
+            // }
           }
           
         })
@@ -421,6 +446,121 @@ export default function PartiesHome() {
   const onError = (data, actions) => {
     setErrorMessage("An Error occured with your payment ");
   };
+
+  const handleApplySortArticles = (sortBy) => {
+    applySortArticle(sortBy, displayArticleList)
+  }
+
+  const handleOpenProductFilter = () => {
+    setOpenProductFilter(true);
+  };
+
+  const handleCloseProductFilter = () => {
+    setOpenProductFilter(false);
+  };
+
+  function applySortArticle(sortBy, finalArticlesList) {
+    console.log('apply sort')
+    setCurrentSortArticle(sortBy);
+    // pList = finalArticlesList --- NOT FUCKING WORK
+    const pList = []
+    finalArticlesList.map((item)=>pList.push(item))
+    console.log(pList)
+    switch (sortBy) {
+      case 'author':
+        pList.sort((a, b) => a.author.localeCompare(b.author));
+        // setDisplayProductList(pList)
+        break;
+      case 'author_desc':
+        pList.sort((a, b) => a.author.localeCompare(b.author)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      case 'newest':
+        pList.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      default:
+        console.log('not applicable');
+    }
+
+    console.log(pList)
+    setDisplayArticleList(pList)
+  }
+
+  function applyProductSort(sortBy, finalProdlist) {
+    console.log('call')
+    setCurrentSortProducts(sortBy);
+    // pList = finalProdlist --- NOT FUCKING WORK
+    const pList = []
+    finalProdlist.map((item)=>pList.push(item))
+    console.log(pList)
+    switch (sortBy) {
+      case 'name':
+        pList.sort((a, b) => a.name.localeCompare(b.name));
+        // setDisplayProductList(pList)
+        break;
+      case 'name_desc':
+        pList.sort((a, b) => a.name.localeCompare(b.name)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      case 'newest':
+        pList.sort((a, b) => a.lastChanged.localeCompare(b.lastChanged)).reverse();
+        // setDisplayProductList(pList)
+        break;
+      default:
+        console.log('not applicable');
+    }
+
+    console.log(pList)
+    setDisplayProductList(pList)
+  }
+
+  const handleApplyProductFilter = (tokenName) => {
+    console.log("handle apply filter in Product");
+    // console.log(filterList);
+    // arrFilter.push(filterList)
+
+    const displayProductListB4 = displayProductList;
+    const displayTokenListB4 = displayTokenList;
+
+    // console.log(displayProductListB4)
+    // console.log(displayTokenListB4)
+
+    // displayTokenList:
+    // USDT: true
+    // ETH: true
+
+    if (displayTokenListB4.get(tokenName))
+      displayTokenListB4.set(tokenName, false)
+    else 
+      displayTokenListB4.set(tokenName, true)
+
+    console.log(displayTokenListB4)
+    setDisplayTokenList(displayTokenListB4)
+
+    // Apply the token list filter
+    const finalProdlist=[];
+    console.log(displayProductListB4)
+    let donecount2 =0;
+    allProductList.forEach((prod) => {
+      console.log(prod)
+      
+      if (displayTokenList.get(prod.currency)){
+        finalProdlist.push(prod)
+      }
+      donecount2+=1;
+      if (donecount2===allProductList.length) {
+        console.log(finalProdlist)
+        setDisplayProductList(finalProdlist);
+        const sortBy = currentSortProducts
+        applyProductSort(sortBy, finalProdlist)
+      }
+    })
+  };
+
+  const handleApplyProductSort = (sortBy) => {
+    applyProductSort(sortBy,displayProductList)
+  }
   
   return (
     <Page title="Artist Home">
@@ -442,15 +582,36 @@ export default function PartiesHome() {
 
       <Container sx={{ mb: 5 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Articles
-          </Typography>
-          <ArticlesPostsSort options={SORT_OPTIONS} />
+        <Grid container spacing={3} sx={{ mb: 2 }}>
+            <Grid key='Title' item xs={3} sm={6} md={9}>
+              <Typography variant="h4" gutterBottom width='30%'>
+                Articles
+              </Typography>
+            </Grid>
+
+            <Grid key='SortButton' item xs={9} sm={6} md={3} >
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {/* Pending
+                <ArticleFilterSidebar 
+                  isOpenFilter={openFilter}
+                  onOpenFilter={handleOpenFilter}
+                  onCloseFilter={handleCloseFilter}
+                  applyFilter={handleApplyFilter}
+                  filterTokenList={filterTokenList}
+                  displayTokenList={displayTokenList}
+                />
+                */}
+                <ArticlesPostsSort
+                  applySort={handleApplySortArticles} 
+                />
+              </Box>
+            </Grid>
+          </Grid>
         </Stack>
 
         <Grid container spacing={3}>
           { 
-            allArticleList.map((post, index) => (
+            displayArticleList.map((post, index) => (
             <ArticlesPostCard key={post.id} post={post} index={index} />
             ))}
         </Grid>
@@ -459,33 +620,37 @@ export default function PartiesHome() {
       <Divider />
 
       <Container sx={{ mt: 5 }}>
-          <Stack direction="row" spacing={2}>
-            <Typography variant="h4" sx={{ mb: 5 }}>
+        {!isWalletFound && (
+        <Typography variant="caption"  width='100%'>
+          Please connect your wallet to enable the purchase function  
+        </Typography>
+        )}
+
+        <Grid container spacing={3} sx={{ mb: 2 }}>
+          <Grid key='Title' item xs={3} sm={6} md={9}>
+            <Typography variant="h4" gutterBottom width='15%'>
               Products
             </Typography>
-          </Stack>
-          
-          {/*
-          <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-            <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-              <ProductFilterSidebar
-                isOpenFilter={openFilter}
-                onOpenFilter={handleOpenFilter}
-                onCloseFilter={handleCloseFilter}
-                applyFilter={handleApplyFilter}
+          </Grid>
+
+          <Grid key='SortButton' item xs={9} sm={6} md={3} >
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <ProductFilterSidebar 
+                isOpenFilter={openProductFilter}
+                onOpenFilter={handleOpenProductFilter}
+                onCloseFilter={handleCloseProductFilter}
+                applyFilter={handleApplyProductFilter}
                 filterTokenList={filterTokenList}
                 displayTokenList={displayTokenList}
               />
-              <ProductSort 
-                applySort={handleApplySort} 
+              <ProductSort
+                applySort={handleApplyProductSort} 
               />
-            </Stack>
-          </Stack>
-            
-          */}
-          <ProductList products={displayProductList} /> 
-          
-        </Container>
+            </Box>
+          </Grid>
+        </Grid>
+        <ProductList products={displayProductList} />
+      </Container>
     </Page>
   );
 }
