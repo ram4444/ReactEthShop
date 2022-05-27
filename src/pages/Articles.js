@@ -84,12 +84,12 @@ export default function Articles() {
     return prom;
   } 
 
-  function applySort(sortBy, finalPartiesList) {
+  function applySort(sortBy, finalArticlesList) {
     console.log('apply sort')
     setCurrentSort(sortBy);
-    // pList = finalPartiesList --- NOT FUCKING WORK
+    // pList = finalArticlesList --- NOT FUCKING WORK
     const pList = []
-    finalPartiesList.map((item)=>pList.push(item))
+    finalArticlesList.map((item)=>pList.push(item))
     console.log(pList)
     switch (sortBy) {
       case 'author':
