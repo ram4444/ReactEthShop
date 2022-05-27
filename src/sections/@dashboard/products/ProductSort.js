@@ -8,7 +8,7 @@ import Iconify from '../../../components/Iconify';
 // ----------------------------------------------------------------------
 
 const SORT_BY_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
+  // { value: 'featured', label: 'Featured' },
   { value: 'newest', label: 'Newest' },
   { value: 'name', label: 'Name' },
   { value: 'name_desc', label: 'Name Desc' }
