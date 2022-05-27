@@ -31,7 +31,7 @@ export default function Router() {
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> },
         { path: 'articles', element: <Articles /> },
-        { path: 'artists', element: <Articles /> },
+        { path: 'artistsparties', element: <Parties /> },
         { path: 'artist', element: <PartiesHome /> },
         { path: 'party', element: <PartiesHome /> },
         

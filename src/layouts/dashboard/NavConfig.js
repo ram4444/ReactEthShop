@@ -12,9 +12,19 @@ const navConfig = [
     icon: getIcon('eva:file-text-fill'),
   },
   {
-    title: 'product',
+    title: 'products',
     path: '/list/products',
     icon: getIcon('eva:shopping-bag-fill'),
+  },
+  {
+    title: 'artists',
+    path: '/list/artistsparties',
+    icon: getIcon('fa-solid:hat-wizard'),
+  },
+  {
+    title: 'articles',
+    path: '/list/articles',
+    icon: getIcon('material-symbols:article-outline'),
   },
   {
     title: 'create token',
