@@ -232,7 +232,7 @@ export default function HomeApp() {
     <Page title="Home Page">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Hi, Welcome to Crypto Marketplace
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
@@ -251,6 +251,7 @@ export default function HomeApp() {
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
           {allUserList.map((user,i) => {
+            // this line is for the color of the grid
             const index = 500+(((-1)**i)*100*Math.floor((Math.random() * 3) + 1))
             return (
               <Grid key={i} tem xs={12} sm={6} md={3} pt={'24px'} pl={'24px'}>
@@ -263,7 +264,8 @@ export default function HomeApp() {
             )
           })}
         </Grid>
-
+        
+        {/*
         <Grid container spacing={3} sx={{ mb: 2 }}>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -283,7 +285,7 @@ export default function HomeApp() {
           </Grid>
 
         </Grid>
-
+        */}
         <Divider />
 
         <Typography variant="h4" sx={{ mt: 5 }}>

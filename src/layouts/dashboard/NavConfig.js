@@ -19,7 +19,7 @@ const navConfig = [
   {
     title: 'artists',
     path: '/list/artistsparties',
-    icon: getIcon('fa-solid:hat-wizard'),
+    icon: getIcon('fa6-solid:hat-wizard'),
   },
   {
     title: 'articles',
