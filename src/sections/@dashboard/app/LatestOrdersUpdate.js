@@ -4,13 +4,15 @@ import PropTypes from 'prop-types';
 import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader, Modal } from '@mui/material';
 import axios from 'axios';
 // utils
+import {uuid} from 'uuidv4'
 import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 
 import { TestContext, ProdContext } from '../../../Context';
-import { putItemDelivered } from '../../../utils/awsClient'
+import { putItemDelivered,putItemNotification } from '../../../utils/awsClient'
+
 
 // ----------------------------------------------------------------------
 
@@ -141,6 +143,21 @@ function OrdersItem( { orders }) {
     } 
     console.log(record)
     putItemDelivered('delivered_orders', record)
+
+    // Msg show to buyer
+    const uidMsgSeller=uuid()
+    const recordMsg2Seller=
+    { 
+      "id": { S: uidMsgSeller },
+      "userAddr": { S: fromAddr.toLowerCase()},
+      "related_id": { S: id },
+      "type": {S: 'order_shipped'},
+      "title": {S: `Order for ${title} has already shipped`},
+      "description": {S: 'You will receive your the purchase very soon'},
+      "createdAt": {S: new Date()}
+    }
+    putItemNotification(recordMsg2Seller)
+
     setDisplayRow(false)
   }
 

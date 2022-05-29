@@ -13,7 +13,7 @@ import Cookies from 'js-cookie';
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
-import { putItem } from '../utils/awsClient'
+import { putItem,putItemNotification } from '../utils/awsClient'
 
 // const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
@@ -161,7 +161,7 @@ async function processReceipt(receipt, product, currencyName, chain, deliveryTyp
     "product_email": {S: product.email},
     "product_phone": {S: product.phone},
     "product_location": {S: product.location},
-    // Info from transaction return
+    // Info from transaction retur
     "blockHash": { S: receipt.blockHash },
     "blockNumber": { N: receipt.blockNumber.toString() },
     "contractAddress": { S: contractAddrPass },
@@ -184,6 +184,34 @@ async function processReceipt(receipt, product, currencyName, chain, deliveryTyp
   }
     
   putItem('orders',record)
+
+  // Msg show to buyer
+  const uidMsgBuyer=uuid()
+  const recordMsg2Buyer=
+  { 
+    "id": { S: uidMsgBuyer },
+    "userAddr": { S: receipt.from.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_place'},
+    "title": {S: `You have placed a new order ${product.name}`},
+    "description": {S: 'waiting for shipping'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Buyer)
+
+  // Msg show to buyer
+  const uidMsgSeller=uuid()
+  const recordMsg2Seller=
+  { 
+    "id": { S: uidMsgSeller },
+    "userAddr": { S: product.receiverAddr.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_received'},
+    "title": {S: `You have received a new order for ${product.name}`},
+    "description": {S: 'Please arrange the delivery'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Seller)
 }
 
 BuywithCrypto.propTypes = {

@@ -17,9 +17,9 @@ import Cookies from 'js-cookie';
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
-import { putItemICO } from '../utils/awsClient'
+import { putItemICO,putItemNotification } from '../utils/awsClient'
 
-async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, payerWalletAddr) {
+async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, payerWalletAddr, coinTitle) {
   
   const detailsId = details.id 
   const currencyCode = details.purchase_units[0].amount.currency_code
@@ -127,6 +127,35 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
   }
   
   putItemICO(record)
+
+  // Msg show to buyer
+  const uidMsgBuyer=uuid()
+  const recordMsg2Buyer=
+  { 
+    "id": { S: uidMsgBuyer },
+    "userAddr": { S: payerWalletAddr.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'ico_placed'},
+    "title": {S: `Order for crypto ${coinTitle} has placed`},
+    "description": {S: 'You will receive the crypto coin very soon'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Buyer)
+
+  // Msg show to buyer
+  const uidMsgSeller=uuid()
+  const recordMsg2Seller=
+  { 
+    "id": { S: uidMsgSeller },
+    "userAddr": { S: issueAddr.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'ico_received'},
+    "title": {S: `Someone order for crypto ${coinTitle} `},
+    "description": {S: 'Please send the coin to the payer wallet'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Seller)
+
 }
 
 
@@ -274,7 +303,7 @@ function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, payp
                 acc.then((result) => {
                   console.log('eth_requestAccounts')
                   console.log(result[0])
-                  processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, result[0])
+                  processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, result[0], title)
                   
                 });
                 
