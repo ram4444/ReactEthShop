@@ -1,8 +1,12 @@
+import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+import {uuid} from 'uuidv4'
 // @mui
 import {
   Box,
@@ -21,6 +25,7 @@ import {
 } from '@mui/material';
 // utils
 import { fToNow } from '../../utils/formatTime';
+import { queryNotificationByAddr,queryNotificationReadByAddr, putItemNotificationRead  } from '../../utils/awsClient'
 // components
 import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
@@ -76,10 +81,17 @@ const NOTIFICATIONS = [
   },
 ];
 
+const App = new Web3()
+let web3
+
 export default function NotificationsPopover() {
   const anchorRef = useRef(null);
 
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [isWalletFound, setWalletFound] = useState(false);
+  const [currentWalletAddr, setCurrentWalletAddr] = useState('');
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsRead, setNotificationsRead] = useState([]);
+  
 
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
@@ -94,13 +106,131 @@ export default function NotificationsPopover() {
   };
 
   const handleMarkAllAsRead = () => {
+    notifications.map((notification) => {
+      const recordMsgRead=
+      { 
+        "id": { S: notification.id },
+        "userAddr": { S: notification.userAddr},
+        "related_id": { S: notification.related_id },
+        "createdAt": {S: new Date()}
+      }
+      putItemNotificationRead(recordMsgRead)
+      return null
+    })
+    console.log('Mark all as read send to DB')
+    // queryDyDbNotificationRead(currentWalletAddr)
+    // queryDyDbNotification(currentWalletAddr)
+    
+    
+    const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+    acc.then((result) => {
+      usr= result[0]
+      console.log(usr)
+    }).then(async ()=> {
+      await queryDyDbNotificationRead(usr)
+      await queryDyDbNotification(usr)
+      
+    })
+    
+
     setNotifications(
       notifications.map((notification) => ({
         ...notification,
         isUnRead: false,
       }))
     );
+
+    
+    
   };
+  
+  let qNoti=[];
+  let qNotiRead=[];
+  let usr;
+
+  async function init() {
+    console.log('init')
+    if (window.ethereum) {
+      App.web3Provider = window.ethereum;
+      try {
+        // Request account access
+        
+        // Depricatd soon 
+        // await window.ethereum.enable();
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
+        setWalletFound(true)
+        const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+        acc.then((result) => {
+          usr= result[0]
+          console.log(usr)
+        }).then(async ()=> {
+          setCurrentWalletAddr(usr)
+        })
+        console.log('Wallet found')
+      } catch (error) {
+        // User denied account access...
+        console.error("User denied account access")
+      }
+    } else if (window.web3) {
+      App.web3Provider = window.web3.currentProvider;
+      setWalletFound(true)
+      console.log('Wallet found [Legacy]')
+    }
+    // If no injected web3 instance is detected, fall back to Ganache
+    else {
+      console.error('web3 was undefined');
+      setWalletFound(false)
+    }
+    web3 = new Web3(App.web3Provider);
+    
+    const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+    acc.then((result) => {
+      usr= result[0]
+      console.log(usr)
+    }).then(async ()=> {
+      await queryDyDbNotificationRead(usr)
+      await queryDyDbNotification(usr)
+      
+    })
+  }
+  
+    
+
+  function queryDyDbNotification(addr) {
+    queryNotificationByAddr(addr).then((queryResult) => {
+      console.log('Query the DB for notification: done')
+      qNoti=queryResult.Items.map((msg)=> ({
+          id: msg.id.S,
+          title: msg.title.S,
+          description: msg.description.S,
+          avatar: null,
+          type: msg.type.S,
+          createdAt: msg.createdAt.S,
+          userAddr: msg.userAddr.S,
+          isUnRead: !qNotiRead.includes(msg.id.S), // False=ReadED
+          related_id: msg.related_id.S,
+        }))
+        qNoti.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).reverse();
+        const slicedArray = qNoti.slice(0, 5);
+        console.log(slicedArray)
+      setNotifications(slicedArray)
+    })
+  }
+
+  function queryDyDbNotificationRead(addr) {
+    queryNotificationReadByAddr(addr).then((queryResult) => {
+      console.log('Query the DB for notification read: done')
+      qNotiRead=queryResult.Items.map((msg)=> (
+        msg.id.S
+      ))
+      setNotificationsRead(qNotiRead)
+    })
+  }
+
+  useEffect(()=> {
+    console.log('useEffect')
+    init()
+  }, []);
 
   return (
     <>
@@ -191,14 +321,52 @@ NotificationItem.propTypes = {
     description: PropTypes.string,
     type: PropTypes.string,
     avatar: PropTypes.any,
+    userAddr: PropTypes.string,
+    related_id: PropTypes.string
   }),
 };
 
+
+
 function NotificationItem({ notification }) {
   const { avatar, title } = renderContent(notification);
+  const navigate = useNavigate();
+
+  async function readNotification(notification) {
+    // const uidRead=uuid()
+    const recordMsgRead=
+    { 
+      "id": { S: notification.id },
+      "userAddr": { S: notification.userAddr},
+      "related_id": { S: notification.related_id },
+      "createdAt": {S: new Date()}
+    }
+    
+    let route;
+    switch (notification.type) {
+      case 'order_place':
+        route = '/dashboard/buyer';
+        break;
+      case 'order_received':
+        route = '/dashboard/seller';
+        break;
+      default:
+        route = '/dashboard/home';
+    }
+
+    await putItemNotificationRead(recordMsgRead)
+    notification.isUnRead=false
+
+    navigate(route, { replace: true });
+  }
 
   return (
     <ListItemButton
+      onClick= {()=> {
+        readNotification(notification);
+        
+        }
+      }
       sx={{
         py: 1.5,
         px: 2.5,
@@ -244,12 +412,32 @@ function renderContent(notification) {
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
+  if (notification.type === 'order_place') {
     return {
       avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
       title,
     };
   }
+  if (notification.type === 'order_received') {
+    return {
+      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
+      title,
+    };
+  }
+
+  if (notification.type === 'ico_place') {
+    return {
+      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
+      title,
+    };
+  }
+  if (notification.type === 'ico_received') {
+    return {
+      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
+      title,
+    };
+  }
+
   if (notification.type === 'order_shipped') {
     return {
       avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,

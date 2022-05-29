@@ -216,6 +216,81 @@ export async function queryDeilveredIcoOrdersByIssueAddr(fromAddr) {
   return results;
 }
 
+export async function queryNotificationByAddr(addr) {
+  console.log(addr)
+  const client = new DynamoDBClient({ 
+    region: "ap-southeast-1", 
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: "ap-southeast-1" },
+      identityPoolId: 'ap-southeast-1:5b08d690-81df-4a05-b1cf-36e894f1ae61'
+    })
+  })
+
+  // ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax
+
+  const params = {
+    TableName: 'notification_msg',
+    IndexName: 'userAddr-index',
+    // details_id, form_username, currency_code, form_email, form_amount	
+    KeyConditions: {
+      userAddr: {
+        "ComparisonOperator":"EQ",
+        "AttributeValueList": [ {"S": addr} ]
+      }
+    }
+  };
+
+  let results = {}
+  const command = new QueryCommand(params);
+  try {
+    results = await client.send(command);
+    console.log("Query Notification table Start");
+    console.log(results);
+  } catch (err) {
+    console.error(err);
+  }
+
+  return results;
+}
+
+export async function queryNotificationReadByAddr(addr) {
+  const client = new DynamoDBClient({ 
+    region: "ap-southeast-1", 
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: "ap-southeast-1" },
+      identityPoolId: 'ap-southeast-1:5b08d690-81df-4a05-b1cf-36e894f1ae61'
+    })
+  })
+
+  // ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax
+
+  const params = {
+    TableName: 'notification_msg_read',
+    IndexName: 'userAddr-index',
+    // details_id, form_username, currency_code, form_email, form_amount	
+    
+    KeyConditions: {
+      userAddr: {
+        "ComparisonOperator":"EQ",
+        "AttributeValueList": [ {"S": addr} ]
+      }
+    }
+    
+  };
+
+  let results = {}
+  const command = new QueryCommand(params);
+  try {
+    results = await client.send(command);
+    console.log("Query notification_msg_read table Start");
+    console.log(results);
+  } catch (err) {
+    console.error(err);
+  }
+
+  return results;
+}
+
 export async function scanTable(table) {
   const client = new DynamoDBClient({ 
     region: "ap-southeast-1", 
@@ -380,6 +455,58 @@ export async function putItemICODelivered(item) {
 
   const params = {
     TableName: "delivered_ico",
+    Item: item,
+  };
+  
+  console.log(params)
+  const command = new PutItemCommand(params);
+  console.log(command)
+  try {
+    const results = await client.send(command);
+    console.log(results);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function putItemNotification(item) {
+  const client = new DynamoDBClient({ 
+    region: "ap-southeast-1", 
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: "ap-southeast-1" },
+      identityPoolId: 'ap-southeast-1:5b08d690-81df-4a05-b1cf-36e894f1ae61'
+    })
+    
+  })
+
+  const params = {
+    TableName: "notification_msg",
+    Item: item,
+  };
+  
+  console.log(params)
+  const command = new PutItemCommand(params);
+  console.log(command)
+  try {
+    const results = await client.send(command);
+    console.log(results);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function putItemNotificationRead(item) {
+  const client = new DynamoDBClient({ 
+    region: "ap-southeast-1", 
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: "ap-southeast-1" },
+      identityPoolId: 'ap-southeast-1:5b08d690-81df-4a05-b1cf-36e894f1ae61'
+    })
+    
+  })
+
+  const params = {
+    TableName: "notification_msg_read",
     Item: item,
   };
   
