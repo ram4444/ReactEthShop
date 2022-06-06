@@ -14,7 +14,7 @@ import CreateTokenForm from '../components/CreateTokenForm';
 
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
-    display: 'flex'
+    display: 'flex',
   }
 }));
 
@@ -31,10 +31,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
   display: 'flex',
-  minHeight: '100vh',
+  // minHeight: '100vh',
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: theme.spacing(12, 0)
+  // padding: theme.spacing(4, 0)
+  pt: 32
 }));
 
 // ----------------------------------------------------------------------
@@ -44,14 +45,14 @@ export default function CreateToken() {
     <RootStyle title="Create Token">
       <Container>
         <ContentStyle>
-          <Box sx={{ mb: 5 }}>
-            <Typography variant="h4" gutterBottom>
-              Create a tradable TOKEN on blockchain
-            </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>In ERC777 standard</Typography>
-          </Box>
+            <Box sx={{ mb: 5 }} >
+              <Typography variant="h4" gutterBottom>
+                Create a tradable TOKEN on blockchain
+              </Typography>
+              <Typography sx={{ color: 'text.secondary' }}>In ERC777 standard</Typography>
+            </Box>
 
-          <CreateTokenForm />
+            <CreateTokenForm />
         </ContentStyle>
       </Container>
     </RootStyle>

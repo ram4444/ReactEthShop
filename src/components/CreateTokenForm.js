@@ -93,7 +93,7 @@ export default function CreateTokenForm() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={3} >
           <FormControl component="fieldset">
             <FormLabel component="legend">Chain Network</FormLabel>
             <RadioGroup
@@ -157,7 +157,8 @@ export default function CreateTokenForm() {
               label="Advance Options"
             />
           </FormControl>
-
+          
+          <Stack sx={!advanceOption ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 250 }} spacing={3}>
           <TextField
             fullWidth
             label="Owner's Wallet address"
@@ -197,6 +198,7 @@ export default function CreateTokenForm() {
             disabled={!advanceOption}
             sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
           />
+          </Stack>
 
           <LoadingButton
             fullWidth
