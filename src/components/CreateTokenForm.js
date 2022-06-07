@@ -29,6 +29,7 @@ import {
   Button
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import AppShortcutIcon from '@mui/icons-material/AppShortcut';
 import axios from 'axios';
 import Iconify from './Iconify';
 import { urls } from '../properties/urls';
@@ -51,7 +52,7 @@ const fakeResponseJSON = {
               "status": "1"
           },
           "details": {
-            "result": "fyfgzlmcg29e1dazp2zbmbdnkiqashitaxbgp4ugxkuz4nynbb",
+            "result": "success",
             "message": "OK",
             "status": "1"
         }
@@ -62,7 +63,7 @@ const fakeResponseJSON = {
 export default function CreateTokenForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [deployResultJSON, setDeployResultJSON ] = useState(fakeResponseJSON)
+  const [deployResultJSON, setDeployResultJSON ] = useState(null)
   const [advanceOption, setAdvanceOption] = useState(false);
   const [showDetailOption, setShowDetailOption] = useState(false);
 
@@ -108,12 +109,13 @@ export default function CreateTokenForm() {
       npmInstall: 'false',
       delNodeModuleDir: 'true',
       uploadSourceCode: 'true',
-      retryWhenFail: ''
+      retryWhenFail: 'true'
     },
     validationSchema: CreateTokenSchema,
     onSubmit: async (values) => {
+      handleToggle()
       await new Promise((r) => setTimeout(r, 500));
-      // console.log(JSON.stringify(values, null, 2));
+      console.log(JSON.stringify(values, null, 2));
 
       axios({
         method: 'post',
@@ -125,10 +127,16 @@ export default function CreateTokenForm() {
           'Content-Type': 'application/json'
         },
         data: JSON.stringify(values, null, 2)
+      // }).error((error) => {
+      //  handleToggle()
+      //  console.log('HTTP call to Process Builder fail');
       }).then((response) => {
         console.log('HTTP call to deploy done');
+        console.log(response);
         console.log(response.data);
-        handleToggle()
+        setDeployResultJSON(response.data)
+        // extractJSON()
+        handleClose()
 
       });
     }
@@ -151,7 +159,7 @@ export default function CreateTokenForm() {
     if (deployResultJSON.data.chainNetwork === 'mainnet')
       etherscanLink = `https://etherscan.io/token/${deployResultJSON.data.tokenContractAddr}`
     else 
-    etherscanLink = `https://${deployResultJSON.data.chainNetwork}.etherscan.io/token/${deployResultJSON.data.tokenContractAddr}`
+      etherscanLink = `https://${deployResultJSON.data.chainNetwork}.etherscan.io/token/${deployResultJSON.data.tokenContractAddr}`
     try { 
       senderContAddr=deployResultJSON.data.senderContractAddr
       recipientContAddr=deployResultJSON.data.recipientContractAddr
@@ -163,12 +171,11 @@ export default function CreateTokenForm() {
      console.log('')    
     }
   }
-  extractJSON()
+  // extractJSON()
   
   async function addTokenFunction(tokenAddress,tokenSymbol) {
 
     try {
-      
       const wasAdded = await window.ethereum.request({
         method: 'wallet_watchAsset',
         params: {
@@ -185,12 +192,12 @@ export default function CreateTokenForm() {
       if (wasAdded) {
         console.log('Thanks for your interest!');
       } else {
-        console.log('HelloWorld Coin has not been added');
+        console.log("{tokenSymbol} has not been added");
       }
     } catch (error) {
       console.log(error);
     }
-    }
+  }
 
   return (
     <>
@@ -322,6 +329,8 @@ export default function CreateTokenForm() {
     
       <Grid item xs={12} md={6} lg={6}>
         <Stack >
+        {deployResultJSON!=null ?
+          <>
           <Typography variant="h5" gutterBottom>
             Deployment Result:
           </Typography>
@@ -331,7 +340,7 @@ export default function CreateTokenForm() {
           
 
           {!deployResultJSON.data.success ? 
-          <Typography variant="inherit" gutterBottom>Please contact us</Typography> 
+          <Typography variant="inherit" gutterBottom>Deployment fail. Please contact us</Typography> 
           : <><Typography variant="h5" gutterBottom>
               Token Contract Address:
             </Typography>
@@ -341,7 +350,13 @@ export default function CreateTokenForm() {
             </Typography>
             <Grid container columnSpacing={3}>
               <Grid item>
-              <Link href={etherscanLink} variant="subtitle2" underline="hover" >
+              <Link href={
+                deployResultJSON.data.chainNetwork === 'mainnet'?
+                  `https://etherscan.io/token/${deployResultJSON.data.tokenContractAddr}`
+                : 
+                  `https://${deployResultJSON.data.chainNetwork}.etherscan.io/token/${deployResultJSON.data.tokenContractAddr}`
+                }
+                target="_blank" variant="subtitle2" underline="hover" >
                 [check on ETHERSCAN]
               </Link>
               </Grid>
@@ -350,6 +365,7 @@ export default function CreateTokenForm() {
                   addTokenFunction(deployResultJSON.data.tokenContractAddr,deployResultJSON.data.tokenAlias);
                 }}
                 variant="contained" color="success"
+                endIcon={<AppShortcutIcon />}
                 >
                   Add token to wallet
                 </Button>
@@ -357,9 +373,13 @@ export default function CreateTokenForm() {
             </Grid>
             </>
           }
-          
+          </>
+          : <></>
+        } 
+        
         </Stack>
-
+        {deployResultJSON!=null ?
+        <>
         <Typography variant="caption" gutterBottom>
           Details log:
         </Typography>
@@ -389,42 +409,44 @@ export default function CreateTokenForm() {
             Sender Contract Address:
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {senderContAddr} 
+            {deployResultJSON.data.senderContractAddr} 
           </Typography>
           <Typography variant="h6" gutterBottom>
             Recipient Contract Address:
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {recipientContAddr}
+            {deployResultJSON.data.recipientContractAddr}
           </Typography>
           <Typography variant="h6" gutterBottom>
             Verification Return Message:
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {verificationMsg}
+            {deployResultJSON.data.data.verification.message}
           </Typography>
           <Typography variant="h6" gutterBottom>
             Verification Details Message:
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {detailsMsg}
+            {deployResultJSON.data.data.details.message}
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {detailsResult}
+            {deployResultJSON.data.data.details.result}
           </Typography>
           <Typography variant="h6" gutterBottom>
             Verification GUID:
           </Typography>
           <Typography variant="inherit" gutterBottom>
-            {verificationResult}
+            {deployResultJSON.data.data.verification.result}
           </Typography>
         </Stack>
+        </>: <></>}
       </Grid>
     </Grid>
     <div>
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2 }}
       open={openLoadScreen}
+      onClick={handleClose}
     >
       <CircularProgress color="inherit" />
     </Backdrop>
