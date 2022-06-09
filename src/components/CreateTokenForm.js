@@ -63,9 +63,22 @@ const fakeResponseJSON = {
 export default function CreateTokenForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showRequireMnem, setShowRequireMnem] = useState(false);
   const [deployResultJSON, setDeployResultJSON ] = useState(null)
-  const [advanceOption, setAdvanceOption] = useState(false);
+  const [miscOption, setMiscOption] = useState(false);
+  const [mainnetOption, setMainnetOption] = useState(false);
   const [showDetailOption, setShowDetailOption] = useState(false);
+
+  const handleMainnetRadio = (event) => {
+    console.log(event)
+    if (event.target.id==='mainnetRadio') {
+      setMainnetOption(true)
+    } else {
+      setMainnetOption(false)
+    }
+
+
+  };
 
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const handleClose = () => {
@@ -113,32 +126,37 @@ export default function CreateTokenForm() {
     },
     validationSchema: CreateTokenSchema,
     onSubmit: async (values) => {
-      handleToggle()
-      await new Promise((r) => setTimeout(r, 500));
+      
       console.log(JSON.stringify(values, null, 2));
 
-      axios({
-        method: 'post',
-        url: urls.truffleMigrate,
-        responseType: 'json',
-        crossDomain: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(values, null, 2)
-      // }).error((error) => {
-      //  handleToggle()
-      //  console.log('HTTP call to Process Builder fail');
-      }).then((response) => {
-        console.log('HTTP call to deploy done');
-        console.log(response);
-        console.log(response.data);
-        setDeployResultJSON(response.data)
-        // extractJSON()
-        handleClose()
+      if (mainnetOption && values.custMnem!=='') {
+        handleToggle()
+        await new Promise((r) => setTimeout(r, 500));
+        axios({
+          method: 'post',
+          url: urls.truffleMigrate,
+          responseType: 'json',
+          crossDomain: true,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify(values, null, 2)
+        // }).error((error) => {
+        //  handleToggle()
+        //  console.log('HTTP call to Process Builder fail');
+        }).then((response) => {
+          console.log('HTTP call to deploy done');
+          console.log(response);
+          console.log(response.data);
+          setDeployResultJSON(response.data)
+          // extractJSON()
+          handleClose()
 
-      });
+        });
+      } else {
+        setShowRequireMnem(true)
+      }
     }
   });
 
@@ -216,7 +234,7 @@ export default function CreateTokenForm() {
                 >
                   <FormControlLabel value="rinkeby" control={<Radio />} label="Rinkeby Testnet" />
                   <FormControlLabel value="goerli" control={<Radio />} label="Goerli Testnet" />
-                  <FormControlLabel value="RRRRinkeby" control={<Radio />} label="Mainnet" />
+                  <FormControlLabel value="mainnet" control={<Radio id="mainnetRadio" onChange={(e) => handleMainnetRadio(e) } />} label="Mainnet" />
                 </RadioGroup>
               </FormControl>
               <FormControl component="fieldset">
@@ -262,25 +280,53 @@ export default function CreateTokenForm() {
                   control={
                     <Switch
                       // checked={state.checkedB}
-                      onChange={() => setAdvanceOption((prev) => !prev)}
+                      onChange={() => setMiscOption((prev) => !prev)}
                       // name="checkedB"
                       color="primary"
                     />
                   }
-                  label="Advance Options"
+                  label="Misc Options"
                 />
               </FormControl>
+
+              <Stack sx={!mainnetOption ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 60 }} spacing={3}>
+                <TextField
+                  fullWidth
+                  type={showPassword ? 'text' : 'password'}
+                  label="Mnemoric phase"
+                  {...getFieldProps('custMnem')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton edge="end" onClick={() => setShowPassword((prev) => !prev)}>
+                          <Icon icon={showPassword ? getIcon('eva:eye-fill') : getIcon('eva:eye-Off-Fill')} />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                  error={Boolean(touched.custMnem && errors.custMnem)}
+                  helperText={touched.custMnem && errors.custMnem}
+                  disabled={!mainnetOption}
+                  sx={!mainnetOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
+                />
+                <Typography variant="caption" gutterBottom color="error" sx={!showRequireMnem ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 60 }}>
+                  Mnemoric phase is required when deploy the contract to Mainnet.
+                </Typography>
+
+              </Stack>
               
-              <Stack sx={!advanceOption ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 250 }} spacing={3}>
+              <Stack sx={!miscOption ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 60 }} spacing={3}>
+              {/*
               <TextField
                 fullWidth
                 label="Owner's Wallet address"
                 {...getFieldProps('custOwnerAddr')}
                 error={Boolean(touched.custOwnerAddr && errors.custOwnerAddr)}
                 helperText={touched.custOwnerAddr && errors.custOwnerAddr}
-                disabled={!advanceOption}
-                sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
+                disabled={!miscOption}
+                sx={!miscOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
               />
+              */}
 
               <TextField
                 fullWidth
@@ -288,31 +334,17 @@ export default function CreateTokenForm() {
                 {...getFieldProps('custInfuraProjId')}
                 error={Boolean(touched.custInfuraProjId && errors.custInfuraProjId)}
                 helperText={touched.custInfuraProjId && errors.custInfuraProjId}
-                disabled={!advanceOption}
-                sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
+                disabled={!miscOption}
+                sx={!miscOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
               />
 
-              <TextField
-                fullWidth
-                type={showPassword ? 'text' : 'password'}
-                label="Mnemoric phase"
-                {...getFieldProps('custMnem')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton edge="end" onClick={() => setShowPassword((prev) => !prev)}>
-                        <Icon icon={showPassword ? getIcon('eva:eye-fill') : getIcon('eva:eye-Off-Fill')} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-                error={Boolean(touched.custMnem && errors.custMnem)}
-                helperText={touched.custMnem && errors.custMnem}
-                disabled={!advanceOption}
-                sx={!advanceOption ? { visibility: 'hidden' } : { visibility: 'visible' }}
-              />
               </Stack>
+              {/*
+              <Stack sx={!showRequireMnem ? { visibility: 'hidden', height: 0} : { visibility: 'visible', height: 60 }} spacing={3}>
 
+              </Stack>
+              */}
+              
               <LoadingButton
                 fullWidth
                 size="large"
