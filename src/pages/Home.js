@@ -16,8 +16,9 @@ import {
 } from '../sections/@dashboard/app';
 import {
   UserWidget,
+  BannerCard
 } from '../sections/@dashboard/home';
-import { ArticlesPostCard, ArticlesPostsSort, ArticlesPostsSearch } from '../sections/@dashboard/articles';
+import { ArticlesPostCard, ArticlesPostsSort, ArticlesPostsSearch} from '../sections/@dashboard/articles';
 import { TestContext, ProdContext } from '../Context';
 
 // ---------------Style--------------------------------------------------
@@ -48,10 +49,36 @@ export default function HomeApp() {
   const [displayArticleList, setDisplayArticleList] = useState([]);
   const [allArticleList, setAllArticleList] = useState([]);
   const [displayUserList, setDisplayUserList] = useState([]);
+  const [bannerList, setBannerList] = useState([]);
   const [allUserList, setAllUserList] = useState([]);
 
   const context = useContext(TestContext);
   const { drupalHostname } = context;
+
+  function promiseBanner() {
+    return axios({
+      method: 'get',
+      url: `http://${drupalHostname}/jsonapi/node/banner?sort=-created&page[limit]=1&include=field_bigimage`,
+      responseType: 'json',
+      // crossDomain: true,
+
+      headers: { 'Access-Control-Allow-Origin': '*'}
+    })
+      .then((response) => {
+        // console.log(response);
+        console.log('HTTP call for Banner done');
+        return response.data;
+    })
+      .then((data) => {
+        console.log('----data----');
+        console.log(data);
+        // const dataArray = data.data.map((_) => _);
+        // const includedArray = data.included.map((_) => _);
+        // setAllArticleList(dataArray)
+        return data;
+    })
+      
+  }
 
   function promiseHttpArticles() {
     return axios({
@@ -115,7 +142,6 @@ export default function HomeApp() {
       url: `http://${drupalHostname}/jsonapi/user/user?sort=-created&page[limit]=4&filter[name-filter][condition][path]=name&filter[name-filter][condition][operator]=<>&filter[name-filter][condition][value][1]=`,
       responseType: 'json',
       // crossDomain: true,
-
       headers: { 'Access-Control-Allow-Origin': '*'}
     })
       .then((response) => {
@@ -225,6 +251,22 @@ export default function HomeApp() {
         return [];
       })
     })
+
+    // Load the Big Banner
+    const bannerPromisecall = promiseBanner().then((prom)=>{
+      console.log(prom)
+      const arr=[]
+      let donecount =0;
+      const s = prom.data.map((bannerinfo, i ) => {
+        const item = {'text': bannerinfo.attributes.field_bannercaption.value, 'pic': `http://${drupalHostname}/sites/default/files/media/Image/banner/${prom.included[0].attributes.name}`}
+        arr.push(item)
+        donecount+=1;
+        if (donecount===prom.data.length) {
+          setBannerList(arr)
+        }
+        return [];
+      })
+    })
   
   }, []);
 
@@ -236,17 +278,14 @@ export default function HomeApp() {
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={8} lg={8}>
-            <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-              <BannerImgStyleBig alt='bigbanner' src='http://mstdatalite.dionysbiz.xyz/sites/default/files/styles/large/public/media/Image/banner/testbanner1.jpg'/>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} md={4} lg={4}>
-            <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-              <BannerImgStyleSmall alt='smallbanner' src='http://mstdatalite.dionysbiz.xyz/sites/default/files/styles/large/public/media/Image/banner/testbanner2.jpg'/>
-            </Box>
-          </Grid>
+          {/*
+          <BannerCard text='This is time to crypt your money' cover='http://mstdatalite.dionysbiz.xyz/sites/default/files/media/Image/banner/testout%280%29_2.png'/>
+          <BannerCard text='This is time to crypt your money' cover={`http://${drupalHostname}/sites/default/files/media/Image/banner/${bannerList.included[0].attributes.name}`}/>
+          */}
+          { 
+            bannerList.map((banner, index) => (
+              <BannerCard banner={banner} />
+            ))}
         </Grid>
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
