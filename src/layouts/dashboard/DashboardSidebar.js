@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
@@ -15,8 +15,10 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
 import navConfig from './NavConfig';
+import { TestContext, ProdContext } from '../../Context';
 
 // ----------------------------------------------------------------------
+
 
 const DRAWER_WIDTH = 280;
 
@@ -42,8 +44,14 @@ DashboardSidebar.propTypes = {
   onCloseSidebar: PropTypes.func,
 };
 
+
+
+
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
+
+  const context = useContext(TestContext);
+  const { drupalHostname } = context;
 
   const isDesktop = useResponsive('up', 'lg');
 
@@ -105,7 +113,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             </Typography>
           </Box>
 
-          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="contained">
+          <Button href={`http://${drupalHostname}/contact`} target="_blank" variant="contained">
             Contact Us
           </Button>
         </Stack>
