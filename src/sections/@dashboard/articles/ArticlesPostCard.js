@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Web3 from 'web3';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -7,12 +9,15 @@ import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Modal } from '@
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
+import { triggerTransaction } from '../../../utils/ethUtil';
 //
 import SvgIconStyle from '../../../components/SvgIconStyle';
 import Iconify from '../../../components/Iconify';
-
+import { urls } from '../../../properties/urls';
 
 // ----------------------------------------------------------------------
+
+const { abi } = require('../../../abi/ERC777.json');
 
 const CardMediaStyle = styled('div')({
   position: 'relative',
@@ -70,17 +75,104 @@ const ModalStyle = {
 
 // ----------------------------------------------------------------------
 
+
+
+const App = new Web3()
+let web3
+let walletFound = false;
+
+async function init() {
+  
+  if (window.ethereum) {
+    App.web3Provider = window.ethereum;
+    try {
+      // Request account access
+      
+      // Depricatd soon 
+      // await window.ethereum.enable();
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
+      walletFound=true
+      console.log('Wallet found')
+    } catch (error) {
+      // User denied account access...
+      console.error("User denied account access")
+    }
+  } else if (window.web3) {
+    App.web3Provider = window.web3.currentProvider;
+    walletFound=true
+    console.log('Wallet found [Legacy]')
+  }
+  // If no injected web3 instance is detected, fall back to Ganache
+  else {
+    console.error('web3 was undefined');
+    walletFound=false
+  }
+  web3 = new Web3(App.web3Provider);
+  // legacy 
+  /*
+  if (typeof web3 !== 'undefined') {
+    console.log('Web3 found');
+    window.web3 = new Web3(window.web3.currentProvider);
+    // web3.eth.defaultAccount = web3.eth.accounts[0];
+    walletFound=true
+  } else {
+    console.error('web3 was undefined');
+    walletFound=false
+  }
+  */
+
+}
+init();
+
+let contract;
+
+function promiseHttpAbi(chain, contractAddr) {
+  let apiURL;
+  switch (chain) {
+    case 'Rinkeby':
+      apiURL = urls.etherscan_rinkeby;
+      break;
+    case 'Mainnet':
+      apiURL = urls.etherscan_mainnet;
+      break;
+    default:
+      apiURL = urls.etherscan_rinkeby;
+  }
+
+  return axios({
+    method: 'get',
+    url: apiURL+contractAddr,
+    responseType: 'json',
+    // crossDomain: true,
+    // headers: { 'Access-Control-Allow-Origin': '*' }
+  })
+    .then((response) => {
+      console.log(`HTTP call to ${chain} Etherscan is done`);
+      console.log(response);
+      return response;
+  })
+    
+}
+
 ArticlesPostCard.propTypes = {
   post: PropTypes.object.isRequired,
   index: PropTypes.number,
 };
 
 export default function ArticlesPostCard({ post, index }) {
-  const { id, cover, title, summary, body, view, comment, share, author, createdAt } = post;
+  const { id, cover, title, summary, body, view, comment, share, author, authorWallet, price, paymentContract, paymentChain, paymentTokenAlias, paymentTokenName, createdAt} = post;
   
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const handleOpenModal = () => setOpenModal(true);
+  
+  const handleCloseModal = () => {
+    setOpenLoadScreen(false);
+    setOpenModal(false);
+  };
+  const handleToggle = () => {
+    setOpenLoadScreen(!openLoadScreen);
+  };
   
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
@@ -92,7 +184,146 @@ export default function ArticlesPostCard({ post, index }) {
     { number: share, icon: 'eva:share-fill' },
   ];
   
-  // console.log(post.body)
+  // console.log(post)
+  // console.log(paymentTokenAlias)
+  let acc = [];
+  let abiUse;
+
+  async function ivkContractFuncBySENDNew(acct) {
+    triggerTransaction(paymentChain, paymentContract, paymentTokenName, acct, authorWallet, price)
+  }
+  
+  async function ivkContractFuncBySEND(acct) {
+    
+    let chainIdUse=''
+    switch (paymentChain) {
+      case 'Rinkeby':
+        chainIdUse = '0x4';
+        break;
+      case 'Mainnet':
+        chainIdUse = '0x1';
+        break;
+      default:
+        chainIdUse = '0x4';
+    }
+    
+    // Query the abi by the follow url as sample
+    // const response = await fetch('https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address=0xC1dcBB3E385Ef67f2173A375F63f5F4361C4d2f9&apikey=YourApiKeyToken');
+    
+    // Get the gas price first
+    web3.eth.getGasPrice().then((result) => {
+      
+      console.log('GasFee in Wei')
+      console.log(result)
+  
+      let gasFee
+      let unit
+      if (paymentTokenName.includes("Tether")) {
+        // For adjustment of USDT
+        unit='mwei'
+      } else {
+        unit='ether'
+      }
+  
+      let chainIdUse;
+      switch (paymentChain) {
+        case 'Rinkeby':
+          chainIdUse = '0x4';
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei('188729959600000', 'gwei')))
+          if (paymentTokenName.includes("Tether")) {
+            unit='ether'
+          }
+          break;
+        case 'Mainnet':
+          chainIdUse = '0x1';
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei(result, 'gwei')))
+          console.log(gasFee)
+          break;
+        default:
+          chainIdUse = '0x4';
+          // gasFee = web3.utils.toHex(web3.utils.toWei('100', 'gwei'))
+          gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei('188729959600000', 'gwei')))
+          if (paymentTokenName.includes("Tether")) {
+            unit='ether'
+          }
+      }
+  
+      if (paymentTokenName.includes("Ethereum")) {
+        console.log(`Read to send ${paymentTokenName} with no contract address`)
+        web3.eth.sendTransaction({
+          from: acct, 
+          to: authorWallet, 
+          value: web3.utils.toWei(price, 'ether'), 
+          gas: gasFee
+        })
+        .on('error', (error, receipt) => {
+          console.log('error')
+          console.log(error)
+          console.log(receipt)
+          // handleClose()
+        })
+        .then((receipt) => {
+          console.log(receipt)
+          // processReceipt(receipt, product, currencyName, chain, deliveryType)
+          // handleClose()
+        });
+      } else {
+        console.log(`Read to send ${paymentTokenName}`)
+        promiseHttpAbi(paymentChain, paymentContract).then((response) => {
+          if (response.data.status === '1') {
+            console.log(response.data.message);
+            abiUse = JSON.parse(response.data.result);
+            contract = new web3.eth.Contract(abiUse, paymentContract);
+            
+          } else {
+            console.log(response.message);
+            console.log(response.result);
+            console.log('Query ABI from Etherscan fail, use local ABI file instead');
+            contract = new web3.eth.Contract(abi, paymentContract);
+          }
+    
+          contract.methods
+            .transfer(authorWallet, web3.utils.toWei(price, unit))
+            .send({
+              from: acct,
+              // value: web3.utils.toHex(web3.utils.toWei('100', 'gwei')),
+              gas: gasFee,
+              // gas: web3.utils.toHex(42000),
+              chainId: chainIdUse,
+              data: ''
+            })
+            .on('error', (error, receipt) => {
+              console.log('error')
+              console.log(error)
+              console.log(receipt)
+              // handleClose()
+            })
+            .then((receipt) => {
+              // handleClose()
+              console.log(receipt)
+              // processReceipt(receipt, product, currencyName, chain, deliveryType)
+            });
+          
+        }) 
+      }
+    
+    })
+  }
+
+  const onClickBuy = () => {
+    // Sending Ethereum to an address
+    acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+    acc.then((result) => {
+      console.log('result when call')
+      console.log(result)
+      // console.log('submit the Type as')
+      // console.log(deliveryType)
+      handleToggle()
+      ivkContractFuncBySEND(result[0])
+    });
+  };
+
   return (
     <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
       <Card sx={{ position: 'relative' }}>
@@ -160,14 +391,19 @@ export default function ArticlesPostCard({ post, index }) {
                 color: 'common.white',
               }),
             }}
-            onClick={handleOpen}
+            onClick={
+              onClickBuy
+            }
           >
             {title}
           </TitleStyle>
+          <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
+            {parseFloat(price)!==0 ? `Pay to read Price: ${paymentTokenAlias} ${price}` : null}
+          </Typography>
           <div>
             <Modal
-              open={open}
-              onClose={handleClose}
+              open={openModal}
+              onClose={handleCloseModal}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >

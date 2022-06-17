@@ -89,7 +89,7 @@ export default function PartiesHome() {
     console.log(article)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid`,
+      url: `http://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -100,6 +100,10 @@ export default function PartiesHome() {
         return (
           {"filename": responsePhoto.data.included[0].attributes.name,
            "userDisplayName": responsePhoto.data.included[1].attributes.display_name,
+           "userWalletAddr": responsePhoto.data.included[1].attributes.field_default_address,
+           "payment_contract": responsePhoto.data.included[2].attributes.field_contractaddress,
+           "payment_chain": responsePhoto.data.included[2].attributes.field_chain,
+           "payment_tokenalias": responsePhoto.data.included[2].attributes.field_alias,
           });
     })
       .then((obj) => ({
@@ -112,6 +116,11 @@ export default function PartiesHome() {
           comment: 0,
           share: 0,
           author: obj.userDisplayName,
+          authorWallet: obj.userWalletAddr,
+          price: article.attributes.field_read_price,
+          paymentContract: obj.payment_contract,
+          paymentChain: obj.payment_chain,
+          paymentTokenAlias: obj.payment_tokenalias,
           createdAt: article.attributes.created
         }))
     return prom;
