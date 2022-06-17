@@ -105,9 +105,14 @@ export async function triggerTransaction(chainName, contractAddr, paymentTokenNa
     let walletExist=false;
     let targetChainId=''
 
-    const chainListJSON = getChainlistJSON().then((response) =>
-        console.log(response)
+    const chainListJSON = getChainlistJSON().then((response) => {
+        return response.data
+    }
     )
+
+    chainListJSON.forEach((item)=>{
+
+    })
 
     switch (chainName) {
       case 'Rinkeby':
