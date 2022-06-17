@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Modal } from '@mui/material';
+import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Modal, Backdrop, CircularProgress, Stack } from '@mui/material';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
@@ -14,6 +14,7 @@ import { triggerTransaction } from '../../../utils/ethUtil';
 import SvgIconStyle from '../../../components/SvgIconStyle';
 import Iconify from '../../../components/Iconify';
 import { urls } from '../../../properties/urls';
+import { localChainList } from '../../../properties/localChainList';
 
 // ----------------------------------------------------------------------
 
@@ -132,7 +133,7 @@ function promiseHttpAbi(chain, contractAddr) {
     case 'Rinkeby':
       apiURL = urls.etherscan_rinkeby;
       break;
-    case 'Mainnet':
+    case 'Ethereum Mainnet':
       apiURL = urls.etherscan_mainnet;
       break;
     default:
@@ -164,14 +165,29 @@ export default function ArticlesPostCard({ post, index }) {
   
   const [openModal, setOpenModal] = React.useState(false);
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
+  const [openFinishTick, setOpenFinishTick] = React.useState(false);
+  const [openFinishX, setOpenFinishX] = React.useState(false);
+
   const handleOpenModal = () => setOpenModal(true);
   
   const handleCloseModal = () => {
+    console.log("Close Modal")
     setOpenLoadScreen(false);
     setOpenModal(false);
   };
   const handleToggle = () => {
-    setOpenLoadScreen(!openLoadScreen);
+    if (openLoadScreen) {
+      console.log("Close loading screen")
+      setOpenLoadScreen(false);
+      setOpenFinishTick(false);
+      setOpenFinishX(false);
+    } else {
+      console.log("Open loading screen")
+      setOpenLoadScreen(true);
+    }
+
+
   };
   
   const latestPostLarge = index === 0;
@@ -189,10 +205,31 @@ export default function ArticlesPostCard({ post, index }) {
   let acc = [];
   let abiUse;
 
-  async function ivkContractFuncBySENDNew(acct) {
-    triggerTransaction(paymentChain, paymentContract, paymentTokenName, acct, authorWallet, price)
+  async function ivkContractFuncBySEND(acct) {
+    function onSuccess() {
+      console.log("Transaction successful")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(true)
+      setOpenFinishX(false)
+      setOpenModal(true)
+    }
+
+    function onFail() {
+      console.log("Fail to transfer")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(false)
+      setOpenFinishX(true)
+    }
+
+    setOpenLoadCircle(true)
+    setOpenFinishTick(false)
+    setOpenFinishX(false)
+    triggerTransaction(paymentChain, paymentContract, paymentTokenName, acct, authorWallet, price, onSuccess, onFail)
   }
   
+  /*
   async function ivkContractFuncBySEND(acct) {
     
     let chainIdUse=''
@@ -200,7 +237,7 @@ export default function ArticlesPostCard({ post, index }) {
       case 'Rinkeby':
         chainIdUse = '0x4';
         break;
-      case 'Mainnet':
+      case 'Ethereum Mainnet':
         chainIdUse = '0x1';
         break;
       default:
@@ -235,7 +272,7 @@ export default function ArticlesPostCard({ post, index }) {
             unit='ether'
           }
           break;
-        case 'Mainnet':
+        case 'Ethereum Mainnet':
           chainIdUse = '0x1';
           gasFee = web3.utils.toBN(Math.round(web3.utils.fromWei(result, 'gwei')))
           console.log(gasFee)
@@ -310,18 +347,21 @@ export default function ArticlesPostCard({ post, index }) {
     
     })
   }
+  */
 
   const onClickBuy = () => {
-    // Sending Ethereum to an address
-    acc = window.ethereum.request({ method: 'eth_requestAccounts' });
-    acc.then((result) => {
-      console.log('result when call')
-      console.log(result)
-      // console.log('submit the Type as')
-      // console.log(deliveryType)
-      handleToggle()
-      ivkContractFuncBySEND(result[0])
-    });
+    if (parseFloat(price)!==0) {
+      // Sending Ethereum to an address
+      acc = window.ethereum.request({ method: 'eth_requestAccounts' });
+      acc.then((result) => {
+        console.log('result when call')
+        console.log(result)
+        handleToggle()
+        ivkContractFuncBySEND(result[0])
+      });
+    } else {
+      setOpenModal(true)
+    }
   };
 
   return (
@@ -415,6 +455,42 @@ export default function ArticlesPostCard({ post, index }) {
               </Box>
             </Modal>
           </div>
+          
+            <Backdrop
+              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2 }}
+              open={openLoadScreen}
+              onClick={handleToggle}
+            >
+              <Stack justifyContent="center" >
+                <CircularProgress color="inherit" sx={
+                    !openLoadCircle ? { display: 'none' } : 
+                    { visibility: 'visible'}} />
+                
+                <Stack sx={!openFinishTick ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+                  <Iconify icon="mdi:check" 
+                    sx={{width: 128, height: 128, margin: 'auto'}} />
+                  <Typography variant="h3" align='center'>
+                      Transaction Success
+                  </Typography>
+                  <Typography variant="subtitle2" align='center'>
+                      Press to continue
+                  </Typography>
+                </Stack>
+                
+                <Stack sx={!openFinishX ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+                  <Iconify icon="codicon:error"
+                    sx={{width: 128, height: 128, margin: 'auto'}} />
+                  <Typography variant="h3" >
+                      Transaction Fail
+                  </Typography>
+                  <Typography variant="subtitle2" align='center'>
+                      Press to continue
+                  </Typography>
+                </Stack>
+              </Stack>
+
+            </Backdrop>
+          
 
           <InfoStyle>
             {POST_INFO.map((info, index) => (
