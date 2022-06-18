@@ -48,8 +48,18 @@ export default function ShopProductCard({ product }) {
   // console.log(currency)
 
   const [open, setOpen] = React.useState(false);
+  const [enableBackDropClose, setEnableBackDropClose] = React.useState(true);
+
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    console.log('Product card close')
+    setOpen(false);
+  }
+
+  const handleUnderTx = (underTx) => {
+    console.log(`Set modal back drop onClick Close to ${!underTx}`)
+    setEnableBackDropClose(!underTx);
+  }
 
   // console.log(description)
 
@@ -75,7 +85,16 @@ export default function ShopProductCard({ product }) {
         <div>
           <Modal
             open={open}
-            onClose={handleClose}
+            onClose={(_, reason) => {
+              // console.log(_);
+              // console.log(reason);
+              if (enableBackDropClose) {
+                handleClose()
+              } else if (reason !== "backdropClick") {
+                // Mute the backdrop close when metamask is under transaction
+                handleClose();
+              }}
+            }
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -88,7 +107,15 @@ export default function ShopProductCard({ product }) {
               </Box>
               <br/>
               <Divider />
-              <BuywithCrypto amountTransfer={price} toAddr={receiverAddr} contractAddr={contractAddr} chain={chain} currencyName={currency} product={product} handleClosedModal={handleClose}/>
+              <BuywithCrypto 
+                amountTransfer={price} 
+                toAddr={receiverAddr} 
+                contractAddr={contractAddr} 
+                chain={chain} 
+                currencyName={currency} 
+                product={product} 
+                handleClosedModal={handleClose} 
+                handleUnderTx={handleUnderTx}/>
             </Box>
           </Modal>
         </div>
