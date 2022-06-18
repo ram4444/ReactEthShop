@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 import { urls } from '../properties/urls';
 
-const { abiLocal } = require('../abi/ERC777.json');
+const { abi } = require('../abi/ERC777.json');
 const { localChainList } = require('../properties/localChainList');
 
 const App = new Web3()
@@ -103,10 +103,12 @@ export function getEtherscanAbi(chain, contractAddr) {
 }
 
 export async function triggerTransaction(chainName, contractAddr, paymentTokenName, fromAddr, toAddr, amount, onSuccess, onFail) {
-  let abiUse;
+  let abiEtherscan;
   let contract;
   let walletExist=false;
   let targetChainId=''
+
+  checkWalletExist()
 
   const chainListJSON = await getChainlistJSON().then((response) => {
     if (response.status === 200) {
@@ -206,12 +208,11 @@ export async function triggerTransaction(chainName, contractAddr, paymentTokenNa
       .on('error', (error, receipt) => {
         console.log('error')
         console.log(error)
-        onFail()
+        onFail(receipt)
       })
       .then((receipt) => {
         console.log(receipt)
-        // processReceipt(receipt, product, currencyName, chain, deliveryType)
-        onSuccess()
+        onSuccess(receipt)
       });
       return walletCall;
     } // else HIDDEN {
@@ -219,18 +220,18 @@ export async function triggerTransaction(chainName, contractAddr, paymentTokenNa
       console.log(`Read to send ${paymentTokenName}`)
       
       // Get the ABI from etherscan
-      await getEtherscanAbi(chainName, contractAddr).then((response) => {
+      getEtherscanAbi(chainName, contractAddr).then((response) => {
         if (response.data.status === '1') {
             console.log(response.data.message);
-            abiUse = JSON.parse(response.data.result);
-            contract = new web3.eth.Contract(abiUse, contractAddr);
+            abiEtherscan = JSON.parse(response.data.result);
+            contract = new web3.eth.Contract(abiEtherscan, contractAddr);
         
         } else {
           // Use local ABI when fail to get
-          console.log(response.message);
-          console.log(response.result);
+          console.log(response.data.message);
+          console.log(response.data.result);
           console.log('Query ABI from Etherscan fail, use local ABI file instead');
-          contract = new web3.eth.Contract(abiLocal, contractAddr);
+          contract = new web3.eth.Contract(abi, contractAddr);
         }
         
         walletCall = contract.methods
@@ -246,11 +247,11 @@ export async function triggerTransaction(chainName, contractAddr, paymentTokenNa
         .on('error', (error, receipt) => {
             console.log('error')
             console.log(error)
-            onFail()
+            onFail(receipt)
         })
         .then((receipt) => {
             console.log(receipt)
-            onSuccess()
+            onSuccess(receipt)
             // processReceipt(receipt, product, currencyName, chain, deliveryType)
         });
 
