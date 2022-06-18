@@ -178,10 +178,12 @@ export default function ArticlesPostCard({ post, index }) {
   };
   const handleToggle = () => {
     if (openLoadScreen) {
-      console.log("Close loading screen")
-      setOpenLoadScreen(false);
-      setOpenFinishTick(false);
-      setOpenFinishX(false);
+      if (openFinishTick || openFinishX) {
+        console.log("Close loading screen")
+        setOpenLoadScreen(false);
+        setOpenFinishTick(false);
+        setOpenFinishX(false);
+      }
     } else {
       console.log("Open loading screen")
       setOpenLoadScreen(true);
