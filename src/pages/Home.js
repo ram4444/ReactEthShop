@@ -123,6 +123,7 @@ export default function HomeApp() {
            "payment_contract": responsePhoto.data.included[2].attributes.field_contractaddress,
            "payment_chain": responsePhoto.data.included[2].attributes.field_chain,
            "payment_tokenalias": responsePhoto.data.included[2].attributes.field_alias,
+           "payment_tokenname": responsePhoto.data.included[2].attributes.field_tokenname,
           });
     })
       .then((obj) => ({
@@ -140,6 +141,7 @@ export default function HomeApp() {
           paymentContract: obj.payment_contract,
           paymentChain: obj.payment_chain,
           paymentTokenAlias: obj.payment_tokenalias,
+          paymentTokenName: obj.payment_tokenname,
           createdAt: article.attributes.created
         }))
     return prom;
