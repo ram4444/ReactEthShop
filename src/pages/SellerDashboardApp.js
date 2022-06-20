@@ -5,7 +5,7 @@ import axios from 'axios';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Button, Backdrop, CircularProgress } from '@mui/material';
+import { Grid, Container, Typography, Button, Backdrop, CircularProgress, Stack } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import {uuid} from 'uuidv4'
@@ -22,6 +22,7 @@ import {
 // util
 import { scanTable, queryOrdersByReceiver, queryDeliveredOrdersByReceiver, queryIcoOrdersByAddr, putItemICODelivered, queryDeilveredIcoOrdersByIssueAddr } from '../utils/awsClient'
 import { urls } from '../properties/urls';
+import { triggerTransaction } from '../utils/ethUtil';
 // import { netId } from 'src/Context';
 
 const { abi } = require('../abi/ERC777.json');
@@ -73,10 +74,17 @@ export default function SellerDashboardApp() {
   const [deliverdIcoOrderList, setDeliverdIcoOrderList] = React.useState([]);
   const [currentNetId, setCurrentNetId] = useState('UNKNOWN');
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
+  const [openFinishTick, setOpenFinishTick] = React.useState(false);
+  const [openFinishX, setOpenFinishX] = React.useState(false);
   const [isWalletFound, setWalletFound] = useState(false);
 
   const handleClose = () => {
-    setOpenLoadScreen(false);
+    if (openFinishTick || openFinishX) {
+      console.log('Close loading screen')
+      setOpenLoadScreen(false);
+      // handleClosedModal(openFinishTick, openFinishX)
+    }
   };
   const handleToggle = () => {
     setOpenLoadScreen(!openLoadScreen);
@@ -209,6 +217,7 @@ export default function SellerDashboardApp() {
           form_amount: item.form_amount.N,
           payerWalletAddr: item.payerWalletAddr.S,
           contract_addr: item.contract_addr.S,
+          tokenName: item.token_name.S,
           chain: item.chain.S
         })
       }
@@ -269,6 +278,13 @@ export default function SellerDashboardApp() {
       hide: true
     },
     {
+      field: 'tokenName',
+      headerName: 'tokenName',
+      width: 90,
+      editable: false,
+      hide: false
+    },
+    {
       field: 'payerWalletAddr',
       headerName: 'Payer Addr',
       width: 200,
@@ -295,6 +311,7 @@ export default function SellerDashboardApp() {
                   ivkContractFuncBySEND(
                     result[0], 
                     params.row.contract_addr, // contractAddr
+                    params.row.tokenName,
                     params.row.form_amount, 
                     params.row.payerWalletAddr,
                     params.row.ico_order_id,
@@ -317,7 +334,44 @@ export default function SellerDashboardApp() {
   }, []);
   
   // ---------- Button Trigger Function -----------------------------------
-  function ivkContractFuncBySEND(acct, contractAddr, amount, toAddr, icoOrderId, chain) {
+  async function ivkContractFuncBySEND(acct, contractAddr, tokenName, amount, toAddr, icoOrderId, chain) {
+    async function onSuccess(receipt) {
+      console.log("Transaction successful")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(true)
+      setOpenFinishX(false)
+      // processReceipt(receipt, product, currencyName, chain, deliveryType)
+      // handleUnderTx(false)
+      console.log('put the ICO deliver record to DB')
+      processICODeliver(icoOrderId,receipt,toAddr,amount,contractAddr,chain)
+      
+      console.log('Reflesh the ICO List every time')
+      await queryDyDbIco(acct)
+      await queryDyDbDeliveredIco(acct) 
+      await filterICOList(chain)
+      handleToggle()
+    }
+
+    function onFail(receipt) {
+      console.log("Fail to transfer")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(false)
+      setOpenFinishX(true)
+      // handleUnderTx(false)
+    }
+
+    handleToggle()
+    setOpenLoadCircle(true)
+    // handleUnderTx(true)
+    setOpenFinishTick(false)
+    setOpenFinishX(false)
+    triggerTransaction(chain, contractAddr, tokenName, acct, toAddr, amount, onSuccess, onFail)
+  }
+
+  /*
+  function ivkContractFuncBySENDOLD(acct, contractAddr, amount, toAddr, icoOrderId, chain) {
     // Query the abi by the follow url as sample
     // const response = await fetch('https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address=0xC1dcBB3E385Ef67f2173A375F63f5F4361C4d2f9&apikey=YourApiKeyToken');
     
@@ -383,6 +437,7 @@ export default function SellerDashboardApp() {
     
     })
   }
+  */
 
   async function processICODeliver(icoOrderId,receipt,toAddr,amount,contractAddr,chain) {
 
@@ -442,20 +497,20 @@ export default function SellerDashboardApp() {
 
         <Grid container spacing={3}>
             
-            <Grid item xs={12} md={6} lg={8} height='400'>
-              <div style={{ height: 400, width: '100%' }}>
-              <Typography variant="h5" sx={{ mb: 5 }}>
-                Pending ICO Orders
-              </Typography>
-              <DataGrid
-                rows={icoOrderList}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-              />
-              </div>
-            </Grid>
+          <Grid item xs={12} md={6} lg={8} height='400'>
+            <div style={{ height: 400, width: '100%' }}>
+            <Typography variant="h5" sx={{ mb: 5 }}>
+              Pending ICO Orders
+            </Typography>
+            <DataGrid
+              rows={icoOrderList}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+            />
+            </div>
+          </Grid>
             
           
           <Grid item xs={12} md={6} lg={8}>
@@ -543,7 +598,33 @@ export default function SellerDashboardApp() {
           open={openLoadScreen}
           onClick={handleClose}
         >
-          <CircularProgress color="inherit" />
+          <Stack justifyContent="center" >
+            <CircularProgress color="inherit" sx={
+                !openLoadCircle ? { display: 'none' } : 
+                { visibility: 'visible'}} />
+            
+            <Stack sx={!openFinishTick ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+              <Iconify icon="mdi:check" 
+                sx={{width: 128, height: 128, margin: 'auto'}} />
+              <Typography variant="h3" align='center'>
+                  Transaction Success
+              </Typography>
+              <Typography variant="subtitle2" align='center'>
+                  Press to continue
+              </Typography>
+            </Stack>
+            
+            <Stack sx={!openFinishX ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+              <Iconify icon="codicon:error"
+                sx={{width: 128, height: 128, margin: 'auto'}} />
+              <Typography variant="h3" >
+                  Transaction Fail
+              </Typography>
+              <Typography variant="subtitle2" align='center'>
+                  Press to continue
+              </Typography>
+            </Stack>
+          </Stack>
         </Backdrop>
       </div>
     </Page>

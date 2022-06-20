@@ -252,6 +252,7 @@ export default function PartiesHome() {
            "userDisplayName": responsePhoto.data.included[1].attributes.display_name,
            "contractAddr": responsePhoto.data.included[2].attributes.field_contractaddress,
            "chain":responsePhoto.data.included[2].attributes.field_chain,
+           "tokenName":responsePhoto.data.included[2].attributes.field_tokenname,
           });
     })
       .then((obj) => ({
@@ -260,6 +261,7 @@ export default function PartiesHome() {
           title: ico.attributes.title,
           summary: ico.attributes.body.summary,
           body: ico.attributes.body.value,
+          tokenName: obj.tokenName,
           author: obj.userDisplayName,
           createdAt: ico.attributes.created,
           endDate: ico.attributes.field_end_date,

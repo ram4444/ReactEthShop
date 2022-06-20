@@ -4,16 +4,17 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 // Material
 import { styled } from '@mui/material/styles';
-import { Button, Backdrop, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CircularProgress, Stack} from '@mui/material';
+import { Button, Backdrop, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CircularProgress, Stack, Typography} from '@mui/material';
 
 import {uuid} from 'uuidv4'
 import Cookies from 'js-cookie';
-
+import Iconify from './Iconify';
 
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
 import { putItem } from '../utils/awsClient'
+import { triggerTransaction } from '../utils/ethUtil';
 
 // const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
@@ -21,8 +22,7 @@ const { abi } = require('../abi/ERC777.json');
 let contract;
 let enableBuyButton = false;
 let walletFound = false;
-let cookiesFound = false;
-let ONBOARD_TEXT = 'Buy with Crypto';
+let ONBOARD_TEXT = 'Send';
 
 const App = new Web3()
 let web3
@@ -67,15 +67,9 @@ async function init() {
   }
   */
 
-  if (Cookies.get('address1')) {
-    cookiesFound=true
-  } else {
-    cookiesFound=false
-  }
-
-  if (cookiesFound && walletFound) {
+  if ( walletFound) {
     enableBuyButton=true;
-    ONBOARD_TEXT = 'Buy with Crypto';
+    ONBOARD_TEXT = 'Send';
   } else { 
     enableBuyButton=false;
     if (!walletFound) {
@@ -203,6 +197,11 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
   const [buyButtonDisable, setBuyButtonDisable] = React.useState(!enableBuyButton);
+  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
+  const [openFinishTick, setOpenFinishTick] = React.useState(false);
+  const [openFinishX, setOpenFinishX] = React.useState(false);
+  
   const handleBuyButtonDisable = () => {
     setBuyButtonDisable(false);
   };
@@ -210,7 +209,6 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
     setBuyButtonDisable(!buyButtonDisable);
   };
 
-  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const handleClose = () => {
     setOpenLoadScreen(false);
     handleClosedModal()
@@ -237,7 +235,34 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   let acc = [];
   let abiUse;
 
-  function ivkContractFuncBySEND(acct) {
+  async function ivkContractFuncBySEND(acct) {
+    function onSuccess(receipt) {
+      console.log("Transaction successful")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(true)
+      setOpenFinishX(false)
+      processReceipt(receipt, product, currencyName, chain, deliveryType)
+      // handleUnderTx(false)
+    }
+
+    function onFail(receipt) {
+      console.log("Fail to transfer")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(false)
+      setOpenFinishX(true)
+      // handleUnderTx(false)
+    }
+
+    setOpenLoadCircle(true)
+    // handleUnderTx(true)
+    setOpenFinishTick(false)
+    setOpenFinishX(false)
+    triggerTransaction(chain, contractAddr, currencyName, acct, toAddr, amountTransfer, onSuccess, onFail)
+  }
+
+  function ivkContractFuncBySENDOLD(acct) {
     // Query the abi by the follow url as sample
     // const response = await fetch('https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address=0xC1dcBB3E385Ef67f2173A375F63f5F4361C4d2f9&apikey=YourApiKeyToken');
     
@@ -397,7 +422,33 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
           open={openLoadScreen}
           onClick={handleClose}
         >
-          <CircularProgress color="inherit" />
+          <Stack justifyContent="center" >
+            <CircularProgress color="inherit" sx={
+                !openLoadCircle ? { display: 'none' } : 
+                { visibility: 'visible'}} />
+            
+            <Stack sx={!openFinishTick ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+              <Iconify icon="mdi:check" 
+                sx={{width: 128, height: 128, margin: 'auto'}} />
+              <Typography variant="h3" align='center'>
+                  Transaction Success
+              </Typography>
+              <Typography variant="subtitle2" align='center'>
+                  Press to continue
+              </Typography>
+            </Stack>
+            
+            <Stack sx={!openFinishX ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+              <Iconify icon="codicon:error"
+                sx={{width: 128, height: 128, margin: 'auto'}} />
+              <Typography variant="h3" >
+                  Transaction Fail
+              </Typography>
+              <Typography variant="subtitle2" align='center'>
+                  Press to continue
+              </Typography>
+            </Stack>
+          </Stack>
         </Backdrop>
       </div></>
   );

@@ -19,8 +19,10 @@ import { TestContext, ProdContext } from '../Context';
 import { urls } from '../properties/urls';
 import { putItemICO,putItemNotification } from '../utils/awsClient'
 
-async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, payerWalletAddr, coinTitle) {
+async function processICO(details, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, payerWalletAddr, icoTitle, tokenName) {
   
+  console.log(details)
+
   const detailsId = details.id 
   const currencyCode = details.purchase_units[0].amount.currency_code
   const amount = details.purchase_units[0].amount.value
@@ -42,10 +44,10 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
   const payerSurname = details.payer.name.surname
   const payerEmailAddress = details.payer.email_address
   const payerId = details.payer.payer_id // Review
-  const payerAddressLine1 = details.payer.address.address_line_1
-  const payerAddressLine2 = details.payer.address.address_line_2
-  const payerAddressAdminArea1 = details.payer.address.admin_area_1
-  const payerAddressAdminArea2 = details.payer.address.admin_area_2
+  // const payerAddressLine1 = details.payer.address.address_line_1
+  // const payerAddressLine2 = details.payer.address.address_line_2
+  // const payerAddressAdminArea1 = details.payer.address.admin_area_1
+  // const payerAddressAdminArea2 = details.payer.address.admin_area_2
   const payerCountryCode = details.payer.address.country_code
   const createTime= details.create_time
   const updateTime= details.update_time
@@ -87,6 +89,8 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     "issue_addr" : {S: issueAddr.toLowerCase()},
     "contract_addr": {S: contractAddr.toLowerCase()},
     "chain": {S: chain},
+    "token_name": {S: tokenName},
+
     // Info from paypal return
     "details_id": { S: detailsId },
     "currency_code": { S: currencyCode },
@@ -109,21 +113,14 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     "payer_surname": { S: payerSurname },
     "payer_email_address": { S: payerEmailAddress },
     "payer_id": { S: payerId },
-    "payer_address_line_1": { S: payerAddressLine1 },
-    "payer_address_line_2": { S: payerAddressLine2 },
-    "payer_address_admin_area_1": { S: payerAddressAdminArea1 },
-    "payer_address_admin_area_2": { S: payerAddressAdminArea2 },
+    // "payer_address_line_1": { S: payerAddressLine1 },
+    // "payer_address_line_2": { S: payerAddressLine2 },
+    // "payer_address_admin_area_1": { S: payerAddressAdminArea1 },
+    // "payer_address_admin_area_2": { S: payerAddressAdminArea2 },
     "payer_country_code": { S: payerCountryCode },
     "payer_create_time": { S: createTime },
     "payer_update_time": { S: updateTime },
     "payer_checkout_href": { S: payerCheckoutHref },
-    // Delivery Info From Cookies
-    /*
-    "buyer_name": {S: Cookies.get('username')},
-    "buyer_email": {S: Cookies.get('email')},
-    "delivery_addr1": {S: Cookies.get('address1')},
-    "delivery_addr2": {S: Cookies.get('address2')},
-    */
   }
   
   putItemICO(record)
@@ -136,7 +133,7 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     "userAddr": { S: payerWalletAddr.toLowerCase()},
     "related_id": { S: uid },
     "type": {S: 'ico_placed'},
-    "title": {S: `Order for crypto ${coinTitle} has placed`},
+    "title": {S: `Order for crypto ${icoTitle} has placed`},
     "description": {S: 'You will receive the crypto coin very soon'},
     "createdAt": {S: new Date()}
   }
@@ -150,7 +147,7 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
     "userAddr": { S: issueAddr.toLowerCase()},
     "related_id": { S: uid },
     "type": {S: 'ico_received'},
-    "title": {S: `Someone order for crypto ${coinTitle} `},
+    "title": {S: `Someone order for crypto ${icoTitle} `},
     "description": {S: 'Please send the coin to the payer wallet'},
     "createdAt": {S: new Date()}
   }
@@ -162,6 +159,7 @@ async function processICO(details, minUnit, startupPrice, paypalClientId, issueA
 
 BuywithPaypal.propTypes = {
   title: PropTypes.string,
+  tokenName: PropTypes.string,
   body: PropTypes.string,
   endDate: PropTypes.string,
   startupPrice: PropTypes.string,
@@ -174,7 +172,7 @@ BuywithPaypal.propTypes = {
   open: PropTypes.bool,
 };
 
-function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, contractAddr, chain, open}) {
+function BuywithPaypal({ title, body, tokenName, endDate, minUnit, startupPrice, fiat, paypalClientId, issueAddr, contractAddr, chain, open}) {
   const navigate = useNavigate();
   const ref = useRef(null);
 
@@ -303,7 +301,7 @@ function BuywithPaypal({ title, body, endDate, minUnit, startupPrice, fiat, payp
                 acc.then((result) => {
                   console.log('eth_requestAccounts')
                   console.log(result[0])
-                  processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, result[0], title)
+                  processICO(receiptDetails, minUnit, startupPrice, paypalClientId, issueAddr, contractAddr, chain, formUsername, formEmail, formAmount, result[0], title, tokenName)
                   
                 });
                 
