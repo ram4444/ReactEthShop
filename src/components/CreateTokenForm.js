@@ -88,6 +88,31 @@ export default function CreateTokenForm() {
     setOpenLoadScreen(!openLoadScreen);
   };
 
+  function promiseProcessBuilder(values) {
+    axios({
+      method: 'post',
+      url: urls.truffleMigrate,
+      responseType: 'json',
+      crossDomain: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(values, null, 2)
+    // }).error((error) => {
+    //  handleToggle()
+    //  console.log('HTTP call to Process Builder fail');
+    }).then((response) => {
+      console.log('HTTP call to deploy done');
+      console.log(response);
+      console.log(response.data);
+      setDeployResultJSON(response.data)
+      // extractJSON()
+      handleClose()
+
+    });
+  }
+
   const CreateTokenSchema = Yup.object().shape({
     chainNetwork: Yup.string().required(
       'Please select the network for the token smart contract to be deployed'
@@ -129,33 +154,19 @@ export default function CreateTokenForm() {
       
       console.log(JSON.stringify(values, null, 2));
 
-      if (mainnetOption && values.custMnem!=='') {
-        handleToggle()
-        await new Promise((r) => setTimeout(r, 500));
-        axios({
-          method: 'post',
-          url: urls.truffleMigrate,
-          responseType: 'json',
-          crossDomain: true,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
-          },
-          data: JSON.stringify(values, null, 2)
-        // }).error((error) => {
-        //  handleToggle()
-        //  console.log('HTTP call to Process Builder fail');
-        }).then((response) => {
-          console.log('HTTP call to deploy done');
-          console.log(response);
-          console.log(response.data);
-          setDeployResultJSON(response.data)
-          // extractJSON()
-          handleClose()
-
-        });
+      if (mainnetOption) {
+        if (values.custMnem!=='') {
+          handleToggle()
+          await new Promise((r) => setTimeout(r, 500));
+          // promiseProcessBuilder(values)
+          console.log('here')
+        } else {
+          setShowRequireMnem(true)
+        }
       } else {
-        setShowRequireMnem(true)
+        handleToggle()
+          await new Promise((r) => setTimeout(r, 500));
+          promiseProcessBuilder(values)
       }
     }
   });
