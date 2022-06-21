@@ -158,7 +158,7 @@ export default function CreateTokenForm() {
         if (values.custMnem!=='') {
           handleToggle()
           await new Promise((r) => setTimeout(r, 500));
-          // promiseProcessBuilder(values)
+          promiseProcessBuilder(values)
           console.log('here')
         } else {
           setShowRequireMnem(true)
