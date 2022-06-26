@@ -353,7 +353,7 @@ export default function PartiesHome() {
                 switch (chainId) {
                   case '0x1':
                     setNetId('Mainnet');
-                    chainName=('Mainnet');
+                    chainName=('Ethereum Mainnet');
                     break;
                   case '0x3':
                     setNetId('Ropsten');
@@ -369,7 +369,7 @@ export default function PartiesHome() {
                     break;
                   default:
                     setNetId('UNKNOWN');
-                    chainName=('Mainnet');
+                    chainName=('Ethereum Mainnet');
                 }
                 
                 const arrFilterTokenList=[]

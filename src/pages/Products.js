@@ -216,7 +216,7 @@ import { TestContext, ProdContext } from '../Context';
                   switch (chainId) {
                     case '0x1':
                       setNetId('Mainnet');
-                      chainName=('Mainnet');
+                      chainName=('Ethereum Mainnet');
                       break;
                     case '0x3':
                       setNetId('Ropsten');
@@ -232,7 +232,7 @@ import { TestContext, ProdContext } from '../Context';
                       break;
                     default:
                       setNetId('UNKNOWN');
-                      chainName=('Mainnet');
+                      chainName=('Ethereum Mainnet');
                   }
                   
                   const filterTokenList4Pass = prom.map((tokenObj) => {

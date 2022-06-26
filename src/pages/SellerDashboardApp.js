@@ -42,7 +42,7 @@ function promiseHttpAbi(chain, contractAddr) {
     case 'Rinkeby':
       apiURL = urls.etherscan_rinkeby;
       break;
-    case 'Mainnet':
+    case 'Ethereum Mainnet':
       apiURL = urls.etherscan_mainnet;
       break;
     default:
@@ -132,8 +132,8 @@ export default function SellerDashboardApp() {
       
       switch (window.ethereum.chainId) {
         case '0x1':
-          setCurrentNetId('Mainnet');
-          chainName=('Mainnet');
+          setCurrentNetId('Ethereum Mainnet');
+          chainName=('Ethereum Mainnet');
           break;
         case '0x3':
           setCurrentNetId('Ropsten');

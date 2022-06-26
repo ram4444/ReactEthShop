@@ -101,7 +101,7 @@ function OrdersItem({ orders }) {
     const urlNormal= url.concat('etherscan.io/tx/',txHash);
     let urlFinal = ''
     switch (chain) {
-      case 'Mainnet':
+      case 'Ethereum Mainnet':
         urlFinal=urlNormal
         break;
       case 'Ropsten':
