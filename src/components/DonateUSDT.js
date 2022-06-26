@@ -2,13 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Iconify from './Iconify';
 import { TestContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import { urls } from '../properties/urls';
+import { triggerTransaction } from '../utils/ethUtil';
 
 // const web3 = new Web3(window.web3.currentProvider);
 const { abi } = require('../abi/ERC777.json');
@@ -102,12 +105,19 @@ DonateUSDT.propTypes = {
 function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}) {
   const [buttonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled] = React.useState(false);
+  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
+  const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
+  const [openFinishTick, setOpenFinishTick] = React.useState(false);
+  const [openFinishX, setOpenFinishX] = React.useState(false);
 
   const context = useContext(TestContext);
 
-  const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const handleClose = () => {
-    setOpenLoadScreen(false);
+    if (openFinishTick || openFinishX) {
+      console.log('Close loading screen')
+      setOpenLoadScreen(false);
+      // handleClosedModal(openFinishTick, openFinishX)
+    }
   };
   const handleToggle = () => {
     setOpenLoadScreen(!openLoadScreen);
@@ -119,6 +129,35 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
   let acc = [];
   let abiUse;
 
+  async function ivkContractFuncBySEND(acct) {
+    function onSuccess(receipt) {
+      console.log("Transaction successful")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(true)
+      setOpenFinishX(false)
+      // processReceipt(receipt, product, currencyName, chain, deliveryType)
+      // handleUnderTx(false)
+    }
+
+    function onFail(receipt) {
+      console.log("Fail to transfer")
+      handleToggle()
+      setOpenLoadCircle(false)
+      setOpenFinishTick(false)
+      setOpenFinishX(true)
+      // handleUnderTx(false)
+    }
+
+    setOpenLoadCircle(true)
+    // handleUnderTx(true)
+    setOpenFinishTick(false)
+    setOpenFinishX(false)
+    console.log(chain)
+    triggerTransaction(chain, contractAddr, currencyName, acct, toAddr, amountTransfer, onSuccess, onFail)
+  }
+
+  /*
   function ivkContractFuncBySEND(acct) {
 
     // Get the gas price first
@@ -222,6 +261,7 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
     })
 
   }
+  */
 
   const onClick = () => {
     // Sending Ethereum to an address
@@ -232,18 +272,45 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
   return (
     <>
     <Button variant="contained" disabled={isDisabled} onClick={onClick}>
-      {buttonText}
+      {buttonText} 
     </Button>
 
     <div>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2 }}
           open={openLoadScreen}
           onClick={handleClose}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div></>
+    >
+      <Stack justifyContent="center" >
+        <CircularProgress color="inherit" sx={
+            !openLoadCircle ? { display: 'none' } : 
+            { visibility: 'visible'}} />
+        
+        <Stack sx={!openFinishTick ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+          <Iconify icon="mdi:check" 
+            sx={{width: 32, height: 32, margin: 'auto'}} />
+          <Typography variant="subtitle2" align='center'>
+              Transaction Success
+          </Typography>
+          <Typography variant="subtitle2" align='center'>
+              Press to continue
+          </Typography>
+        </Stack>
+        
+        <Stack sx={!openFinishX ? { display: 'none' } : { visibility: 'visible', justifyContent: 'center'}}>
+          <Iconify icon="codicon:error"
+            sx={{width: 32, height: 32, margin: 'auto'}} />
+          <Typography variant="subtitle2" >
+              Transaction Fail
+          </Typography>
+          <Typography variant="subtitle2" align='center'>
+              Press to continue
+          </Typography>
+        </Stack>
+      </Stack>
+    </Backdrop>
+    </div>
+    </>
   );
 }
 
