@@ -55,12 +55,12 @@ export default function Donationbar() {
     if (window.ethereum) {
       setWalletFound(true)
       setChainId(window.ethereum.chainId)
-
+      /*
       switch (window.ethereum.chainId) {
         case '0x1':
           setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
           setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
-          setChainName('Mainnet')
+          setChainName('Ethereum Mainnet')
           break;
         case '0x4':
           setUsdtContractAddr('0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02')
@@ -70,8 +70,12 @@ export default function Donationbar() {
         default:
           setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
           setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
-          setChainName('Mainnet')
+          setChainName('Ethereum Mainnet')
       }
+      */
+      setUsdtContractAddr('0xdAC17F958D2ee523a2206206994597C13D831ec7')
+      setReveiverAddr('0x9B40d31fdc6Ef74D999AFDdeF151f8E864391cfF')
+      setChainName('Ethereum Mainnet')
     } 
   })
 
