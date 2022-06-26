@@ -192,6 +192,7 @@ SendIcoCrypto.propTypes = {
 
 let deliveryType;
 
+// No longer in used
 function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal}) {
   console.log(product.deliveryTypeList)
   

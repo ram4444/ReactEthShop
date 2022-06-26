@@ -225,6 +225,7 @@ Pay2ReadwithCrypto.propTypes = {
 
 let deliveryType;
 
+// No longer in used
 function Pay2ReadwithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal}) {
   console.log(product.deliveryTypeList)
   
