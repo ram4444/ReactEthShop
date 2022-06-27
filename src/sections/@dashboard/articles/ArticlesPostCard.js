@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Modal, Backdrop, CircularProgress, Stack } from '@mui/material';
+import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Modal, Backdrop, CircularProgress, Stack, Input, InputAdornment, Divider } from '@mui/material';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 import { triggerTransaction } from '../../../utils/ethUtil';
 //
+import DonateUSDT from '../../../components/DonateUSDT';
 import SvgIconStyle from '../../../components/SvgIconStyle';
 import Iconify from '../../../components/Iconify';
 import { urls } from '../../../properties/urls';
@@ -168,6 +169,8 @@ export default function ArticlesPostCard({ post, index }) {
   const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
   const [openFinishTick, setOpenFinishTick] = React.useState(false);
   const [openFinishX, setOpenFinishX] = React.useState(false);
+
+  const [donateAmount, setDonateAmount] = useState('0');
 
   const handleOpenModal = () => setOpenModal(true);
   
@@ -450,10 +453,34 @@ export default function ArticlesPostCard({ post, index }) {
               aria-describedby="modal-modal-description"
             >
               <Box sx={ModalStyle}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                {title}
-                </Typography>
-                <div dangerouslySetInnerHTML={{ __html: body }} height={200} />
+                <Stack spacing={2}>
+                  <Typography id="modal-modal-title" variant="h6" component="h2">
+                  {title}
+                  </Typography>
+                  <div dangerouslySetInnerHTML={{ __html: body }} height={200} />
+                  
+                  <Divider />
+                  
+                  <Input
+                    id='donate'
+                    autoFocus
+                    width='80%'
+                    maxWidth='200'
+                    disableUnderline
+                    placeholder="Amount of USDT donate to author"
+                    type='number'
+                    onChange={(e) => {
+                      setDonateAmount(e.target.value.toString());
+                    }}
+                    sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
+                  />
+                  
+                  <DonateUSDT amountTransfer={donateAmount}
+                    toAddr={authorWallet}
+                    contractAddr='0xdAC17F958D2ee523a2206206994597C13D831ec7'
+                    chain='Ethereum Mainnet'
+                    currencyName='Tether' />
+                </Stack> 
               </Box>
             </Modal>
           </div>
