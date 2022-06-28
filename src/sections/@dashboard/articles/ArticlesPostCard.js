@@ -463,7 +463,6 @@ export default function ArticlesPostCard({ post, index }) {
                   
                   <Input
                     id='donate'
-                    autoFocus
                     width='80%'
                     maxWidth='200'
                     disableUnderline
