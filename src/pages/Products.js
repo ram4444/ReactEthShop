@@ -241,14 +241,18 @@ import { TestContext, ProdContext } from '../Context';
                     const tokenNameinDrupal=tokenObj.attributes.field_tokenname
                     const tokenAliasinDrupal=tokenObj.attributes.field_alias
                     
-                    
+                    /*
                     if (tokenChain===chainName){
                       setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
                       // filterTokenList4Pass.push(tokenIdinDrupal)
                       console.log(tokenNameinDrupal)
                       return tokenNameinDrupal;
                     }
-                    return null;
+                    */
+                    setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
+                    return tokenNameinDrupal;
+
+                    // return null;
                   }).filter(Boolean) ;
                   console.log(filterTokenList4Pass)
                   
@@ -264,9 +268,11 @@ import { TestContext, ProdContext } from '../Context';
                   const finalProdlist=[];
                   arr.forEach((prod) => {
                     // console.log(prod)
-                    if (prod.chain===chainName){
-                      finalProdlist.push(prod)
-                    }
+                    
+                    // if (prod.chain===chainName){
+                    //  finalProdlist.push(prod)
+                    // }
+                    finalProdlist.push(prod)
                   }) 
                   
                   // Default sort by latest update
