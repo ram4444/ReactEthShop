@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Stack } from '@mui/material';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
@@ -31,21 +32,23 @@ ConnectSolana.propTypes = {
     chain: PropTypes.string,
     // currencyName: PropTypes.string,
     // product: PropTypes.object,
-    // handleClosedModal: PropTypes.func,
-    // handleUnderTx: PropTypes.func,
+    handleToggle: PropTypes.func,
+    handleUnderTx: PropTypes.func,
+    handleOnSuccess: PropTypes.func,
+    handleOnFail: PropTypes.func,
   };
 
-export default function ConnectSolana({amountTransfer, toAddr, chain}) {
+export default function ConnectSolana({amountTransfer, toAddr, chain, handleToggle, handleUnderTx, handleOnSuccess, handleOnFail}) {
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
     let network = WalletAdapterNetwork.Devnet;
     switch (chain) {
-        case 'Devnet':
+        case 'Solana Devnet':
             network = WalletAdapterNetwork.Devnet;
             break;
-        case 'Testnet':
+        case 'Solana Testnet':
             network = WalletAdapterNetwork.Testnet;
             break;
-        case 'Mainnet':
+        case 'Solana Mainnet':
             network = WalletAdapterNetwork.Mainnet;
             break;
         default:
@@ -78,20 +81,30 @@ export default function ConnectSolana({amountTransfer, toAddr, chain}) {
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
                 
-                <WalletDialogProvider>
-                    <WalletMultiButton />
-                    {/* 
-                    <WalletDisconnectButton />
+                <Stack spacing={1}>
+                    <WalletDialogProvider>
+                        <WalletMultiButton />
+                        {/* 
+                        <WalletDisconnectButton />
+                        */}
+                    </WalletDialogProvider>
+                    
+                    {/*
+                    <WalletModalProvider>
+                        <WalletMultiButton />
+                        <WalletDisconnectButton />
+                    </WalletModalProvider>
                     */}
-                </WalletDialogProvider>
-                
-                {/*
-                <WalletModalProvider>
-                    <WalletMultiButton />
-                    <WalletDisconnectButton />
-                </WalletModalProvider>
-                */}
-                <BuywithSolana amountTransfer={amountTransfer} toAddr={toAddr}/> 
+                    <BuywithSolana 
+                        amountTransfer={amountTransfer} 
+                        toAddr={toAddr}
+                        chain={chain}
+                        handleToggle={handleToggle}
+                        handleUnderTx={handleUnderTx}
+                        handleOnSuccess={handleOnSuccess}
+                        handleOnFail={handleOnFail}
+                    /> 
+                </Stack>
             </WalletProvider>
         </ConnectionProvider>
         </>
