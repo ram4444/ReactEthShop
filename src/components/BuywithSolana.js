@@ -2,9 +2,8 @@ import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet,   } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram, Transaction } from '@solana/web3.js';
 import React, { useCallback } from 'react';
-import { Button, Backdrop, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CircularProgress, Stack, Typography} from '@mui/material';
+import { Button} from '@mui/material';
 import PropTypes from 'prop-types';
-import Base58 from 'base-58';
 
 BuywithSolana.propTypes = {
   amountTransfer: PropTypes.number,
