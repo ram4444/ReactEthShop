@@ -144,6 +144,7 @@ export default function PartiesHome() {
           {"filename": responsePhoto.data.included[0].attributes.name,
           "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
           "chainName": responsePhoto.data.included[1].attributes.field_chain,
+          "alias": responsePhoto.data.included[1].attributes.field_alias,
           "cryptoName": responsePhoto.data.included[1].attributes.field_tokenname});
     })
       .then((obj) => ({
@@ -160,6 +161,7 @@ export default function PartiesHome() {
           currency: obj.cryptoName,
           contractAddr: obj.contractAddr,
           chain: obj.chainName,
+          alias: obj.alias,
           dpshift: product.attributes.field_dptshift,
           email: product.attributes.field_email,
           phone: product.attributes.field_phone,
@@ -382,15 +384,15 @@ export default function PartiesHome() {
                   console.log(tokenChain)
                   console.log(chainName)
                   console.log(tokenNameinDrupal)
-                  if (tokenChain===chainName){
+                  // if (tokenChain===chainName){
                     console.log(filterTokenList)
                     // setfilterTokenList(oldArray => [...oldArray, tokenNameinDrupal])
                     // filterTokenList4Pass.push(tokenIdinDrupal)
                     arrFilterTokenList.push(tokenNameinDrupal)
                     console.log(tokenNameinDrupal)
                     return tokenNameinDrupal;
-                  }
-                  return null;
+                  // }
+                  // return null;
                 }).filter(Boolean) ;
                 
                 console.log(filterTokenList4Pass)
@@ -407,9 +409,10 @@ export default function PartiesHome() {
                 const finalProdlist=[];
                 arr.forEach((prod) => {
                   // console.log(prod)
-                  if (prod.chain===chainName){
-                    finalProdlist.push(prod)
-                  }
+                  // if (prod.chain===chainName){
+                  //  finalProdlist.push(prod)
+                  // }
+                  finalProdlist.push(prod)
                 }) 
                 
                 // Default sort by latest update
