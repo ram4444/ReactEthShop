@@ -11,18 +11,19 @@ import {
     SolletWalletAdapter,
     TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-/*
+
 import {
     WalletDialogProvider,
     WalletDisconnectButton,
     WalletMultiButton
  } from '@solana/wallet-adapter-material-ui';
- */
+/*
  import {
     WalletModalProvider,
     WalletDisconnectButton,
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
+*/
 import { clusterApiUrl } from '@solana/web3.js';
 import { createDefaultAuthorizationResultCache, SolanaMobileWalletAdapter } from '@solana-mobile/wallet-adapter-mobile';
 import PropTypes from 'prop-types';
@@ -92,20 +93,18 @@ export default function ConnectSolana({amountTransfer, toAddr, chain, handleTogg
             <WalletProvider wallets={wallets} autoConnect>
                 
                 <Stack spacing={1}>
-                    {/*
+                    
                     <WalletDialogProvider>
                         <WalletMultiButton />
-                         
                         <WalletDisconnectButton />
-                        
                     </WalletDialogProvider>
-    */}
                     
+                    {/*
                     <WalletModalProvider>
                         <WalletMultiButton />
                         <WalletDisconnectButton />
                     </WalletModalProvider>
-                    
+                    */}
                     <BuywithSolana 
                         amountTransfer={amountTransfer} 
                         toAddr={toAddr}
