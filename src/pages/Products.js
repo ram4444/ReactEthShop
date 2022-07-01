@@ -48,6 +48,7 @@ import { TestContext, ProdContext } from '../Context';
             {"filename": responsePhoto.data.included[0].attributes.name,
             "contractAddr": responsePhoto.data.included[1].attributes.field_contractaddress,
             "chainName": responsePhoto.data.included[1].attributes.field_chain,
+            "alias": responsePhoto.data.included[1].attributes.field_alias,
             "cryptoName": responsePhoto.data.included[1].attributes.field_tokenname});
       })
         .then((obj) => ({
@@ -64,6 +65,7 @@ import { TestContext, ProdContext } from '../Context';
             currency: obj.cryptoName,
             contractAddr: obj.contractAddr,
             chain: obj.chainName,
+            alias: obj.alias,
             dpshift: product.attributes.field_dptshift,
             email: product.attributes.field_email,
             phone: product.attributes.field_phone,
