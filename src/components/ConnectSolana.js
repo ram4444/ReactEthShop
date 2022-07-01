@@ -84,9 +84,9 @@ export default function ConnectSolana({amountTransfer, toAddr, chain, handleTogg
                 <Stack spacing={1}>
                     <WalletDialogProvider>
                         <WalletMultiButton />
-                        {/* 
+                         
                         <WalletDisconnectButton />
-                        */}
+                        
                     </WalletDialogProvider>
                     
                     {/*
