@@ -64,7 +64,10 @@ export default function ConnectSolana({amountTransfer, toAddr, chain, handleTogg
     const wallets = useMemo(
         () => [
             new SolanaMobileWalletAdapter({
-                appIdentity: { name: 'Solana Wallet Adapter App' },
+                appIdentity: { 
+                    name: 'MkPlace Demo Site',
+                    uri: 'http://ethshopdemo.dionysbiz.xyz:8080/'
+                },
                 authorizationResultCache: createDefaultAuthorizationResultCache(),
             }),
             new PhantomWalletAdapter(),
