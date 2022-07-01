@@ -44,7 +44,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, coverFilename, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, dpshift, description } = product;
+  const { name, cover, coverFilename, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, alias, dpshift, description } = product;
   // console.log(currency)
 
   const [open, setOpen] = React.useState(false);
@@ -129,8 +129,15 @@ export default function ShopProductCard({ product }) {
         </Link>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
+          {/* <ColorPreview colors={colors} /> */}
+          <Typography variant="caption">
+            {chain}
+          </Typography>
           <Typography variant="subtitle1">
+            {alias}
+          </Typography>
+
+          <Typography variant="subtitle2">
             <Typography
               component="span"
               variant="body1"
