@@ -3,7 +3,7 @@ import React from 'react';
 export const drupalHostname = {
   LOCAL: 'localhost',
   docker: 'containerHost',
-  ext: 'mstdatalite.dionysbiz.xyz'
+  ext: 'mstdatalite.dionysbiz.xyz:8080'
 };
 
 export const netId = {

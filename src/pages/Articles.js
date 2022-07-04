@@ -32,7 +32,7 @@ export default function Articles() {
   function promiseHttp() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article`,
+      url: `https://${drupalHostname}/jsonapi/node/article`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -56,7 +56,7 @@ export default function Articles() {
     console.log(article)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
+      url: `https://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -76,7 +76,7 @@ export default function Articles() {
     })
       .then((obj) => ({
           id: article.id,
-          cover: `http://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
+          cover: `https://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
           title: article.attributes.title,
           summary: article.attributes.body.summary,
           body: article.attributes.body.value,

@@ -58,7 +58,7 @@ export default function HomeApp() {
   function promiseBanner() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/banner?sort=-created&page[limit]=1&include=field_bigimage`,
+      url: `https://${drupalHostname}/jsonapi/node/banner?sort=-created&page[limit]=1&include=field_bigimage`,
       responseType: 'json',
       // crossDomain: true,
 
@@ -83,7 +83,7 @@ export default function HomeApp() {
   function promiseHttpArticles() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article?sort=-created`,
+      url: `https://${drupalHostname}/jsonapi/node/article?sort=-created`,
       responseType: 'json',
       // crossDomain: true,
 
@@ -108,7 +108,7 @@ export default function HomeApp() {
     console.log(article)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
+      url: `https://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -128,7 +128,7 @@ export default function HomeApp() {
     })
       .then((obj) => ({
           id: article.id,
-          cover: `http://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
+          cover: `https://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
           title: article.attributes.title,
           summary: article.attributes.body.summary,
           body: article.attributes.body.value,
@@ -150,7 +150,7 @@ export default function HomeApp() {
   function promiseHttpUser() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/user/user?sort=-created&page[limit]=4&filter[name-filter][condition][path]=name&filter[name-filter][condition][operator]=<>&filter[name-filter][condition][value][1]=`,
+      url: `https://${drupalHostname}/jsonapi/user/user?sort=-created&page[limit]=4&filter[name-filter][condition][path]=name&filter[name-filter][condition][operator]=<>&filter[name-filter][condition][value][1]=`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*'}
@@ -174,7 +174,7 @@ export default function HomeApp() {
     console.log(user)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/user/user/${user.id}?include=field_userlogo`,
+      url: `https://${drupalHostname}/jsonapi/user/user/${user.id}?include=field_userlogo`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -210,7 +210,7 @@ export default function HomeApp() {
         }
         return {
           id: user.id,
-          user_picture: `http://${drupalHostname}/sites/default/files/media/Image/userLogo/${obj.filename}`,
+          user_picture: `https://${drupalHostname}/sites/default/files/media/Image/userLogo/${obj.filename}`,
           display_name: displayNamepass,
           createdAt: user.attributes.created,
           introCaption: caption,
@@ -269,7 +269,7 @@ export default function HomeApp() {
       const arr=[]
       let donecount =0;
       const s = prom.data.map((bannerinfo, i ) => {
-        const item = {'text': bannerinfo.attributes.field_bannercaption.value, 'pic': `http://${drupalHostname}/sites/default/files/media/Image/banner/${prom.included[0].attributes.name}`}
+        const item = {'text': bannerinfo.attributes.field_bannercaption.value, 'pic': `https://${drupalHostname}/sites/default/files/media/Image/banner/${prom.included[0].attributes.name}`}
         arr.push(item)
         donecount+=1;
         if (donecount===prom.data.length) {
@@ -291,7 +291,7 @@ export default function HomeApp() {
         <Grid container spacing={3} sx={{ mb: 2 }}>
           {/*
           <BannerCard text='This is time to crypt your money' cover='http://mstdatalite.dionysbiz.xyz/sites/default/files/media/Image/banner/testout%280%29_2.png'/>
-          <BannerCard text='This is time to crypt your money' cover={`http://${drupalHostname}/sites/default/files/media/Image/banner/${bannerList.included[0].attributes.name}`}/>
+          <BannerCard text='This is time to crypt your money' cover={`https://${drupalHostname}/sites/default/files/media/Image/banner/${bannerList.included[0].attributes.name}`}/>
           */}
           { 
             bannerList.map((banner, index) => (

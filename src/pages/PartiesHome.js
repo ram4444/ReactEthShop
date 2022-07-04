@@ -65,7 +65,7 @@ export default function PartiesHome() {
   function promiseHttpArticles(userId) {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article?sort=-created&filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}`,
+      url: `https://${drupalHostname}/jsonapi/node/article?sort=-created&filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -89,7 +89,7 @@ export default function PartiesHome() {
     console.log(article)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
+      url: `https://${drupalHostname}/jsonapi/node/article/${article.id}?include=field_coverimage,uid,field_payment_currency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -109,7 +109,7 @@ export default function PartiesHome() {
     })
       .then((obj) => ({
           id: article.id,
-          cover: `http://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
+          cover: `https://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
           title: article.attributes.title,
           summary: article.attributes.body.summary,
           body: article.attributes.body.value,
@@ -132,7 +132,7 @@ export default function PartiesHome() {
 
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency,uid`,
+      url: `https://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency,uid`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -149,7 +149,7 @@ export default function PartiesHome() {
     })
       .then((obj) => ({
           id: product.id,
-          cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
+          cover: `https://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
           coverFilename: obj.filename,
           name: product.attributes.title,
           // price: _.attributes.price,
@@ -176,7 +176,7 @@ export default function PartiesHome() {
   function promiseHttpProducts(userId) {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/product?sort=-created&filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}`,
+      url: `https://${drupalHostname}/jsonapi/node/product?sort=-created&filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -198,7 +198,7 @@ export default function PartiesHome() {
   function promiseHttpToken() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/taxonomy_term/cryptotoken`,
+      url: `https://${drupalHostname}/jsonapi/taxonomy_term/cryptotoken`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -219,7 +219,7 @@ export default function PartiesHome() {
   function promiseHttpICO(userId) {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/ico?filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}&sort=-created`,
+      url: `https://${drupalHostname}/jsonapi/node/ico?filter[name-filter][condition][path]=uid.id&filter[name-filter][condition][operator]==&filter[name-filter][condition][value][1]=${userId}&sort=-created`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -243,7 +243,7 @@ export default function PartiesHome() {
     console.log(ico)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/node/ico/${ico.id}?include=field_coverimageico,uid,field_icocurrency`,
+      url: `https://${drupalHostname}/jsonapi/node/ico/${ico.id}?include=field_coverimageico,uid,field_icocurrency`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -261,7 +261,7 @@ export default function PartiesHome() {
     })
       .then((obj) => ({
           id: ico.id,
-          cover: `http://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
+          cover: `https://${drupalHostname}/sites/default/files/media/Image/coverPhoto/${obj.filename}`,
           title: ico.attributes.title,
           summary: ico.attributes.body.summary,
           body: ico.attributes.body.value,

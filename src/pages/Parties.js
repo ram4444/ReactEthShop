@@ -32,7 +32,7 @@ export default function Parties() {
   function promiseHttp() {
     return axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/user/user?sort=-created&page[limit]=16&filter[name-filter][condition][path]=name&filter[name-filter][condition][operator]=<>&filter[name-filter][condition][value][1]=`,
+      url: `https://${drupalHostname}/jsonapi/user/user?sort=-created&page[limit]=16&filter[name-filter][condition][path]=name&filter[name-filter][condition][operator]=<>&filter[name-filter][condition][value][1]=`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -56,7 +56,7 @@ export default function Parties() {
     console.log(user)
     const prom = axios({
       method: 'get',
-      url: `http://${drupalHostname}/jsonapi/user/user/${user.id}?include=field_userlogo`,
+      url: `https://${drupalHostname}/jsonapi/user/user/${user.id}?include=field_userlogo`,
       responseType: 'json',
       // crossDomain: true,
       headers: { 'Access-Control-Allow-Origin': '*' }
@@ -92,7 +92,7 @@ export default function Parties() {
         }
         return {
           id: user.id,
-          user_picture: `http://${drupalHostname}/sites/default/files/media/Image/userLogo/${obj.filename}`,
+          user_picture: `https://${drupalHostname}/sites/default/files/media/Image/userLogo/${obj.filename}`,
           display_name: displayNamepass,
           createdAt: user.attributes.created,
           introCaption: caption,

@@ -36,7 +36,7 @@ import { TestContext, ProdContext } from '../Context';
 
       const prom = axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency,uid`,
+        url: `https://${drupalHostname}/jsonapi/node/product/${product.id}?include=field_product_photo,field_currency,uid`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
@@ -53,7 +53,7 @@ import { TestContext, ProdContext } from '../Context';
       })
         .then((obj) => ({
             id: product.id,
-            cover: `http://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
+            cover: `https://${drupalHostname}/sites/default/files/media/Image/productPhoto/${obj.filename}`,
             coverFilename: obj.filename,
             name: product.attributes.title,
             // price: _.attributes.price,
@@ -80,7 +80,7 @@ import { TestContext, ProdContext } from '../Context';
     function promiseHttp() {
       return axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/node/product?sort=-created`,
+        url: `https://${drupalHostname}/jsonapi/node/product?sort=-created`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
@@ -102,7 +102,7 @@ import { TestContext, ProdContext } from '../Context';
     function promiseHttpChain() {
       return axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/taxonomy_term/chain_network`,
+        url: `https://${drupalHostname}/jsonapi/taxonomy_term/chain_network`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }
@@ -123,7 +123,7 @@ import { TestContext, ProdContext } from '../Context';
     function promiseHttpToken() {
       return axios({
         method: 'get',
-        url: `http://${drupalHostname}/jsonapi/taxonomy_term/cryptotoken`,
+        url: `https://${drupalHostname}/jsonapi/taxonomy_term/cryptotoken`,
         responseType: 'json',
         // crossDomain: true,
         headers: { 'Access-Control-Allow-Origin': '*' }

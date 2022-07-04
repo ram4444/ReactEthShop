@@ -113,7 +113,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             </Typography>
           </Box>
 
-          <Button href={`http://${drupalHostname}/contact`} target="_blank" variant="contained">
+          <Button href={`https://${drupalHostname}/contact`} target="_blank" variant="contained">
             Contact Us
           </Button>
         </Stack>
