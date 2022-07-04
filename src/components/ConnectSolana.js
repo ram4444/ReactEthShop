@@ -74,7 +74,7 @@ export default function ConnectSolana({amountTransfer, toAddr, chain, handleTogg
             new SolanaMobileWalletAdapter({
                 appIdentity: { 
                     name: 'MkPlace Demo Site',
-                    uri: 'http://ethshopdemo.dionysbiz.xyz:8080/'
+                    uri: 'https://ethshopdemo.dionysbiz.xyz'
                 },
                 authorizationResultCache: createDefaultAuthorizationResultCache(),
             }),
