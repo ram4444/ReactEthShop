@@ -606,7 +606,7 @@ export default function PartiesHome({langPack}) {
         <Grid container spacing={3} sx={{ mb: 2 }}>
             <Grid key='Title' item xs={3} sm={6} md={9}>
               <Typography variant="h4" gutterBottom width='30%'>
-                {langPack.artists_Hdr}
+                {langPack.partiesHome_articlesHdr}
               </Typography>
             </Grid>
 
