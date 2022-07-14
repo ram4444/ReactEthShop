@@ -72,7 +72,7 @@ const zhHK = {
   userInfoForm_slogan1: '從此你再也不需要花費時間在帳號註冊上',
   userInfoForm_slogan2: '只要連接加密錢包',
   userInfoForm_Hdr: '請直接輸入電郵及送貨地址',
-  userInfoForm_caption: '毋須任何註冊',
+  userInfoForm_caption: '便毋須任何註冊',
   userInfoForm_Lbl_username: '用戶名稱/收件人',
   userInfoForm_Lbl_email: '電郵',
   userInfoForm_Lbl_addr1: '送貨地址 1',
