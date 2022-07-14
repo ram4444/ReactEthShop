@@ -17,6 +17,22 @@ const LANGS = [
   },
   {
     value: 'zhHK',
+    label: 'Trad. Chinese',
+    icon: '/static/icons/ic_flag_hk.svg',
+  },
+  /*
+  {
+    value: 'cn',
+    label: 'Simp. Chinese',
+    icon: '/static/icons/ic_flag_cn.svg',
+  },
+  {
+    value: 'jp',
+    label: 'Japanese',
+    icon: '/static/icons/ic_flag_jp.svg',
+  },
+  {
+    value: 'de',
     label: 'German',
     icon: '/static/icons/ic_flag_de.svg',
   },
@@ -25,6 +41,12 @@ const LANGS = [
     label: 'French',
     icon: '/static/icons/ic_flag_fr.svg',
   },
+  {
+    value: 'sp',
+    label: 'Spainish',
+    icon: '/static/icons/ic_flag_sp.svg',
+  },
+  */
 ];
 
 // ----------------------------------------------------------------------
