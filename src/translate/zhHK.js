@@ -10,7 +10,7 @@ const zhHK = {
   navSide_BuyerDashBoard: '購買記錄',
   navSide_SellerDashBoard: '銷售記錄',
   navSide_QuestionContact1: '有問題?',
-  navSide_QuestionContact2: '或有意合作',
+  navSide_QuestionContact2: '或有意成為合作夥伴',
   navSide_QuestionContact3: '聯絡我們',
   navSide_ShipInfoWelcomeBack: '歡迎回來!',
   navSide_ShipInfoInput1: '按此',
