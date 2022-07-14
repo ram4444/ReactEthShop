@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
+import Cookies from 'js-cookie';
 // material
 import { alpha } from '@mui/material/styles';
 import { Box, MenuItem, Stack, IconButton } from '@mui/material';
@@ -57,15 +57,31 @@ LanguagePopover.propTypes = {
 export default function LanguagePopover({ onChangeLang }) {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState(0);
 
   const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (lang) => {
-    onChangeLang(lang)
+  const handleClose = (lang, index) => {
+    console.log(index)
+    if (index !== 'backdropClick') {
+      onChangeLang(lang)
+      setCurrentLang(index)
+      Cookies.set('langIndex',index);
+    }
     setOpen(false);
+    
   };
+
+  useEffect(() => {
+    if (Cookies.get('langIndex')) {
+      const i = Cookies.get('langIndex')
+      setCurrentLang(i)
+      onChangeLang(LANGS[i].value)
+  }})
+  
+  
 
   return (
     <>
@@ -81,7 +97,7 @@ export default function LanguagePopover({ onChangeLang }) {
           }),
         }}
       >
-        <img src={LANGS[0].icon} alt={LANGS[0].label} />
+        <img src={LANGS[currentLang].icon} alt={LANGS[currentLang].label} />
       </IconButton>
 
       <MenuPopover
@@ -96,8 +112,8 @@ export default function LanguagePopover({ onChangeLang }) {
         }}
       >
         <Stack spacing={0.75}>
-          {LANGS.map((option) => (
-            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => handleClose(option.value)}>
+          {LANGS.map((option, index) => (
+            <MenuItem key={option.value} selected={option.value === LANGS[currentLang].value} onClick={() => handleClose(option.value, index)}>
               <Box component="img" alt={option.label} src={option.icon} sx={{ width: 28, mr: 2 }} />
 
               {option.label}
