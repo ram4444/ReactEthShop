@@ -319,7 +319,7 @@ export default function NotificationsPopover({langPack}) {
 
 NotificationItem.propTypes = {
   notification: PropTypes.shape({
-    createdAt: PropTypes.instanceOf(Date),
+    createdAt: PropTypes.string,
     id: PropTypes.string,
     isUnRead: PropTypes.bool,
     title: PropTypes.string,
@@ -396,8 +396,10 @@ function NotificationItem({ notification }) {
               color: 'text.disabled',
             }}
           >
-            <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {fToNow(notification.createdAt)}
+            <>
+              <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
+              {fToNow(notification.createdAt)}
+            </>
           </Typography>
         }
       />
