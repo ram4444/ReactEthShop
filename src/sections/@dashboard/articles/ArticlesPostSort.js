@@ -45,7 +45,7 @@ export default function ArticlesPostSort({applySort, langPack}) {
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
       >
-        Sort By:&nbsp;
+        {langPack.articlesSort_title}:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {currentSort}
         </Typography>

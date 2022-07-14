@@ -40,6 +40,7 @@ const en = {
   productSort_byNameDesc: 'Name Desc',
   articles_title: 'Crypto shop: Articles',
   articles_Hdr: 'Articles',
+  articlesSort_title: 'Sort By:',
   articlesSort_byNewest: 'Newest',
   articlesSort_byAuthor: 'Author',
   articlesSort_byAuthorDesc: 'Author Desc',
