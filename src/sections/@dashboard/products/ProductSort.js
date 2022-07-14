@@ -45,7 +45,7 @@ export default function ShopProductSort({applySort, langPack}) {
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
       >
-        {langPack.productSort_title}&nbsp;
+        {langPack.productSort_title}:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {currentSort}
         </Typography>

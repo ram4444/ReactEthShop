@@ -45,7 +45,7 @@ export default function PartiesSort({applySort, langPack}) {
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
       >
-        {langPack.artistsSort_title}&nbsp;
+        {langPack.artistsSort_title}:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {currentSort}
         </Typography>
