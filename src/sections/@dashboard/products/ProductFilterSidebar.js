@@ -55,10 +55,11 @@ ShopFilterSidebar.propTypes = {
   onCloseFilter: PropTypes.func,
   applyFilter: PropTypes.func,
   filterTokenList: PropTypes.array,
-  displayTokenList: PropTypes.object
+  displayTokenList: PropTypes.object,
+  langPack: PropTypes.object
 };
 
-export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, applyFilter, filterTokenList, displayTokenList }) {
+export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseFilter, applyFilter, filterTokenList, displayTokenList, langPack}) {
 
   const handleChange = (event) => {
     // console.log(event.target.value )
@@ -71,7 +72,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon="ic:round-filter-list" />} onClick={onOpenFilter}>
-        Filters&nbsp;
+        {langPack.productFilter_button}&nbsp;
       </Button>
 
       <Drawer
@@ -84,7 +85,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
           <Typography variant="subtitle1" sx={{ ml: 1 }}>
-            Filters
+            {langPack.productFilter_title}
           </Typography>
           <IconButton onClick={onCloseFilter}>
             <Iconify icon="eva:close-fill" width={20} height={20} />
@@ -97,7 +98,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
           <Stack spacing={3} sx={{ p: 3 }}>
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Token
+                {langPack.productFilter_token}
               </Typography>
               <FormGroup>
                 {filterTokenList.map((item) => (
@@ -135,7 +136,7 @@ export default function ShopFilterSidebar({ isOpenFilter, onOpenFilter, onCloseF
             variant="outlined"
             startIcon={<Iconify icon="ic:round-clear-all" />}
           >
-            Clear All
+            {langPack.productFilter_clearAll}
           </Button>
         </Box>
       </Drawer>

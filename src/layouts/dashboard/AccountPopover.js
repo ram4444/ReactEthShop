@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
@@ -10,24 +11,13 @@ import ConnectMetaMask from '../../components/ConnectMetaMask';
 // mocks_
 import account from '../../_mock/account';
 
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-    linkTo: '/',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-    linkTo: '/form/currentUserInfo',
-  },
-];
 
 // ----------------------------------------------------------------------
+AccountPopover.propTypes = {
+  langPack: PropTypes.object
+};
 
-export default function AccountPopover() {
+export default function AccountPopover({langPack}) {
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -45,6 +35,19 @@ export default function AccountPopover() {
     console.log(fromChild);
     setNetId(fromChild);
   };
+
+  const MENU_OPTIONS = [
+    {
+      label: langPack.acctPop_home,
+      icon: 'eva:home-fill',
+      linkTo: '/',
+    },
+    {
+      label: langPack.acctPop_setting,
+      icon: 'eva:settings-2-fill',
+      linkTo: '/form/currentUserInfo',
+    },
+  ];
 
   return (
     <>
@@ -85,7 +88,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {Cookies.get('username')? Cookies.get('username'):'New User' }
+            {Cookies.get('username')? Cookies.get('username'):langPack.acctPop_newUser }
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
           {Cookies.get('email')? Cookies.get('email'):'' }

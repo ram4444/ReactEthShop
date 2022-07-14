@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { faker } from '@faker-js/faker';
+import PropTypes from 'prop-types';
+// import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme,styled } from '@mui/material/styles';
 import { Grid, Container, Typography, Box, Divider } from '@mui/material';
@@ -20,6 +21,7 @@ import {
 } from '../sections/@dashboard/home';
 import { ArticlesPostCard, ArticlesPostsSort, ArticlesPostsSearch} from '../sections/@dashboard/articles';
 import { TestContext, ProdContext } from '../Context';
+
 
 // ---------------Style--------------------------------------------------
 
@@ -42,13 +44,16 @@ const BannerImgStyleSmall = styled('img')({
 
 
 // ----------------------------------------------------------------------
+HomeApp.propTypes = {
+  langPack: PropTypes.object
+};
 
-export default function HomeApp() {
+export default function HomeApp({langPack}) {
   const theme = useTheme();
 
   const [displayArticleList, setDisplayArticleList] = useState([]);
   const [allArticleList, setAllArticleList] = useState([]);
-  const [displayUserList, setDisplayUserList] = useState([]);
+  const [displayUserList, setDisplayUserList] =  useState([]);
   const [bannerList, setBannerList] = useState([]);
   const [allUserList, setAllUserList] = useState([]);
 
@@ -282,10 +287,10 @@ export default function HomeApp() {
   }, []);
 
   return (
-    <Page title="Home Page">
+    <Page title={langPack.home_Title}>
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome to Crypto Marketplace
+          {langPack.home_WelcomeMsg}
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
@@ -345,7 +350,7 @@ export default function HomeApp() {
         <Grid container spacing={3} sx={{ mt: 1 }}>
           { 
             allArticleList.map((post, index) => (
-              <ArticlesPostCard key={post.id} post={post} index={index} />
+              <ArticlesPostCard key={post.id} post={post} index={index} langPack={langPack}/>
             ))}
         </Grid>
 

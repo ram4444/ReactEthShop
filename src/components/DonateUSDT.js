@@ -91,19 +91,18 @@ function promiseHttpAbi(chain, contractAddr) {
     
 }
 
-const ONBOARD_TEXT = 'Donate';
-
 // const testPayableContract = web3.eth.connect()
 DonateUSDT.propTypes = {
   amountTransfer: PropTypes.string,
   toAddr: PropTypes.string,
   contractAddr: PropTypes.string,
   chain: PropTypes.string,
-  currencyName: PropTypes.string
+  currencyName: PropTypes.string,
+  langPack: PropTypes.object,
 };
 
-function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}) {
-  const [buttonText] = React.useState(ONBOARD_TEXT);
+function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName, langPack}) {
+  const [buttonText] = React.useState(langPack.donationbar_button);
   const [isDisabled] = React.useState(false);
   const [openLoadScreen, setOpenLoadScreen] = React.useState(false);
   const [openLoadCircle, setOpenLoadCircle] = React.useState(true);
@@ -290,10 +289,10 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
           <Iconify icon="mdi:check" 
             sx={{width: 32, height: 32, margin: 'auto'}} />
           <Typography variant="subtitle2" align='center'>
-              Transaction Success
+              {langPack.backDrop_transactionSuccess}
           </Typography>
           <Typography variant="subtitle2" align='center'>
-              Press to continue
+              {langPack.backDrop_caption}
           </Typography>
         </Stack>
         
@@ -301,10 +300,10 @@ function DonateUSDT({ amountTransfer, toAddr, contractAddr, chain, currencyName}
           <Iconify icon="codicon:error"
             sx={{width: 32, height: 32, margin: 'auto'}} />
           <Typography variant="subtitle2" >
-              Transaction Fail
+              {langPack.backDrop_transactionFail}
           </Typography>
           <Typography variant="subtitle2" align='center'>
-              Press to continue
+              {langPack.backDrop_caption}
           </Typography>
         </Stack>
       </Stack>

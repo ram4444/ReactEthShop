@@ -38,9 +38,10 @@ BuyRecordsUpdate.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   list: PropTypes.array.isRequired,
+  langPack: PropTypes.object
 };
 
-export default function BuyRecordsUpdate({ title, subheader, list, ...other }) {
+export default function BuyRecordsUpdate({ title, subheader, list, langPack, ...other }) {
 
   return (
     <Card {...other}>
@@ -58,7 +59,7 @@ export default function BuyRecordsUpdate({ title, subheader, list, ...other }) {
 
       <Box sx={{ p: 2, textAlign: 'right' }}>
         <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
-          View all
+          {langPack.buyerDashboard_viewAll}
         </Button>
       </Box>
     </Card>

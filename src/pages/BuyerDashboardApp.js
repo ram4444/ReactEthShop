@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import Web3 from 'web3';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -18,7 +19,11 @@ import { queryOrdersByOrderer } from '../utils/awsClient'
 // ----------------------------------------------------------------------
 const App = new Web3()
 
-export default function BuyerDashboardApp() {
+BuyerDashboardApp.propTypes = {
+  langPack: PropTypes.object
+};
+
+export default function BuyerDashboardApp({langPack}) {
   const [orderList, setOrderList] = React.useState([]);
   const [isWalletFound, setWalletFound] = useState(false);
   
@@ -82,12 +87,12 @@ export default function BuyerDashboardApp() {
   const theme = useTheme();
 
   return (
-    <Page title="Dashboard">
+    <Page title={langPack.buyerDashboard_title}>
       <Container maxWidth="xl">
       {isWalletFound && (
         <>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Buyer Dashboard
+          {langPack.buyerDashboard_Hdr}
         </Typography>
 
         
@@ -95,7 +100,7 @@ export default function BuyerDashboardApp() {
 
           <Grid item xs={12} md={6} lg={8}>
             <BuyRecordsUpdate
-              title="Latest Orders"
+              title={langPack.buyerDashboard_latestOrder}
               list={orderList.map((_, index) => ({
                 id: _.order_id,
                 title: _.product_name.S,
@@ -110,6 +115,7 @@ export default function BuyerDashboardApp() {
                 txHash: _.transactionHash.S,
                 postedAt: faker.date.recent(),
               }))}
+              langPack={langPack}
             />
           </Grid>
 
@@ -119,10 +125,10 @@ export default function BuyerDashboardApp() {
         {!isWalletFound && (
           <>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            Wallet not found!
+            {langPack.buyerDashboard_walletNotFound1}
           </Typography>
           <Typography variant="h5" sx={{ mb: 5 }}>
-            Pleast connect the wallet to show your purchase record
+            {langPack.buyerDashboard_walletNotFound2}
           </Typography>
           </>
         )}

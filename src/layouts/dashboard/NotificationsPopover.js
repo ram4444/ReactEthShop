@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
@@ -84,7 +85,11 @@ const NOTIFICATIONS = [
 const App = new Web3()
 let web3
 
-export default function NotificationsPopover() {
+NotificationsPopover.propTypes = {
+  langPack: PropTypes.object
+};
+
+export default function NotificationsPopover({langPack}) {
   const anchorRef = useRef(null);
 
   const [isWalletFound, setWalletFound] = useState(false);
@@ -253,9 +258,9 @@ export default function NotificationsPopover() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="subtitle1">{langPack.notification_barTitle}</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              {langPack.notification_unread1} {totalUnRead} {langPack.notification_unread2}
             </Typography>
           </Box>
 
@@ -275,7 +280,7 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                {langPack.notification_barNew}
               </ListSubheader>
             }
           >
@@ -288,7 +293,7 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
+                {langPack.notification_barB4}
               </ListSubheader>
             }
           >
@@ -302,7 +307,7 @@ export default function NotificationsPopover() {
 
         <Box sx={{ p: 1 }}>
           <Button fullWidth disableRipple>
-            View All
+          {langPack.notification_barViewAll}
           </Button>
         </Box>
       </MenuPopover>

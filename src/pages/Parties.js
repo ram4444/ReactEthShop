@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { Grid, Button, Container, Stack, Typography, Box } from '@mui/material';
@@ -20,7 +21,11 @@ const SORT_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function Parties() {
+Parties.propTypes = {
+  langPack: PropTypes.object
+};
+
+export default function Parties({langPack}) {
 
   const context = useContext(TestContext);
   const { drupalHostname } = context;
@@ -159,13 +164,13 @@ export default function Parties() {
   }
   
   return (
-    <Page title="Crypto shop: Parties">
+    <Page title={langPack.artists_title}>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Grid container spacing={3} sx={{ mb: 2 }}>
             <Grid key='Title' item xs={3} sm={6} md={9}>
               <Typography variant="h4" gutterBottom width='30%'>
-                Artists
+                {langPack.artists_Hdr}
               </Typography>
             </Grid>
 
@@ -183,6 +188,7 @@ export default function Parties() {
                 */}
                 <PartiesSort
                   applySort={handleApplySort} 
+                  langPack={langPack}
                 />
               </Box>
             </Grid>

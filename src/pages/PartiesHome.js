@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 // material
@@ -31,7 +32,11 @@ const initialOptionsSandbox = {
 
 // ----------------------------------------------------------------------
 
-export default function PartiesHome() {
+PartiesHome.propTypes = {
+  langPack: PropTypes.object
+};
+
+export default function PartiesHome({langPack}) {
 
   const context = useContext(TestContext);
   const { drupalHostname } = context;
@@ -579,12 +584,12 @@ export default function PartiesHome() {
   }
   
   return (
-    <Page title="Artist Home">
+    <Page title={langPack.partiesHome_title}>
 
       <Container sx={{ mb: 5 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Latest ICO
+            {langPack.ico_Hdr}
           </Typography>
         </Stack>
 
@@ -601,7 +606,7 @@ export default function PartiesHome() {
         <Grid container spacing={3} sx={{ mb: 2 }}>
             <Grid key='Title' item xs={3} sm={6} md={9}>
               <Typography variant="h4" gutterBottom width='30%'>
-                Articles
+                {langPack.artists_Hdr}
               </Typography>
             </Grid>
 
@@ -619,6 +624,7 @@ export default function PartiesHome() {
                 */}
                 <ArticlesPostsSort
                   applySort={handleApplySortArticles} 
+                  langPack={langPack}
                 />
               </Box>
             </Grid>
@@ -628,7 +634,7 @@ export default function PartiesHome() {
         <Grid container spacing={3}>
           { 
             displayArticleList.map((post, index) => (
-            <ArticlesPostCard key={post.id} post={post} index={index} />
+            <ArticlesPostCard key={post.id} post={post} index={index} langPack={langPack}/>
             ))}
         </Grid>
       </Container>
@@ -638,14 +644,14 @@ export default function PartiesHome() {
       <Container sx={{ mt: 5 }}>
         {!isWalletFound && (
         <Typography variant="caption"  width='100%'>
-          Please connect your wallet to enable the purchase function  
+          {langPack.product_walletNotFound}
         </Typography>
         )}
 
         <Grid container spacing={3} sx={{ mb: 2 }}>
           <Grid key='Title' item xs={3} sm={6} md={9}>
             <Typography variant="h4" gutterBottom width='15%'>
-              Products
+              {langPack.product_Hdr}
             </Typography>
           </Grid>
 
@@ -658,14 +664,16 @@ export default function PartiesHome() {
                 applyFilter={handleApplyProductFilter}
                 filterTokenList={filterTokenList}
                 displayTokenList={displayTokenList}
+                langPack={langPack}
               />
               <ProductSort
                 applySort={handleApplyProductSort} 
+                langPack={langPack}
               />
             </Box>
           </Grid>
         </Grid>
-        <ProductList products={displayProductList} />
+        <ProductList products={displayProductList} langPack={langPack}/>
       </Container>
     </Page>
   );

@@ -188,12 +188,13 @@ SendIcoCrypto.propTypes = {
   currencyName: PropTypes.string,
   product: PropTypes.object,
   handleClosedModal: PropTypes.func,
+  langPack: PropTypes.object,
 };
 
 let deliveryType;
 
 // No longer in used
-function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal}) {
+function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal, langPack}) {
   console.log(product.deliveryTypeList)
   
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
@@ -432,10 +433,10 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               <Iconify icon="mdi:check" 
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" align='center'>
-                  Transaction Success
+                  {langPack.backDrop_transactionSuccess}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                  {langPack.backDrop_caption}
               </Typography>
             </Stack>
             
@@ -443,10 +444,10 @@ function SendIcoCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               <Iconify icon="codicon:error"
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" >
-                  Transaction Fail
+                  {langPack.backDrop_transactionFail}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                  {langPack.backDrop_caption}
               </Typography>
             </Stack>
           </Stack>

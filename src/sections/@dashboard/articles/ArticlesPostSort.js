@@ -7,18 +7,12 @@ import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-const SORT_BY_OPTIONS = [
-  // { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'author', label: 'Author' },
-  { value: 'author_desc', label: 'Author Desc' }
-];
-
 ArticlesPostSort.propTypes = {
   applySort: PropTypes.func,
+  langPack: PropTypes.object
 };
 
-export default function ArticlesPostSort({applySort}) {
+export default function ArticlesPostSort({applySort, langPack}) {
   const [open, setOpen] = useState(null);
   const [currentSort, setCurrentSort] = useState('newest');
 
@@ -35,6 +29,13 @@ export default function ArticlesPostSort({applySort}) {
     applySort(v)
     handleClose()
   }
+
+  const SORT_BY_OPTIONS = [
+    // { value: 'featured', label: 'Featured' },
+    { value: 'newest', label: (langPack.articlesSort_byNewest) },
+    { value: 'author', label: (langPack.articlesSort_byAuthor) },
+    { value: 'author_desc', label: (langPack.articlesSort_byAuthorDesc) }
+  ];
 
   return (
     <>

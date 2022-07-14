@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -53,8 +54,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+Login.propTypes = {
+  langPack: PropTypes.object
+};
 
-export default function Login() {
+export default function Login({langPack}) {
   const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
@@ -66,7 +70,7 @@ export default function Login() {
 
           {smUp && (
             <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              AND you can change it anytime{' '}
+              {langPack.userInfoForm_slogan2}{' '}
             </Typography>
           )}
         </HeaderStyle>
@@ -74,7 +78,7 @@ export default function Login() {
         {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              You are not necessary to register / login when your wallet is CONNECTED
+              {langPack.userInfoForm_slogan1}
             </Typography>
             <img src="/static/illustrations/illustration_login.png" alt="login" />
           </SectionStyle>
@@ -83,16 +87,16 @@ export default function Login() {
         <Container maxWidth="sm">
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Please enter your email and delivery information directly
+              {langPack.userInfoForm_Hdr}
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>We don't need any registration</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>{langPack.userInfoForm_caption}</Typography>
 
-            <CurrentUserForm />
+            <CurrentUserForm langPack={langPack}/>
 
             {!smUp && (
               <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-                AND you can change it anytime{' '}
+                {langPack.userInfoForm_slogan2}{' '}
               </Typography>
             )}
           </ContentStyle>

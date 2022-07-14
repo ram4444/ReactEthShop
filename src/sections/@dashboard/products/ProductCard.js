@@ -41,9 +41,10 @@ const ModalStyle = {
 
 ShopProductCard.propTypes = {
   product: PropTypes.object,
+  langPack: PropTypes.object
 };
 
-export default function ShopProductCard({ product }) {
+export default function ShopProductCard({ product, langPack }) {
   const { name, cover, coverFilename, price, colors, status, priceSale, receiverAddr, currency, contractAddr, chain, alias, dpshift, description } = product;
   // console.log(currency)
 
@@ -115,7 +116,8 @@ export default function ShopProductCard({ product }) {
                 currencyName={currency} 
                 product={product} 
                 handleClosedModal={handleClose} 
-                handleUnderTx={handleUnderTx}/>
+                handleUnderTx={handleUnderTx}
+                langPack={langPack}/>
             </Box>
           </Modal>
         </div>

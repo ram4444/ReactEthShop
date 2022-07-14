@@ -7,18 +7,12 @@ import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-const SORT_BY_OPTIONS = [
-  // { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'name', label: 'Name' },
-  { value: 'name_desc', label: 'Name Desc' }
-];
-
 ShopProductSort.propTypes = {
   applySort: PropTypes.func,
+  langPack: PropTypes.object
 };
 
-export default function ShopProductSort({applySort}) {
+export default function ShopProductSort({applySort, langPack}) {
   const [open, setOpen] = useState(null);
   const [currentSort, setCurrentSort] = useState('newest');
 
@@ -36,6 +30,13 @@ export default function ShopProductSort({applySort}) {
     handleClose()
   }
 
+  const SORT_BY_OPTIONS = [
+    // { value: 'featured', label: 'Featured' },
+    { value: 'newest', label: (langPack.productSort_byNewest) },
+    { value: 'name', label: (langPack.productSort_byName) },
+    { value: 'name_desc', label: (langPack.productSort_byNameDesc) }
+  ];
+
   return (
     <>
       <Button
@@ -44,7 +45,7 @@ export default function ShopProductSort({applySort}) {
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
       >
-        Sort By:&nbsp;
+        {langPack.productSort_title}&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {currentSort}
         </Typography>

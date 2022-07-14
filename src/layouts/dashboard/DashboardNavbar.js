@@ -39,6 +39,8 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
 
 DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
+  onChangeLang: PropTypes.func,
+  langPack: PropTypes.object
 };
 
 /*
@@ -49,7 +51,7 @@ window.ethereum.on('chainChanged', (_chainId) => {
 });
 */
 
-export default function DashboardNavbar({ onOpenSidebar }) {
+export default function DashboardNavbar({ onOpenSidebar,onChangeLang, langPack }) {
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -57,15 +59,15 @@ export default function DashboardNavbar({ onOpenSidebar }) {
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
 
-        <Donationbar />
+        <Donationbar langPack={langPack}/>
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          {/*
-          <LanguagePopover />
-          */}
-          <NotificationsPopover />
-          <AccountPopover />
+          
+          <LanguagePopover onChangeLang={onChangeLang}/>
+          
+          <NotificationsPopover langPack={langPack}/>
+          <AccountPopover langPack={langPack}/>
         </Stack>
       </ToolbarStyle>
     </RootStyle>

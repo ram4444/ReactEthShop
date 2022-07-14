@@ -185,11 +185,12 @@ BuywithCrypto.propTypes = {
   product: PropTypes.object,
   handleClosedModal: PropTypes.func,
   handleUnderTx: PropTypes.func,
+  langPack: PropTypes.object
 };
 
 let deliveryType;
 
-function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal, handleUnderTx}) {
+function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyName, product, handleClosedModal, handleUnderTx, langPack}) {
   console.log(product.deliveryTypeList)
   
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
@@ -327,10 +328,10 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               <Iconify icon="mdi:check" 
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" align='center'>
-                  Transaction Success
+                {langPack.backDrop_transactionSuccess}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                {langPack.backDrop_caption}
               </Typography>
             </Stack>
             
@@ -338,10 +339,10 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
               <Iconify icon="codicon:error"
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" >
-                  Transaction Fail
+                  {langPack.backDrop_transactionFail}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                  {langPack.backDrop_caption}
               </Typography>
             </Stack>
           </Stack>

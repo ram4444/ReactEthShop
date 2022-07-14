@@ -42,19 +42,19 @@ const AccountStyle = styled('div')(({ theme }) => ({
 DashboardSidebar.propTypes = {
   isOpenSidebar: PropTypes.bool,
   onCloseSidebar: PropTypes.func,
+  langPack: PropTypes.object
 };
 
 
 
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
+export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, langPack}) {
   const { pathname } = useLocation();
 
   const context = useContext(TestContext);
   const { drupalHostname } = context;
 
   const isDesktop = useResponsive('up', 'lg');
-
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
@@ -79,10 +79,10 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Avatar src={account.photoURL} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                {Cookies.get('username')? `Welcome back!`:'Provide Shipping info' }
+                {Cookies.get('username')? (langPack.navSide_ShipInfoWelcomeBack):(langPack.navSide_ShipInfoInput1) }
               </Typography>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                {Cookies.get('username')? Cookies.get('username'):'Provide Shipping info' }
+                {Cookies.get('username')? Cookies.get('username'):(langPack.navSide_ShipInfoInput2) }
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {account.role}
@@ -92,7 +92,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box>
 
-      <NavSection navConfig={navConfig} />
+      <NavSection navConfig={navConfig(langPack)} />
 
       <Box sx={{ flexGrow: 1 }} />
 
@@ -106,15 +106,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
           <Box sx={{ textAlign: 'center' }}>
             <Typography gutterBottom variant="h6">
-              Have Question?
+              {langPack.navSide_QuestionContact1}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              or want to become seller
+              {langPack.navSide_QuestionContact2}
             </Typography>
           </Box>
 
           <Button href={`https://${drupalHostname}/contact`} target="_blank" variant="contained">
-            Contact Us
+            {langPack.navSide_QuestionContact3}
           </Button>
         </Stack>
       </Box>

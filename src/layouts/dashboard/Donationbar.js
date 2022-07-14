@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 // material
 import { styled, alpha } from '@mui/material/styles';
 import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
@@ -33,7 +34,11 @@ const DonationbarStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Donationbar() {
+Donationbar.propTypes = {
+  langPack: PropTypes.object
+};
+
+export default function Donationbar({langPack}) {
   const [isBarOpen, setBarOpen] = useState(false);
   const [value, setValue] = useState('0');
   const [chainId, setChainId] = useState('UNKNOWN');
@@ -99,7 +104,7 @@ export default function Donationbar() {
               autoFocus
               fullWidth
               disableUnderline
-              placeholder="Please enter the USDT amount and.."
+              placeholder={langPack.donationbar_caption}
               startAdornment={
                 <InputAdornment position="start">
                   <Iconify icon="eva:bx:donate-heart" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
@@ -116,7 +121,8 @@ export default function Donationbar() {
             toAddr={reveiverAddr}
             contractAddr={usdtContractAddr}
             chain={chainName}
-            currencyName='Tether' />
+            currencyName='Tether' 
+            langPack={langPack} />
             </>
             )}
             { /* Else */ }
@@ -127,7 +133,7 @@ export default function Donationbar() {
               autoFocus
               fullWidth
               disableUnderline
-              placeholder="To donate, please CONNECT your wallet first"
+              placeholder={langPack.donationbar_noWallet}
               startAdornment={
                 <InputAdornment position="start">
                   <Iconify icon="eva:bx:donate-heart" sx={{ color: 'text.disabled', width: 20, height: 20 }} />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import PropTypes from 'prop-types';
 // material
 import { styled } from '@mui/material/styles';
 //
@@ -31,14 +32,20 @@ const MainStyle = styled('div')(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+DashboardLayout.propTypes = {
+  onChangeLang: PropTypes.func,
+  langPack: PropTypes.object
+};
 
-export default function DashboardLayout() {
+export default function DashboardLayout({onChangeLang, langPack}) {
   const [open, setOpen] = useState(false);
+
+
 
   return (
     <RootStyle>
-      <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
-      <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+      <DashboardNavbar onOpenSidebar={() => setOpen(true)} onChangeLang={onChangeLang} langPack={langPack}/>
+      <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} langPack={langPack} />
       <MainStyle>
         <Outlet />
       </MainStyle>

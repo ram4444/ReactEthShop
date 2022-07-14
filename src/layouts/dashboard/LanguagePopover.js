@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+
 // material
 import { alpha } from '@mui/material/styles';
 import { Box, MenuItem, Stack, IconButton } from '@mui/material';
@@ -14,7 +16,7 @@ const LANGS = [
     icon: '/static/icons/ic_flag_en.svg',
   },
   {
-    value: 'de',
+    value: 'zhHK',
     label: 'German',
     icon: '/static/icons/ic_flag_de.svg',
   },
@@ -26,8 +28,11 @@ const LANGS = [
 ];
 
 // ----------------------------------------------------------------------
+LanguagePopover.propTypes = {
+  onChangeLang: PropTypes.func,
+};
 
-export default function LanguagePopover() {
+export default function LanguagePopover({ onChangeLang }) {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
 
@@ -35,7 +40,8 @@ export default function LanguagePopover() {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (lang) => {
+    onChangeLang(lang)
     setOpen(false);
   };
 
@@ -69,7 +75,7 @@ export default function LanguagePopover() {
       >
         <Stack spacing={0.75}>
           {LANGS.map((option) => (
-            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => handleClose()}>
+            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => handleClose(option.value)}>
               <Box component="img" alt={option.label} src={option.icon} sx={{ width: 28, mr: 2 }} />
 
               {option.label}

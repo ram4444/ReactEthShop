@@ -7,18 +7,12 @@ import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-const SORT_BY_OPTIONS = [
-  // { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'name', label: 'Name' },
-  { value: 'name_desc', label: 'Name Desc' }
-];
-
 PartiesSort.propTypes = {
   applySort: PropTypes.func,
+  langPack: PropTypes.object
 };
 
-export default function PartiesSort({applySort}) {
+export default function PartiesSort({applySort, langPack}) {
   const [open, setOpen] = useState(null);
   const [currentSort, setCurrentSort] = useState('newest');
 
@@ -36,6 +30,13 @@ export default function PartiesSort({applySort}) {
     handleClose()
   }
 
+  const SORT_BY_OPTIONS = [
+    // { value: 'featured', label: 'Featured' },
+    { value: 'newest', label: (langPack.artistsSort_byNewest) },
+    { value: 'name', label: (langPack.artistsSort_byAuthor) },
+    { value: 'name_desc', label: (langPack.artistsSort_byAuthorDesc) }
+  ];
+
   return (
     <>
       <Button
@@ -44,7 +45,7 @@ export default function PartiesSort({applySort}) {
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
       >
-        Sort By:&nbsp;
+        {langPack.artistsSort_title}&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {currentSort}
         </Typography>

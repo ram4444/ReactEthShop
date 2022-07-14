@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 // component
 import Iconify from '../../components/Iconify';
 
@@ -5,39 +6,40 @@ import Iconify from '../../components/Iconify';
 
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
-const navConfig = [
+
+const navConfig = (langPack) => [
   {
-    title: 'home',
+    title: langPack.navSide_Home,
     path: '/dashboard/home',
     icon: getIcon('eva:file-text-fill'),
   },
   {
-    title: 'products',
+    title: langPack.navSide_Products,
     path: '/list/products',
     icon: getIcon('eva:shopping-bag-fill'),
   },
   {
-    title: 'artists',
+    title: langPack.navSide_Artists,
     path: '/list/artistsparties',
     icon: getIcon('fa6-solid:hat-wizard'),
   },
   {
-    title: 'articles',
+    title: langPack.navSide_Articles,
     path: '/list/articles',
     icon: getIcon('material-symbols:article-outline'),
   },
   {
-    title: 'create token',
+    title: langPack.navSide_CreateToken,
     path: '/form/createtoken',
     icon: getIcon('eva:stop-circle-fill')
   },
   {
-    title: 'Buyer Dashboard',
+    title: langPack.navSide_BuyerDashBoard,
     path: '/dashboard/buyer',
     icon: getIcon('akar-icons:shipping-box-01')
   },
   {
-    title: 'Seller Dashboard',
+    title: langPack.navSide_SellerDashBoard,
     path: '/dashboard/seller',
     icon: getIcon('eva:car-fill')
   }

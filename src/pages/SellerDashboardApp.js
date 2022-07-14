@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import Web3 from 'web3';
 import axios from 'axios';
@@ -65,9 +66,11 @@ function promiseHttpAbi(chain, contractAddr) {
 }
 
 
+SellerDashboardApp.propTypes = {
+  langPack: PropTypes.object
+};
 
-
-export default function SellerDashboardApp() {
+export default function SellerDashboardApp({langPack}) {
   const [orderList, setOrderList] = React.useState([]);
   const [deliveredOrderList, setDeliveredOrderList] = React.useState([]);
   const [icoOrderList, setIcoOrderList] = React.useState([]);
@@ -487,12 +490,12 @@ export default function SellerDashboardApp() {
   // At this stage the state value has been ready
   // ---------- Render-----------------------------------------------
   return (
-    <Page title="Dashboard">
+    <Page title={langPack.sellerDashboard_title}>
       <Container maxWidth="xl">
       {isWalletFound && (
         <>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Seller Dashboard
+          {langPack.sellerDashboard_Hdr}
         </Typography>
 
         <Grid container spacing={3}>
@@ -500,7 +503,7 @@ export default function SellerDashboardApp() {
           <Grid item xs={12} md={6} lg={8} height='400'>
             <div style={{ height: 400, width: '100%' }}>
             <Typography variant="h5" sx={{ mb: 5 }}>
-              Pending ICO Orders
+              {langPack.sellerDashboard_latestICOOrder}
             </Typography>
             <DataGrid
               rows={icoOrderList}
@@ -515,7 +518,7 @@ export default function SellerDashboardApp() {
           
           <Grid item xs={12} md={6} lg={8}>
             <LatestOrdersUpdate
-              title="Latest Orders Received"
+              title={langPack.sellerDashboard_latestOrder}
               list={ orderList.map((_, index) => {
                 
                 let delivered=false
@@ -555,7 +558,7 @@ export default function SellerDashboardApp() {
 
           <Grid item xs={12} md={6} lg={8}>
             <DeliveredOrdersUpdate
-              title="Delivered Orders"
+              title={langPack.sellerDashboard_deliveredOrder}
               list={ deliveredOrderList.map((_, index) => ({
                   id: _.order_id.S,
                   title: _.product_name.S,
@@ -584,10 +587,10 @@ export default function SellerDashboardApp() {
         {!isWalletFound && (
           <>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            Wallet not found!
+            {langPack.sellerDashboard_walletNotFound1}
           </Typography>
           <Typography variant="h5" sx={{ mb: 5 }}>
-            Pleast connect the wallet to show order received
+            {langPack.sellerDashboard_walletNotFound2}
           </Typography>
           </>
         )}
@@ -607,10 +610,10 @@ export default function SellerDashboardApp() {
               <Iconify icon="mdi:check" 
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" align='center'>
-                  Transaction Success
+                {langPack.backDrop_transactionSuccess}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                {langPack.backDrop_caption}
               </Typography>
             </Stack>
             
@@ -618,10 +621,10 @@ export default function SellerDashboardApp() {
               <Iconify icon="codicon:error"
                 sx={{width: 128, height: 128, margin: 'auto'}} />
               <Typography variant="h3" >
-                  Transaction Fail
+                {langPack.backDrop_transactionFail}
               </Typography>
               <Typography variant="subtitle2" align='center'>
-                  Press to continue
+                {langPack.backDrop_caption}
               </Typography>
             </Stack>
           </Stack>

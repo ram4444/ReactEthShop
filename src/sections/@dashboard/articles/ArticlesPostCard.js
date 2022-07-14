@@ -159,9 +159,10 @@ function promiseHttpAbi(chain, contractAddr) {
 ArticlesPostCard.propTypes = {
   post: PropTypes.object.isRequired,
   index: PropTypes.number,
+  langPack: PropTypes.object,
 };
 
-export default function ArticlesPostCard({ post, index }) {
+export default function ArticlesPostCard({ post, index, langPack }) {
   const { id, cover, title, summary, body, view, comment, share, author, authorWallet, price, paymentContract, paymentChain, paymentTokenAlias, paymentTokenName, createdAt} = post;
   
   const [openModal, setOpenModal] = React.useState(false);
@@ -498,10 +499,10 @@ export default function ArticlesPostCard({ post, index }) {
                   <Iconify icon="mdi:check" 
                     sx={{width: 128, height: 128, margin: 'auto'}} />
                   <Typography variant="h3" align='center'>
-                      Transaction Success
+                    {langPack.backDrop_transactionSuccess}
                   </Typography>
                   <Typography variant="subtitle2" align='center'>
-                      Press to continue
+                    {langPack.backDrop_caption}
                   </Typography>
                 </Stack>
                 
@@ -509,10 +510,10 @@ export default function ArticlesPostCard({ post, index }) {
                   <Iconify icon="codicon:error"
                     sx={{width: 128, height: 128, margin: 'auto'}} />
                   <Typography variant="h3" >
-                      Transaction Fail
+                    {langPack.backDrop_transactionFail}
                   </Typography>
                   <Typography variant="subtitle2" align='center'>
-                      Press to continue
+                    {langPack.backDrop_caption}
                   </Typography>
                 </Stack>
               </Stack>

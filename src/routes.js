@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
@@ -19,40 +20,58 @@ import BuyererDashboardApp from './pages/BuyerDashboardApp';
 import CreateToken from './pages/CreateToken';
 import CurrentUserInfo from './pages/CurrentUserInfo';
 
+import { zhHK, en } from './translate';
+
 // ----------------------------------------------------------------------
 
+
 export default function Router() {
+  const [langPack, setLangPack] = useState(en)
+
+  const handleLangChange = (lang) => {
+    switch (lang) {
+      case 'zhHK':
+        setLangPack(zhHK);
+        break;
+      case 'en':
+        setLangPack(en);
+        break;
+      default:
+        setLangPack(en);
+    }
+  };
+  
   return useRoutes([
     {
       path: '/list',
-      element: <DashboardLayout />,
+      element: <DashboardLayout onChangeLang={handleLangChange} langPack={langPack}/>,
       children: [
         { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> },
-        { path: 'articles', element: <Articles /> },
-        { path: 'artistsparties', element: <Parties /> },
-        { path: 'artist', element: <PartiesHome /> },
-        { path: 'party', element: <PartiesHome /> },
+        { path: 'products', element: <Products langPack={langPack}/> },
+        { path: 'blog', element: <Blog langPack={langPack}/> },
+        { path: 'articles', element: <Articles langPack={langPack}/> },
+        { path: 'artistsparties', element: <Parties langPack={langPack}/> },
+        { path: 'artist', element: <PartiesHome langPack={langPack}/> },
+        { path: 'party', element: <PartiesHome langPack={langPack}/> },
         
       ],
     },
     {
       path: '/form',
-      element: <DashboardLayout />,
+      element: <DashboardLayout onChangeLang={handleLangChange} langPack={langPack}/>,
       children: [
         { path: 'createtoken', element: <CreateToken /> },
-        { path: 'currentUserInfo', element: <CurrentUserInfo /> },
+        { path: 'currentUserInfo', element: <CurrentUserInfo langPack={langPack}/> },
       ],
     },
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: <DashboardLayout onChangeLang={handleLangChange} langPack={langPack}/>,
       children: [
         { path: 'app', element: <DashboardApp /> },
-        { path: 'home', element: <HomeApp /> },
-        { path: 'seller', element: <SellerDashboardApp /> },
-        { path: 'buyer', element: <BuyererDashboardApp /> },
+        { path: 'home', element: <HomeApp langPack={langPack}/> },
+        { path: 'seller', element: <SellerDashboardApp langPack={langPack}/> },
+        { path: 'buyer', element: <BuyererDashboardApp langPack={langPack}/> },
       ],
     },
     {
