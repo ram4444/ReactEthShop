@@ -53,11 +53,11 @@ export default function CurrentUserForm({langPack}) {
     onSubmit: async (values) => {
       await new Promise((r) => setTimeout(r, 500));
       // console.log(JSON.stringify(values, null, 2));
-      Cookies.set('username',values.username);
-      Cookies.set('email',values.email);
-      Cookies.set('address1',values.address1);
-      Cookies.set('address2',values.address2);
-      Cookies.set('DeliveryAddrFilled',true);
+      Cookies.set('username',values.username, { expires: 30 });
+      Cookies.set('email',values.email, { expires: 30 });
+      Cookies.set('address1',values.address1, { expires: 30 });
+      Cookies.set('address2',values.address2, { expires: 30 });
+      Cookies.set('DeliveryAddrFilled',true, { expires: 30 });
       axios({
         method: 'post',
         url: urls.appendwalletaddr,

@@ -68,7 +68,7 @@ export default function LanguagePopover({ onChangeLang }) {
     if (index !== 'backdropClick') {
       onChangeLang(lang)
       setCurrentLang(index)
-      Cookies.set('langIndex',index);
+      Cookies.set('langIndex',index, { expires: 365 });
     }
     setOpen(false);
     
