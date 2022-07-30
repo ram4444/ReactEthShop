@@ -302,7 +302,8 @@ export default function NotificationsPopover({langPack}) {
             ))}
           </List>
         </Scrollbar>
-
+        
+        {/*
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
@@ -310,6 +311,7 @@ export default function NotificationsPopover({langPack}) {
           {langPack.notification_barViewAll}
           </Button>
         </Box>
+            */}
       </MenuPopover>
     </>
   );
