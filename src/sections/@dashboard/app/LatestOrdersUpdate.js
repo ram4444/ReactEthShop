@@ -35,9 +35,10 @@ LatestOrdersUpdate.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   list: PropTypes.array.isRequired,
+  langPack: PropTypes.object
 };
 
-export default function LatestOrdersUpdate({ title, subheader, list, ...other }) {
+export default function LatestOrdersUpdate({ title, subheader, list, langPack, ...other }) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -45,7 +46,7 @@ export default function LatestOrdersUpdate({ title, subheader, list, ...other })
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
           {list.map((orders) => (
-            <OrdersItem key={orders.id} orders={orders}/>
+            <OrdersItem key={orders.id} orders={orders} langPack={langPack}/>
           ))}
         </Stack>
       </Scrollbar>
@@ -82,9 +83,10 @@ OrdersItem.propTypes = {
     deliveryType: PropTypes.string,
     blockNumber: PropTypes.string,
   }),
+  langPack: PropTypes.object
 };
 
-function OrdersItem( { orders }) {
+function OrdersItem( { orders, langPack }) {
   const { id, fromAddr, toAddr, image, title, buyerName, buyerEmail, buyerAddr1, buyerAddr2, currency, price, chain, txHash, postedAt, deliveryType, blockNumber} = orders;
 
   const [open, setOpen] = React.useState(false);
@@ -205,28 +207,28 @@ function OrdersItem( { orders }) {
                   onClick={() => {
                     openURL(chain,txHash)
                     }}>
-                  Check on Etherscan
+                  {langPack.sellerDashboard_doneItem_checkEthScan}
                 </Link>
               </Typography>
             </Stack>
             <Stack direction="row" spacing={2}>
               <Typography id="modal-modal-currency" variant="body1" component="div">
-                Traded in: {currency}
+                {langPack.sellerDashboard_doneItem_tradeIn}: {currency}
               </Typography>
               <Typography id="modal-modal-price" variant="body1" component="div">
-                Pirce: {price}
+                {langPack.sellerDashboard_doneItem_price}: {price}
               </Typography>
             </Stack>
             <Box component="img" alt={title} src={image} sx={{ width: 400, borderRadius: 1.5, flexShrink: 0 }} />
             <Typography id="modal-modal-description" variant="subtitle1" component="div">
-            Deilver to: 
+            {langPack.sellerDashboard_doneItem_deliverTo}: 
             </Typography>
             <Typography id="modal-modal-address" variant="body1" component="div">
             {buyerAddr1} 
             {buyerAddr2}
             </Typography>
             <Button variant="contained" sx={{ mb: 5, mt: 2 }} onClick={()=>handleRemoveItem()}>
-              Item Delivered
+              {langPack.sellerDashboard_doneItem_button}
             </Button>
           </Box>
         </Modal>

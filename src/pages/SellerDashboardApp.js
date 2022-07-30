@@ -552,7 +552,7 @@ export default function SellerDashboardApp({langPack}) {
                 }
                 
               }).filter(Boolean) }
-                
+              langPack={langPack} 
             />
           </Grid>
 
@@ -576,7 +576,7 @@ export default function SellerDashboardApp({langPack}) {
                   deliveryType: _.delivery_type.S,
                   blockNumber: _.blockNumber.N,
                 })).filter(Boolean) }
-                
+              langPack={langPack}  
             />
           </Grid>
 
