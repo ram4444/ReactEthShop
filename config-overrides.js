@@ -3,7 +3,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = function override (config, env) {
     console.log('Using plug-in react-app-rewired to override webpack version > 5')
-    let loaders = config.resolve
+    const loaders = config.resolve
     loaders.fallback = {
         ...loaders.fallback,
         fs: false,
@@ -22,6 +22,12 @@ module.exports = function override (config, env) {
         buffer: require.resolve('buffer/'),
         stream: require.resolve('stream-browserify'),
     }
+    config.module.rules.unshift({
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false, // disable the behaviour
+        },
+      });
     loaders.extensions = [...loaders.extensions, ".ts", ".js"]
     config.plugins = [
         ...config.plugins,

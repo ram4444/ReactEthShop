@@ -12,6 +12,7 @@ import Iconify from './Iconify';
 import { TestContext, ProdContext } from '../Context';
 // import { contractAddr } from '../properties/contractAddr';
 import ConnectSolana from './ConnectSolana';
+import ConnectPolkadot from './ConnectPolkadot';
 import BuywithERC from './BuywithERC';
 
 import { urls } from '../properties/urls';
@@ -275,9 +276,24 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
     />
   )
 
+  const btnPolkadot = (
+    <ConnectPolkadot 
+      amountTransfer={amountTransfer} 
+      toAddr={toAddr} 
+      chain={chain}
+      handleToggle={handleToggle}
+      handleUnderTx={handleUnderTx}
+      handleClosedModal={handleClose} 
+      handleOnSuccess={onSuccess}
+      handleOnFail={onFail}
+    />
+  )
+
   let btn
   if (chain.includes('Solana')) {
     btn = btnSolana
+  } else if (chain.includes('Polkadot')) {
+    btn = btnPolkadot
   } else {
     btn = btnERC
   }
