@@ -6,6 +6,7 @@ import {
     // web3UseRpcProvider
   } from '@polkadot/extension-dapp';
 import {ApiPromise, WsProvider} from '@polkadot/api'
+import Identicon from '@polkadot/react-identicon';
 import React, { useCallback } from 'react';
 import { Button} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -65,9 +66,20 @@ export default function BuywithPolkadot({amountTransfer, account, fromAddr, toAd
         
     });
 
+    // size (optional) is a number, indicating the size (in pixels, 64 as default)
+    // theme (optional), depicts the type of icon, one of
+    // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
+
     return (
+      <>
         <Button onClick={onClick} >
+          <Identicon
+          value={toAddr}
+          size={32}
+          theme='polkadot'
+        />
             Pay with Wallet {account.meta.name}
         </Button>
+        </>
     );
 };

@@ -3051,6 +3051,23 @@
     "react-copy-to-clipboard" "^5.0.2"
     "styled-components" "^5.0.1"
 
+"@polkadot/react-identicon@^2.9.3":
+  "integrity" "sha512-OiegUmiGISpjCc7NeUmTjtHXPXuFijMVrozshidhqarYjiBYwX1/a6hYNmVc2z1CarEVvgkPqsMjRVAV07MTGw=="
+  "resolved" "https://registry.npmjs.org/@polkadot/react-identicon/-/react-identicon-2.9.3.tgz"
+  "version" "2.9.3"
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@polkadot/keyring" "^10.1.2"
+    "@polkadot/ui-settings" "2.9.3"
+    "@polkadot/ui-shared" "2.9.3"
+    "@polkadot/util" "^10.1.2"
+    "@polkadot/util-crypto" "^10.1.2"
+    "color" "^3.2.1"
+    "ethereum-blockies-base64" "^1.0.2"
+    "jdenticon" "3.1.1"
+    "react-copy-to-clipboard" "^5.1.0"
+    "styled-components" "^5.3.5"
+
 "@polkadot/react-qr@^0.52.0-beta.5":
   "integrity" "sha512-p0AbM5GUZnFWJ319QdXU3tzS9B+4547FKTlvhSOZD9RLGceidbCmTPQRdAakFKTmx3C8O3xc1sgB8ag0XmHa5w=="
   "resolved" "https://registry.npmjs.org/@polkadot/react-qr/-/react-qr-0.52.1.tgz"
@@ -3231,7 +3248,7 @@
   optionalDependencies:
     "@ledgerhq/hw-transport-node-hid" "^5.12.0"
 
-"@polkadot/ui-settings@*":
+"@polkadot/ui-settings@*", "@polkadot/ui-settings@2.9.3":
   "integrity" "sha512-OJLGY3jq8+uMltwUswk/WS44VQ+T6/ZOwDmiJFi0x4sSNK4SaqrpdWhEffxQ3T4HAemnZG8r4ZAjMcRTfeWdXQ=="
   "resolved" "https://registry.npmjs.org/@polkadot/ui-settings/-/ui-settings-2.9.3.tgz"
   "version" "2.9.3"
@@ -3258,6 +3275,14 @@
   dependencies:
     "@babel/runtime" "^7.9.2"
     "color" "^3.1.2"
+
+"@polkadot/ui-shared@2.9.3":
+  "integrity" "sha512-GiSD1ZkQbKxCfG8kDLVc3NqMheUt84xZqtCgAQAHYsyZBDZB5bMCu5UE9B6/mFAdfeKeEXQPvatlz5ox5veTFA=="
+  "resolved" "https://registry.npmjs.org/@polkadot/ui-shared/-/ui-shared-2.9.3.tgz"
+  "version" "2.9.3"
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "color" "^3.2.1"
 
 "@polkadot/util-crypto@*", "@polkadot/util-crypto@^10.1.2", "@polkadot/util-crypto@10.1.2":
   "integrity" "sha512-lSgxSLF/XkksL8St3kyw8SCLic0JvyIf8uOezQZYyjSJKT3Gl8gGu9wCAKNAmboU0FgO8cnLO9AcAEkhCHvnyw=="
@@ -5905,6 +5930,13 @@
   "resolved" "https://registry.npmjs.org/canvas-renderer/-/canvas-renderer-2.1.1.tgz"
   "version" "2.1.1"
 
+"canvas-renderer@~2.2.0":
+  "integrity" "sha512-Itdq9pwXcs4IbbkRCXc7reeGBk6i6tlDtZTjE1yc+KvYkx1Mt3WLf6tidZ/Ixbm7Vmi+jpWKG0dRBor67x9yGw=="
+  "resolved" "https://registry.npmjs.org/canvas-renderer/-/canvas-renderer-2.2.0.tgz"
+  "version" "2.2.0"
+  dependencies:
+    "@types/node" "*"
+
 "capital-case@^1.0.4":
   "integrity" "sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A=="
   "resolved" "https://registry.npmjs.org/capital-case/-/capital-case-1.0.4.tgz"
@@ -6159,7 +6191,7 @@
     "color-name" "^1.0.0"
     "simple-swizzle" "^0.2.2"
 
-"color@^3.1.2":
+"color@^3.1.2", "color@^3.2.1":
   "integrity" "sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA=="
   "resolved" "https://registry.npmjs.org/color/-/color-3.2.1.tgz"
   "version" "3.2.1"
@@ -7701,6 +7733,13 @@
   "version" "4.0.3"
   dependencies:
     "fast-safe-stringify" "^2.0.6"
+
+"ethereum-blockies-base64@^1.0.2":
+  "integrity" "sha512-Vg2HTm7slcWNKaRhCUl/L3b4KrB8ohQXdd5Pu3OI897EcR6tVRvUqdTwAyx+dnmoDzj8e2bwBLDQ50ByFmcz6w=="
+  "resolved" "https://registry.npmjs.org/ethereum-blockies-base64/-/ethereum-blockies-base64-1.0.2.tgz"
+  "version" "1.0.2"
+  dependencies:
+    "pnglib" "0.0.1"
 
 "ethereum-bloom-filters@^1.0.6":
   "integrity" "sha512-rxJ5OFN3RwjQxDcFP2Z5+Q9ho4eIdEmSc2ht0fCu8Se9nbXjZ7/031uXoUYJ87KHCOdVeiUuwSnoS7hmYAGVHA=="
@@ -9301,6 +9340,13 @@
   dependencies:
     "@types/node" "*"
     "canvas-renderer" "~2.1.1"
+
+"jdenticon@3.1.1":
+  "integrity" "sha512-/m0Kk5ou7tPHjW6YovCysRETqPlFcTabWG96r8NbbSsEK+eQ3jHiGULaGOtp4XBqkRxWS1XMopLRGwdhet5ezw=="
+  "resolved" "https://registry.npmjs.org/jdenticon/-/jdenticon-3.1.1.tgz"
+  "version" "3.1.1"
+  dependencies:
+    "canvas-renderer" "~2.2.0"
 
 "jest-changed-files@^27.5.1":
   "integrity" "sha512-buBLMiByfWGCoMsLLzGUUSpAmIAGnbR2KJoMN10ziLhOLvP4e0SlypHnAel8iqQXTrcbmfEY9sSqae5sgUsTvw=="
@@ -11162,6 +11208,11 @@
   dependencies:
     "find-up" "^3.0.0"
 
+"pnglib@0.0.1":
+  "integrity" "sha512-95ChzOoYLOPIyVmL+Y6X+abKGXUJlvOVLkB1QQkyXl7Uczc6FElUy/x01NS7r2GX6GRezloO/ecCX9h4U9KadA=="
+  "resolved" "https://registry.npmjs.org/pnglib/-/pnglib-0.0.1.tgz"
+  "version" "0.0.1"
+
 "portfinder@^1.0.28":
   "integrity" "sha512-Se+2isanIcEqf2XMHjyUKskczxbPH7dQnlMjXX6+dybayyHvAf/TCgyMRlzf/B6QDhAEFOGes0pzRo3by4AbMA=="
   "resolved" "https://registry.npmjs.org/portfinder/-/portfinder-1.0.28.tgz"
@@ -12011,7 +12062,7 @@
   dependencies:
     "semver" "^5.6.0"
 
-"react-copy-to-clipboard@^5.0.2":
+"react-copy-to-clipboard@^5.0.2", "react-copy-to-clipboard@^5.1.0":
   "integrity" "sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A=="
   "resolved" "https://registry.npmjs.org/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz"
   "version" "5.1.0"
@@ -13381,7 +13432,7 @@
   "resolved" "https://registry.npmjs.org/style-loader/-/style-loader-3.3.1.tgz"
   "version" "3.3.1"
 
-"styled-components@*", "styled-components@^5.0.1", "styled-components@>= 2":
+"styled-components@*", "styled-components@^5.0.1", "styled-components@^5.3.5", "styled-components@>= 2":
   "integrity" "sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg=="
   "resolved" "https://registry.npmjs.org/styled-components/-/styled-components-5.3.5.tgz"
   "version" "5.3.5"
