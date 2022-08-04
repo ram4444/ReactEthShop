@@ -78,6 +78,182 @@ async function init() {
 }
 init();
 
+async function processReceiptSolana(receipt, product, currencyName, chain, deliveryType) {
+              
+  const contractAddrPass="" // DynamoDB not accept null value
+  let toAddrPass;
+  
+  // In custom TOKEN contract address is in receipt.to, Receiver is in receipt.events.Transfer.returnValues.to
+  // 
+  
+  /*
+  With Cap letters:
+  receipt.events.Transfer.returnValues.to
+  product.receiverAddr
+
+  Lower Cap letters only:
+  eth_request_account
+  receipt.to, receipt.from
+  */
+  const uid=uuid()
+
+  const record=
+  { 
+    // MAP type need hard code
+    "order_id": { S: uid },
+    // Info from drupal
+    "currencyName": {S: currencyName},
+    "chain" : {S: chain},
+    "product_id": {S: product.id},
+    "product_name": {S: product.name},
+    "product_cover": {S: product.cover},
+    "product_coverFilename": {S: product.coverFilename},
+    "product_price": {N: product.price},
+    "product_email": {S: product.email},
+    "product_phone": {S: product.phone},
+    "product_location": {S: product.location},
+    // Info from transaction retur
+    // "blockHash": { S: receipt.blockHash },
+    "blockNumber": { N: '0' },
+    "contractAddress": { S: contractAddrPass },
+    // "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
+    // "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
+    "fromAddr": {S: receipt.from.toLowerCase()},
+    "toAddr": {S: product.receiverAddr.toLowerCase()},
+    // "gasUsed": {N: receipt.gasUsed.toString()},
+    // "tx_status": {BOOL: receipt.status},
+    // "transactionHash": {S: receipt.transactionHash},
+    // "transactionIndex": {N: receipt.transactionIndex.toString()},
+    // "tx_type": {S: receipt.type},
+    // "tx_events": { S: eventsjson },
+    // Delivery Info From Cookies
+    "buyer_name": {S: Cookies.get('username')},
+    "buyer_email": {S: Cookies.get('email')},
+    "delivery_addr1": {S: Cookies.get('address1')},
+    "delivery_addr2": {S: Cookies.get('address2')},
+    "delivery_type": {S: deliveryType}
+  }
+
+  console.log(record)
+    
+  putItem('orders',record)
+
+  // Msg show to buyer
+  const uidMsgBuyer=uuid()
+  const recordMsg2Buyer=
+  { 
+    "id": { S: uidMsgBuyer },
+    "userAddr": { S: receipt.from.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_place'},
+    "title": {S: `You have placed a new order ${product.name}`},
+    "description": {S: 'waiting for shipping'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Buyer)
+
+  // Msg show to buyer
+  const uidMsgSeller=uuid()
+  const recordMsg2Seller=
+  { 
+    "id": { S: uidMsgSeller },
+    "userAddr": { S: product.receiverAddr.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_received'},
+    "title": {S: `You have received a new order for ${product.name}`},
+    "description": {S: 'Please arrange the delivery'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Seller)
+}
+
+async function processReceiptPolkadot(receipt, product, currencyName, chain, deliveryType) {
+              
+  let contractAddrPass // DynamoDB not accept null value
+  let toAddrPass;
+
+  // In custom TOKEN contract address is in receipt.to, Receiver is in receipt.events.Transfer.returnValues.to
+  // 
+  
+  /*
+  With Cap letters:
+  receipt.events.Transfer.returnValues.to
+  product.receiverAddr
+
+  Lower Cap letters only:
+  eth_request_account
+  receipt.to, receipt.from
+  */
+  const uid=uuid()
+  console.log(receipt.from)
+  const record=
+  { 
+    // MAP type need hard code
+    "order_id": { S: uid },
+    // Info from drupal
+    "currencyName": {S: currencyName},
+    "chain" : {S: chain},
+    "product_id": {S: product.id},
+    "product_name": {S: product.name},
+    "product_cover": {S: product.cover},
+    "product_coverFilename": {S: product.coverFilename},
+    "product_price": {N: product.price},
+    "product_email": {S: product.email},
+    "product_phone": {S: product.phone},
+    "product_location": {S: product.location},
+    // Info from transaction retur
+    "blockHash": { S: receipt.blockHash },
+    // "blockNumber": { N: receipt.blockNumber.toString() },
+    "contractAddress": { S: contractAddrPass },
+    // "cumulativeGasUsed": { N: receipt.cumulativeGasUsed.toString() },
+    // "effectiveGasPrice": { N: receipt.effectiveGasPrice.toString() },
+    "fromAddr": {S: receipt.from.toLowerCase()},
+    "toAddr": {S: product.receiverAddr.toLowerCase()},
+    // "gasUsed": {N: receipt.gasUsed.toString()},
+    // "tx_status": {BOOL: receipt.status},
+    // "transactionHash": {S: receipt.transactionHash},
+    // "transactionIndex": {N: receipt.transactionIndex.toString()},
+    // "tx_type": {S: receipt.type},
+    // "tx_events": { S: eventsjson },
+    // Delivery Info From Cookies
+    "buyer_name": {S: Cookies.get('username')},
+    "buyer_email": {S: Cookies.get('email')},
+    "delivery_addr1": {S: Cookies.get('address1')},
+    "delivery_addr2": {S: Cookies.get('address2')},
+    "delivery_type": {S: deliveryType}
+  }
+    
+  putItem('orders',record)
+
+  // Msg show to buyer
+  const uidMsgBuyer=uuid()
+  const recordMsg2Buyer=
+  { 
+    "id": { S: uidMsgBuyer },
+    "userAddr": { S: receipt.from.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_place'},
+    "title": {S: `You have placed a new order ${product.name}`},
+    "description": {S: 'waiting for shipping'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Buyer)
+
+  // Msg show to buyer
+  const uidMsgSeller=uuid()
+  const recordMsg2Seller=
+  { 
+    "id": { S: uidMsgSeller },
+    "userAddr": { S: product.receiverAddr.toLowerCase()},
+    "related_id": { S: uid },
+    "type": {S: 'order_received'},
+    "title": {S: `You have received a new order for ${product.name}`},
+    "description": {S: 'Please arrange the delivery'},
+    "createdAt": {S: new Date()}
+  }
+  putItemNotification(recordMsg2Seller)
+}
+
 async function processReceipt(receipt, product, currencyName, chain, deliveryType) {
   console.log(receipt)
   let eventsjson = JSON.stringify(receipt.events)
@@ -223,12 +399,20 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
 
 
   const onSuccess = (receipt) => {
-    console.log("Transaction successful")
+    console.log("Transaction successful with...")
+    console.log(currencyName)
     handleToggle()
     setOpenLoadCircle(false)
     setOpenFinishTick(true)
     setOpenFinishX(false)
-    processReceipt(receipt, product, currencyName, chain, deliveryType)
+    // currencyName = Drupal TokenName (NOT Title name)
+    if (currencyName.includes('SOL')) {
+      processReceiptSolana(receipt, product, currencyName, chain, deliveryType)
+    } else if (currencyName.includes('Polkadot')) {
+      processReceiptPolkadot(receipt, product, currencyName, chain, deliveryType)
+    } else {
+      processReceipt(receipt, product, currencyName, chain, deliveryType)
+    }
     handleUnderTx(false)
   }
 

@@ -71,7 +71,10 @@ export default function BuywithSolana({amountTransfer, toAddr, chain, handleTogg
         console.log(signature)
         if (signature !== null ) {
             console.log("Transaction successful")
-            handleOnSuccess()
+            const receipt = {
+                "from": publicKey.toBase58()
+            }
+            handleOnSuccess(receipt)
             // processReceipt(receipt, product, currencyName, chain, deliveryType)
             handleUnderTx(false)
         } else {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import Web3 from 'web3';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
@@ -8,10 +10,9 @@ import { Grid, Container, Typography } from '@mui/material';
 
 // components
 import Page from '../components/Page';
+import ConnectSolanaDashboard from '../components/ConnectSolanaDashboard';
 // sections
-import {
-  BuyRecordsUpdate,
-} from '../sections/@dashboard/app';
+import {BuyRecordsUpdate} from '../sections/@dashboard/app';
 // util
 import { queryOrdersByOrderer } from '../utils/awsClient'
 
@@ -26,12 +27,16 @@ BuyerDashboardApp.propTypes = {
 export default function BuyerDashboardApp({langPack}) {
   const [orderList, setOrderList] = React.useState([]);
   const [isWalletFound, setWalletFound] = useState(false);
+  // Solana
+  const { connection } = useConnection();
+  
   
   let qR=[];
   let usr;
   async function init() {
     console.log('init')
 
+    // ERC
     if (window.ethereum) {
       App.web3Provider = window.ethereum;
       try {
@@ -61,27 +66,30 @@ export default function BuyerDashboardApp({langPack}) {
     acc.then((result) => {
       usr= result[0]
       console.log(usr)
-    }).then(()=>queryDyDb(usr))
-    
-  }
-
-  function queryDyDb(addr) {
-    queryOrdersByOrderer(addr).then((queryResult) => {
-      console.log('Query the DB')
-      qR=queryResult.Items
-      setOrderList(qR)
+    }).then(()=> {
+      queryDyDb(usr)
     })
+
+    
+
+  }
+
+  async function queryDyDb(addr) {
+    await queryOrdersByOrderer(addr).then((queryResult) => {
+      console.log('Query the DB result')
+      console.log(queryResult.Items)
+      qR=qR.concat(queryResult.Items)
+    })
+    setOrderList(qR)
   }
   
   
-
+  
   useEffect(()=> {
-    console.log('useEffect')
+    console.log('useEffect Buyerdashboard')
     init()
+    console.log('Ready to query by SOL wallet addr')
   }, []);
-  
-
-  
   
   
   const theme = useTheme();
@@ -132,6 +140,7 @@ export default function BuyerDashboardApp({langPack}) {
           </Typography>
           </>
         )}
+        <ConnectSolanaDashboard langPack={langPack}/>
       </Container>
     </Page>
   );
