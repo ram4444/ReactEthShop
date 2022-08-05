@@ -6,7 +6,7 @@ import { PublicKey } from '@solana/web3.js';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Stack, Grid, Container, Typography, Divider } from '@mui/material';
 
 // components
 import Page from '../components/Page';
@@ -26,7 +26,7 @@ BuyerDashboardApp.propTypes = {
 
 export default function BuyerDashboardApp({langPack}) {
   const [orderList, setOrderList] = React.useState([]);
-  const [isWalletFound, setWalletFound] = useState(false);
+  const [isERCWalletFound, setERCWalletFound] = useState(false);
   // Solana
   const { connection } = useConnection();
   
@@ -45,7 +45,7 @@ export default function BuyerDashboardApp({langPack}) {
         // Depricatd soon 
         // await window.ethereum.enable();
         await window.ethereum.request({ method: 'eth_requestAccounts' })
-        setWalletFound(true)
+        setERCWalletFound(true)
         console.log('Wallet found')
       } catch (error) {
         // User denied account access...
@@ -53,13 +53,13 @@ export default function BuyerDashboardApp({langPack}) {
       }
     } else if (window.web3) {
       App.web3Provider = window.web3.currentProvider;
-      setWalletFound(true)
+      setERCWalletFound(true)
       console.log('Wallet found [Legacy]')
     }
     // If no injected web3 instance is detected, fall back to Ganache
     else {
       console.error('web3 was undefined');
-      setWalletFound(false)
+      setERCWalletFound(false)
     }
 
     const acc = window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -96,51 +96,63 @@ export default function BuyerDashboardApp({langPack}) {
 
   return (
     <Page title={langPack.buyerDashboard_title}>
-      <Container maxWidth="xl">
-      {isWalletFound && (
-        <>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          {langPack.buyerDashboard_Hdr}
-        </Typography>
-
-        
-        <Grid container spacing={3}>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <BuyRecordsUpdate
-              title={langPack.buyerDashboard_latestOrder}
-              list={orderList.map((_, index) => ({
-                id: _.order_id,
-                title: _.product_name.S,
-                buyerName: _.buyer_name.S,
-                buyerEmail: _.buyer_email.S,
-                buyerAddr1: _.delivery_addr1.S,
-                buyerAddr2: _.delivery_addr2.S,
-                currency: _.currencyName.S,
-                price: _.product_price.N,
-                image: _.product_cover.S,
-                chain: _.chain.S,
-                txHash: _.transactionHash.S,
-                postedAt: faker.date.recent(),
-              }))}
-              langPack={langPack}
-            />
-          </Grid>
-
-        </Grid>
-        </>
-        )}
-        {!isWalletFound && (
-          <>
-          <Typography variant="h4" sx={{ mb: 5 }}>
-            {langPack.buyerDashboard_walletNotFound1}
+      <Container maxWidth="xl" >
+        <Stack spacing={1}>
+      
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            {langPack.buyerDashboard_Hdr}
           </Typography>
-          <Typography variant="h5" sx={{ mb: 5 }}>
-            {langPack.buyerDashboard_walletNotFound2}
+
+          {isERCWalletFound && (
+            <>
+            <Typography variant="h5" sx={{ mb: 1}}>
+              ERC
+            </Typography>
+
+            <Grid container spacing={1} sx={{mb:4}}>
+
+              <Grid item xs={12} md={6} lg={8}>
+                <BuyRecordsUpdate
+                  title={langPack.buyerDashboard_latestOrder}
+                  list={orderList.map((_, index) => ({
+                    id: _.order_id,
+                    title: _.product_name.S,
+                    buyerName: _.buyer_name.S,
+                    buyerEmail: _.buyer_email.S,
+                    buyerAddr1: _.delivery_addr1.S,
+                    buyerAddr2: _.delivery_addr2.S,
+                    currency: _.currencyName.S,
+                    price: _.product_price.N,
+                    image: _.product_cover.S,
+                    chain: _.chain.S,
+                    txHash: _.transactionHash.S,
+                    postedAt: faker.date.recent(),
+                  }))}
+                  langPack={langPack}
+                />
+              </Grid>
+
+            </Grid>
+            </>
+          )}
+          {!isERCWalletFound && (
+            <>
+            <Typography variant="h4" sx={{ mb: 3 }}>
+              {langPack.buyerDashboard_walletNotFound1}
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {langPack.buyerDashboard_walletNotFound2}
+            </Typography>
+            </>
+          )}
+
+          <Divider />
+
+          <Typography variant="h5" sx={{ mb: 1 }}>
+            Solana
           </Typography>
-          </>
-        )}
-        <ConnectSolanaDashboard langPack={langPack}/>
+          <ConnectSolanaDashboard langPack={langPack} page='buyer'/>
+        </Stack>
       </Container>
     </Page>
   );

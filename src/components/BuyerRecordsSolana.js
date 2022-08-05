@@ -45,29 +45,29 @@ export default function BuyerRecordsSolana({langPack}) {
     }, [fakeOnClick]);
 
     return (
-        <Grid container spacing={3}>
+      <Grid container spacing={3}>
 
-            <Grid item xs={12} md={6} lg={8}>
-                <BuyRecordsUpdate
-                title={langPack.buyerDashboard_latestOrder}
-                list={orderList.map((_, index) => ({
-                    id: _.order_id,
-                    title: _.product_name.S,
-                    buyerName: _.buyer_name.S,
-                    buyerEmail: _.buyer_email.S,
-                    buyerAddr1: _.delivery_addr1.S,
-                    buyerAddr2: _.delivery_addr2.S,
-                    currency: _.currencyName.S,
-                    price: _.product_price.N,
-                    image: _.product_cover.S,
-                    chain: _.chain.S,
-                    txHash: 'N/A',
-                    postedAt: faker.date.recent(),
-                }))}
-                langPack={langPack}
-                />
-            </Grid>
-
+        <Grid item xs={12} md={6} lg={8}>
+          <BuyRecordsUpdate
+          title={langPack.buyerDashboard_latestOrder}
+          list={orderList.map((_, index) => ({
+            id: _.order_id,
+            title: _.product_name.S,
+            buyerName: _.buyer_name.S,
+            buyerEmail: _.buyer_email.S,
+            buyerAddr1: _.delivery_addr1.S,
+            buyerAddr2: _.delivery_addr2.S,
+            currency: _.currencyName.S,
+            price: _.product_price.N,
+            image: _.product_cover.S,
+            chain: _.chain.S,
+            txHash: 'N/A',
+            postedAt: faker.date.recent(),
+          }))}
+          langPack={langPack}
+          />
         </Grid>
+
+      </Grid>
     );
 };

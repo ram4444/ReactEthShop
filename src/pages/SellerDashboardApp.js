@@ -6,7 +6,7 @@ import axios from 'axios';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Button, Backdrop, CircularProgress, Stack } from '@mui/material';
+import { Grid, Container, Typography, Button, Backdrop, CircularProgress, Stack, Divider } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import {uuid} from 'uuidv4'
@@ -15,6 +15,8 @@ import Cookies from 'js-cookie';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
+import ConnectSolanaDashboard from '../components/ConnectSolanaDashboard';
+
 // sections
 import {
   LatestOrdersUpdate,
@@ -492,108 +494,121 @@ export default function SellerDashboardApp({langPack}) {
   return (
     <Page title={langPack.sellerDashboard_title}>
       <Container maxWidth="xl">
-      {isWalletFound && (
-        <>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          {langPack.sellerDashboard_Hdr}
-        </Typography>
+        <Stack spacing={1}>
 
-        <Grid container spacing={3}>
-            
-          <Grid item xs={12} md={6} lg={8} height='400'>
-            <div style={{ height: 400, width: '100%' }}>
-            <Typography variant="h5" sx={{ mb: 5 }}>
-              {langPack.sellerDashboard_latestICOOrder}
-            </Typography>
-            <DataGrid
-              rows={icoOrderList}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              disableSelectionOnClick
-            />
-            </div>
-          </Grid>
-            
-          
-          <Grid item xs={12} md={6} lg={8}>
-            <LatestOrdersUpdate
-              title={langPack.sellerDashboard_latestOrder}
-              list={ orderList.map((_, index) => {
-                
-                let delivered=false
-                deliveredOrderList.forEach((deliveredOrder) => {
-                  console.log(_.order_id)
-                  console.log(deliveredOrder.order_id.S)
-                  if (deliveredOrder.order_id.S===_.order_id.S) {
-                    
-                    console.log('delivered')
-                    delivered=true
-                  }
-                })
-                if (delivered) {return null}
-                return {
-                  id: _.order_id.S,
-                  title: _.product_name.S,
-                  buyerName: _.buyer_name.S,
-                  buyerEmail: _.buyer_email.S,
-                  buyerAddr1: _.delivery_addr1.S,
-                  buyerAddr2: _.delivery_addr2.S,
-                  currency: _.currencyName.S,
-                  price: _.product_price.N,
-                  image: _.product_cover.S,
-                  chain: _.chain.S,
-                  txHash: _.transactionHash.S,
-                  postedAt: faker.date.recent(),
-                  fromAddr: _.fromAddr.S,
-                  toAddr: _.toAddr.S,
-                  deliveryType: _.delivery_type.S,
-                  blockNumber: _.blockNumber.N,
-                }
-                
-              }).filter(Boolean) }
-              langPack={langPack} 
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <DeliveredOrdersUpdate
-              title={langPack.sellerDashboard_deliveredOrder}
-              list={ deliveredOrderList.map((_, index) => ({
-                  id: _.order_id.S,
-                  title: _.product_name.S,
-                  buyerName: _.buyer_name.S,
-                  buyerEmail: _.buyer_email.S,
-                  buyerAddr1: _.delivery_addr1.S,
-                  buyerAddr2: _.delivery_addr2.S,
-                  currency: _.currency.S,
-                  price: _.product_price.N,
-                  chain: _.chain.S,
-                  txHash: _.txHash.S,
-                  postedAt: faker.date.recent(),
-                  fromAddr: _.fromAddr.S,
-                  toAddr: _.toAddr.S,
-                  deliveryType: _.delivery_type.S,
-                  blockNumber: _.blockNumber.N,
-                })).filter(Boolean) }
-              langPack={langPack}  
-            />
-          </Grid>
-
-
-        </Grid>
-        </>
-        )}
-        {!isWalletFound && (
-          <>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            {langPack.sellerDashboard_walletNotFound1}
+            {langPack.sellerDashboard_Hdr}
           </Typography>
-          <Typography variant="h5" sx={{ mb: 5 }}>
-            {langPack.sellerDashboard_walletNotFound2}
+
+          {isWalletFound && (
+            <>
+            <Typography variant="h5" sx={{ mb: 1}}>
+                ERC
+            </Typography>
+
+            <Grid container spacing={1} sx={{mb:4}}>
+
+              <Grid item xs={12} md={6} lg={8} height='400'>
+                <div style={{ height: 400, width: '100%' }}>
+                <Typography variant="h5" sx={{ mb: 5 }}>
+                  {langPack.sellerDashboard_latestICOOrder}
+                </Typography>
+                <DataGrid
+                  rows={icoOrderList}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  disableSelectionOnClick
+                />
+                </div>
+              </Grid>
+                
+              
+              <Grid item xs={12} md={6} lg={8}>
+                <LatestOrdersUpdate
+                  title={langPack.sellerDashboard_latestOrder}
+                  list={ orderList.map((_, index) => {
+                    
+                    let delivered=false
+                    deliveredOrderList.forEach((deliveredOrder) => {
+                      console.log(_.order_id)
+                      console.log(deliveredOrder.order_id.S)
+                      if (deliveredOrder.order_id.S===_.order_id.S) {
+                        
+                        console.log('delivered')
+                        delivered=true
+                      }
+                    })
+                    if (delivered) {return null}
+                    return {
+                      id: _.order_id.S,
+                      title: _.product_name.S,
+                      buyerName: _.buyer_name.S,
+                      buyerEmail: _.buyer_email.S,
+                      buyerAddr1: _.delivery_addr1.S,
+                      buyerAddr2: _.delivery_addr2.S,
+                      currency: _.currencyName.S,
+                      price: _.product_price.N,
+                      image: _.product_cover.S,
+                      chain: _.chain.S,
+                      txHash: _.transactionHash.S,
+                      postedAt: faker.date.recent(),
+                      fromAddr: _.fromAddr.S,
+                      toAddr: _.toAddr.S,
+                      deliveryType: _.delivery_type.S,
+                      blockNumber: _.blockNumber.N,
+                    }
+                    
+                  }).filter(Boolean) }
+                  langPack={langPack} 
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={8}>
+                <DeliveredOrdersUpdate
+                  title={langPack.sellerDashboard_deliveredOrder}
+                  list={ deliveredOrderList.map((_, index) => ({
+                      id: _.order_id.S,
+                      title: _.product_name.S,
+                      buyerName: _.buyer_name.S,
+                      buyerEmail: _.buyer_email.S,
+                      buyerAddr1: _.delivery_addr1.S,
+                      buyerAddr2: _.delivery_addr2.S,
+                      currency: _.currency.S,
+                      price: _.product_price.N,
+                      chain: _.chain.S,
+                      txHash: _.txHash.S,
+                      postedAt: faker.date.recent(),
+                      fromAddr: _.fromAddr.S,
+                      toAddr: _.toAddr.S,
+                      deliveryType: _.delivery_type.S,
+                      blockNumber: _.blockNumber.N,
+                    })).filter(Boolean) }
+                  langPack={langPack}  
+                />
+              </Grid>
+
+
+            </Grid>
+            </>
+          )}
+          {!isWalletFound && (
+            <>
+            <Typography variant="h4" sx={{ mb: 3 }}>
+              {langPack.sellerDashboard_walletNotFound1}
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {langPack.sellerDashboard_walletNotFound2}
+            </Typography>
+            </>
+          )}
+          <Divider />
+
+          <Typography variant="h5" sx={{ mb: 1 }}>
+            Solana
           </Typography>
-          </>
-        )}
+          <ConnectSolanaDashboard langPack={langPack} page='seller'/>
+        </Stack>
       </Container>
       <div>
         <Backdrop
