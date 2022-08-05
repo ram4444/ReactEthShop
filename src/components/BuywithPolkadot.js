@@ -1,10 +1,10 @@
 import {
-    web3Accounts,
-    web3Enable,
-    web3FromAddress,
-    // web3ListRpcProviders,
-    // web3UseRpcProvider
-  } from '@polkadot/extension-dapp';
+  web3Accounts,
+  web3Enable,
+  web3FromAddress,
+  // web3ListRpcProviders,
+  // web3UseRpcProvider
+} from '@polkadot/extension-dapp';
 import {ApiPromise, WsProvider} from '@polkadot/api'
 import Identicon from '@polkadot/react-identicon';
 import React, { useCallback } from 'react';
@@ -36,9 +36,17 @@ export default function BuywithPolkadot({amountTransfer, account, fromAddr, toAd
       // returns an array of { address, meta: { name, source } }
       // meta.source contains the name of the extension that provides this account
       // const allAccounts = await web3Accounts();
-
+       
+      // example for other end point
+      // https://docs.moonbeam.network/builders/get-started/endpoints/
       const wsProvider = new WsProvider('wss://rpc.polkadot.io');
       const api = await ApiPromise.create({ provider: wsProvider });
+
+      // Test area
+      const header = await api.rpc.chain.getHeader()
+      const chain = await api.rpc.system.chain()
+      console.log(header)
+      console.log(chain)
 
       // the address we use to use for signing, as injected
       const SENDER = fromAddr;
@@ -57,11 +65,20 @@ export default function BuywithPolkadot({amountTransfer, account, fromAddr, toAd
       .signAndSend(SENDER, { signer: injector.signer }, (status) => { 
         if (status.isInBlock) {
           console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+          const receipt = {
+            "from": fromAddr,
+            "blockHash": status.asInBlock.toString()
+          }
+          handleOnSuccess(receipt)
+          // processReceipt(receipt, product, currencyName, chain, deliveryType)
+          handleUnderTx(false)
         } else {
             console.log(`Current status: ${status.type}`);
         }
       }).catch((error) => {
         console.log(':( transaction failed', error);
+        handleOnFail()
+        handleUnderTx(false)
       });;
         
     });
