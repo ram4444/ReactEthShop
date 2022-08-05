@@ -344,7 +344,7 @@ export default function HomeApp({langPack}) {
         <Divider />
 
         <Typography variant="h4" sx={{ mt: 5 }}>
-          Latest Articles
+          {langPack.home_Hdr_LatestArticle}
         </Typography>
 
         <Grid container spacing={3} sx={{ mt: 1 }}>

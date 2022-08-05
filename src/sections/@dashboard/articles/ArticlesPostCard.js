@@ -479,7 +479,8 @@ export default function ArticlesPostCard({ post, index, langPack }) {
                     toAddr={authorWallet}
                     contractAddr='0xdAC17F958D2ee523a2206206994597C13D831ec7'
                     chain='Ethereum Mainnet'
-                    currencyName='Tether' />
+                    currencyName='Tether' 
+                    langPack={langPack}/>
                 </Stack> 
               </Box>
             </Modal>
