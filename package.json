@@ -25,9 +25,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "chrome >= 67",
+      "edge >= 79",
+      "firefox >= 68",
+      "opera >= 54",
+      "safari >= 14"
     ],
     "development": [
       "last 1 chrome version",
@@ -52,6 +54,7 @@
     "@polkadot/extension": "^0.22.1",
     "@polkadot/extension-dapp": "^0.44.3",
     "@polkadot/react-identicon": "^2.9.3",
+    "@polkadot/util": "^10.1.2",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@solana-mobile/wallet-adapter-mobile": "^0.0.1-alpha.0",
     "@solana/wallet-adapter-base": "^0.9.6",
