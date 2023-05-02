@@ -60,7 +60,7 @@ export default function Router() {
       path: '/form',
       element: <DashboardLayout onChangeLang={handleLangChange} langPack={langPack}/>,
       children: [
-        { path: 'createtoken', element: <CreateToken /> },
+        // { path: 'createtoken', element: <CreateToken /> },
         { path: 'currentUserInfo', element: <CurrentUserInfo langPack={langPack}/> },
       ],
     },

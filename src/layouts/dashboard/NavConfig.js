@@ -28,11 +28,13 @@ const navConfig = (langPack) => [
     path: '/list/articles',
     icon: getIcon('material-symbols:article-outline'),
   },
+  /*
   {
     title: langPack.navSide_CreateToken,
     path: '/form/createtoken',
     icon: getIcon('eva:stop-circle-fill')
   },
+  */
   {
     title: langPack.navSide_BuyerDashBoard,
     path: '/dashboard/buyer',
