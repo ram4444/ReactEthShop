@@ -5,10 +5,6 @@
 ## Git clone the repo
 git clone https://github.com/ram4444/ReactEthShop.git
 
-mv build_image.sh ReactEthShop/
-mv run_image.sh ReactEthShop/
-mv runtime.dockerfile ReactEthShop/
-
 cd ReactEthShop
 npm run build
 tar -czvf build.tar.gz ./build
