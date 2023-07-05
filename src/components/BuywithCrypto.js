@@ -486,7 +486,7 @@ function BuywithCrypto({ amountTransfer, toAddr, contractAddr, chain, currencyNa
   return (
     <>
       <Stack direction="row" spacing={2} pt={2} alignItems="center" justifyContent="center" >
-        <div maxWidth='40%'>
+        <div>
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">Delivery Method</FormLabel>
             <RadioGroup
