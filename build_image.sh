@@ -6,8 +6,9 @@
 git clone https://github.com/ram4444/ReactEthShop.git
 
 cd ReactEthShop
+npm install
 npm run build
-tar -czvf build.tar.gz ./build
+tar -czvf build.tar.gz build
 
 # Copy the git credential from home directory to the project folder for COPY operation in dockerfile
 cp ../../.git-credentials ./.git-credentials
