@@ -6,4 +6,5 @@ COPY ["./package.json", "/root/app/package.json"]
 COPY --chown=root --chmod=775 ["./run_image.sh", "/root/app/run_image.sh"]
 EXPOSE 3000
 WORKDIR /root/app
-CMD ["./run_image.sh"]
+ENTRYPOINT [ "/root/app/run_image.sh" ]
+#CMD ["./run_image.sh"]
